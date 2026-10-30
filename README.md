@@ -1,138 +1,147 @@
-# Lily58-Tastenkappen (DES-Profil, deutsches Layout)
+# Lily58 keycaps (DES profile, German layout)
 
-Tastenkappen für den [Lily58](https://github.com/kata0510/Lily58) mit deutschem Layout (QWERTZ,
-ohne Sonderzeichen), Symbolen für die Sondertasten und mehrfarbigen Legenden. Die Kappen werden
-von einem Skript aus parametrischen OpenSCAD-Vorlagen erzeugt und sind für den Druck auf einem
-FDM-Drucker optimiert.
+Keycaps for the [Lily58](https://github.com/kata0510/Lily58) with a German layout (QWERTZ, no
+special characters), symbols for the modifier keys and multi-color legends. The caps are generated
+by a script from parametric OpenSCAD templates and are optimized for printing on an FDM printer.
 
-Die fertigen STL-Dateien für den DES-Satz liegen als ZIP am
-[neuesten Release](../../releases/latest).
+The finished STL files for the DES set are attached as a ZIP to the
+[latest release](../../releases/latest).
 
-![DES-Satz mit Beschriftung in Lily58-Anordnung](docs/des_satz_beschriftet.png)
+![DES set with legends in Lily58 arrangement](docs/des_set_labeled.png)
 
-![DES-Satz ohne Beschriftung](docs/des_satz_leer.png)
+![DES set without legends](docs/des_set_blank.png)
 
-![Nahaufnahme: Esc, Q, F mit Homing-Steg, Space (1,5u) und GUI](docs/des_nahaufnahme.png)
+![Close-up: Esc, Q, F with homing bar, Space (1.5u) and GUI](docs/des_closeup.png)
 
-*Renderbilder aus OpenSCAD (Kappen mit plan geschnittenen Seiten, wie sie gedruckt werden; R1 um
-180° gedreht, wie sie aufgesteckt wird).*
+*OpenSCAD renders (caps with flattened sides as they are printed; R1 rotated by 180° as it is
+mounted).*
 
-## Seitwärts gedruckt – optimiert für FDM
+Printed caps (0.4 mm nozzle, two filaments). The flat side on the right of each cap is the side that
+lay on the print bed:
 
-Die Kappen werden **auf der Seite liegend** gedruckt, nicht aufrecht:
+| | | |
+|---|---|---|
+| ![Printed GUI key](docs/photo_gui_key.jpg) | ![Printed blank key](docs/photo_blank_key.jpg) | ![Printed G key](docs/photo_g_key.jpg) |
 
-- **Glatte Oberseite:** Die gewölbte Mulde entsteht aus senkrechten Schichtkonturen statt aus
-  waagerechten Stufen. Aufrecht gedruckt zeichnet sich jede Schicht als Ring in der Mulde ab.
-- **Stabiler Stem:** Die Schichtlinien laufen längs zum Stem. Aufrecht gedruckt verlaufen sie quer
-  dazu, dort reißt der Stem beim Abziehen der Kappe am ehesten.
-- **Flache Seiten:** Die linke und rechte Seitenwand ist entlang einer Ebene plan geschnitten
-  (untere Randecke bis obere Kante). Jede Kappe liegt so mit 80 bis 240 mm² flach auf dem Bett.
-  Der Druckwinkel ergibt sich aus derselben Ebene.
-- **Herausziehbare Stütze:** Ein Fuß steht vor der offenen Unterseite der Kappe auf dem Bett, ein
-  Steg reicht durch die Öffnung unter den Stem. Die Stütze berührt die Kappe nirgends
-  (0,2 mm Abstand zum Stem, etwa 0,3 mm zur Wand) und lässt sich nach dem Druck herausziehen.
-- **Mehrfarbige Legenden:** Beschriftung und Kappe sind getrennte Teile und werden mit zwei
-  Filamenten gedruckt (z. B. mit dem AMS).
+## Printed sideways – optimized for FDM
+
+The caps are printed **lying on their side**, not upright:
+
+- **Smooth top surface:** the curved dish is built from vertical layer contours instead of
+  horizontal steps. Printed upright, every layer shows up as a ring in the dish.
+- **Stronger stem:** the layer lines run along the stem. Printed upright they run across it, which
+  is where the stem tends to break when the cap is pulled off.
+- **Flat sides:** the left and right side walls are cut flat along a plane (from the bottom rim
+  corner to the top edge). Each cap lies flat on the bed with 80 to 240 mm² of contact; the print
+  angle follows from the same plane.
+- **Removable support:** a foot stands on the bed in front of the open bottom of the cap, a fin
+  reaches through the opening under the stem. The support does not touch the cap anywhere (0.2 mm
+  gap to the stem, about 0.3 mm to the wall) and is simply pulled out after printing.
+- **Multi-color legends:** legend and cap are separate parts and are printed with two filaments
+  (e.g. with the AMS).
 
 ## Layout
 
-| Reihe | Links | Rechts |
+| Row | Left | Right |
 |---|---|---|
-| R1 (Zahlen) | Esc 1 2 3 4 5 | 6 7 8 9 0 Entf |
+| R1 (numbers) | Esc 1 2 3 4 5 | 6 7 8 9 0 Del |
 | R2 | Tab Q W E R T | Z U I O P □ |
-| R3 (Home) | Strg A S D **F** G | H **J** K L □ □ |
+| R3 (home) | Ctrl A S D **F** G | H **J** K L □ □ |
 | R4 | Shift Y X C V B □ | □ N M □ □ □ Shift |
-| Daumen | Alt GUI Lower Space | Enter Raise Backspace GUI |
+| Thumbs | Alt GUI Lower Space | Enter Raise Backspace GUI |
 
-□ = leere Kappe, **F**/**J** mit Homing-Steg. Space und Enter sind 1,5u. Strg, Alt und GUI tragen
-die Mac-Symbole ⌃ ⌥ ⌘. Dazu kommen je Reihe eine leere Ersatzkappe, ein kompletter Satz leerer
-Daumenkappen und zwei leere Homing-Kappen.
+□ = blank cap, **F**/**J** with homing bar. Space and Enter are 1.5u. Ctrl, Alt and GUI use the Mac
+symbols ⌃ ⌥ ⌘. In addition there is one blank spare cap per row, a full set of blank thumb caps and
+two blank homing caps.
 
-**R1 wird um 180° gedreht aufgesteckt:** Die R1-Kappe des DES-Profils ist nach hinten geneigt. Als
-Zahlenreihe muss sie zum Nutzer zeigen, deshalb ist ihre Beschriftung um 180° gedreht.
+**R1 is mounted rotated by 180°:** the R1 cap of the DES profile tilts backwards. As the number row
+it has to face the user, so its legends are rotated by 180°.
 
-## Drucken
+## Printing
 
-- In Bambu Studio pro Gruppe `*_body.stl` und `*_legends.stl` zusammen importieren und als ein
-  Objekt mit mehreren Teilen laden, dann der Legende das zweite Filament zuweisen. Leere Gruppen
-  (`Ersatz_*`, `Daumen_leer`, `Homing_leer`) haben nur eine `*_body.stl`.
-- Die Stützen sind schon enthalten, die Slicer-Stützen also ausschalten.
-- Getestet mit einer 0,4-mm-Düse. Die Stem-Toleranz 0.025 sitzt fest; mit dem Modus `des-test`
-  lassen sich andere Werte vorab testen.
-- Empfehlungen: Naht nach hinten bzw. auf die Bettseite, Arachne als Wandgenerator (feine
-  Symbollinien), Außenwände langsam.
+- In Bambu Studio, import `*_body.stl` and `*_legends.stl` of a group together and load them as one
+  object with multiple parts, then assign the second filament to the legend. Blank groups
+  (`Ersatz_*`, `Daumen_leer`, `Homing_leer`) only have a `*_body.stl`.
+- The supports are already included, so turn slicer supports off.
+- Tested with a 0.4 mm nozzle. A stem tolerance of 0.025 gives a firm fit; other values can be
+  tested beforehand with the `des-test` mode.
+- Recommended: seam at the back or on the bed side, Arachne wall generator (fine symbol lines),
+  slow outer walls.
 
-## Selbst rendern
+File names are German: `links`/`rechts` = left/right half, `Daumen` = thumbs, `Ersatz` = spare,
+`leer` = blank.
+
+## Rendering yourself
 
 ```bash
-./lily58_keycaps.sh des-all            # DES-Satz, Standard-Toleranz 0.025
-./lily58_keycaps.sh des-all 0.05       # andere Toleranz
-./lily58_keycaps.sh des-test           # Passtest: leere Kappen mit 0.00 0.025 0.05 0.075
-./lily58_keycaps.sh kat-all            # derselbe Satz im KAT-Profil (keycap_playground)
+./lily58_keycaps.sh des-all            # DES set, default tolerance 0.025
+./lily58_keycaps.sh des-all 0.05       # different tolerance
+./lily58_keycaps.sh des-test           # fit test: blank caps with 0.00 0.025 0.05 0.075
+./lily58_keycaps.sh kat-all            # the same set in the KAT profile (keycap_playground)
 ```
 
-Die Ausgabe landet in `~/Documents/lily58_keycaps/stl/` (anderer Ort mit `KEYCAP_DIR=...`). Die
-Vorlagen und Bibliotheken lädt das Skript beim ersten Lauf selbst herunter.
+The output goes to `~/Documents/lily58_keycaps/stl/` (set another location with `KEYCAP_DIR=...`).
+The script downloads the templates and libraries itself on the first run.
 
-Voraussetzungen:
+Requirements:
 
-- OpenSCAD Nightly/Snapshot mit Manifold-Backend und `textmetrics` (zum Zentrieren der Legenden)
-- `git` und `unzip`
-- Schriften: JetBrains Mono Nerd Font (Bold) für die Symbole; Liberation Sans liegt OpenSCAD bei
+- OpenSCAD nightly/snapshot with the Manifold backend and `textmetrics` (used to center legends)
+- `git` and `unzip`
+- Fonts: JetBrains Mono Nerd Font (Bold) for the symbols; Liberation Sans ships with OpenSCAD
 
-## Änderungen an den Vorlagen
+## Changes to the templates
 
-Die Vorlagen werden nicht verändert weiterverteilt. Das Skript lädt sie herunter und baut darauf auf.
+The templates are not redistributed in modified form; the script downloads them and builds on them.
 
 ### PseudoMakeMeKeyCapProfiles (DES, `MX_DES_Standard.scad`, `MX_DES_Thumb.scad`)
 
-Das Skript nutzt eine Kopie der beiden Profildateien ohne ihren eigenen `keycap()`-Aufruf. Statt
-`keycap()` baut ein eigenes Modul `des_cap()` die Kappe aus den Formfunktionen und Parametern des
-Profils, mit diesen Änderungen:
+The script uses a copy of both profile files without their own `keycap()` call. Instead of
+`keycap()`, a custom module `des_cap()` builds the cap from the profile's shape functions and
+parameters, with these changes:
 
-- **Stem:** außen rund mit 5,7 statt 5,5 mm Durchmesser, Toleranz einstellbar (Standard 0.025).
-- **Kreuzloch:** mit denselben Maßen neu aufgebaut, aber ohne deckungsgleiche Flächen, die beim
-  Slicer-Import offene Kanten ergeben. Das Kreuz beginnt unterhalb des Stem-Bodens; die
-  Einführschräge (1,1-fach bei z = 0) besteht aus zwei Pyramidenstümpfen pro Kreuzarm.
-- **Mulde:** Die beiden Mulden-Hälften überlappen um 0,05 mm statt 0,00001 mm.
-- **Legenden:** ein eigenes Teil für den Mehrfarbdruck, senkrecht zur geneigten Oberseite und nach
-  der sichtbaren Form der Glyphe zentriert (`textmetrics`). Sie enden 0,3 mm über der Innendecke.
-  Die R1-Legenden sind um 180° gedreht.
-- **Homing:** ein erhabener Steg (3 × 1 mm, etwa 0,6 mm hoch) statt der Vertiefung des Originals.
-- **Daumen:** High-Profile-Varianten (1,5u = ID 0, 1u = ID 1 und 2), für eine Hälfte gespiegelt; die
-  Legenden bleiben dabei lesbar.
-- **Druck:** Seiten plan geschnitten, auf die Seite gelegt, herausziehbare Stütze.
-- **Auflösung:** `fn = 60`, `layers = 50`, die Werte, die der Autor für die Ausgabe nennt.
+- **Stem:** round outside with a diameter of 5.7 instead of 5.5 mm, adjustable tolerance
+  (default 0.025).
+- **Cross hole:** rebuilt with the same dimensions but without coincident faces, which cause open
+  edges on slicer import. The cross starts below the stem bottom; the entry chamfer (1.1× at z = 0)
+  is made of two frustums per cross arm.
+- **Dish:** the two dish halves overlap by 0.05 mm instead of 0.00001 mm.
+- **Legends:** a separate part for multi-color printing, perpendicular to the tilted top and
+  centered on the visible shape of the glyph (`textmetrics`). They end 0.3 mm above the inner
+  ceiling. The R1 legends are rotated by 180°.
+- **Homing:** a raised bar (3 × 1 mm, about 0.6 mm high) instead of the original's dimple.
+- **Thumbs:** high-profile variants (1.5u = ID 0, 1u = IDs 1 and 2), mirrored for one half; the
+  legends stay readable.
+- **Printing:** sides cut flat, laid on the side, removable support.
+- **Resolution:** `fn = 60`, `layers = 50`, the values the author gives for output.
 
-### keycap_playground (KAT, Modus `kat-all`)
+### keycap_playground (KAT, mode `kat-all`)
 
-Am Code des Playgrounds ändert das Skript nichts. Es setzt nur Parameter und verarbeitet die
-erzeugten Kappen weiter:
+The script does not change the playground's code; it only sets parameters and post-processes the
+generated caps:
 
-- **Profil:** KAT mit den Reihen R1–R4.
-- **Stem:** `round_cherry` mit 5,7 mm (`STEM_OUTSIDE_TOLERANCE_X = -0.23`).
-- **Korrekturen pro Reihe:** `STEM_HEIGHT`, damit der runde Stem in hohen Reihen die Oberseite
-  erreicht; `KEY_HEIGHT` und `HOMING_DOT_Z`, damit Legende und Homing-Punkt nicht unter der Mulde
-  liegen; `LEGEND_TRANS` zentriert die Legende nach sichtbarer Form und auf der Oberseite statt auf
-  der Grundfläche.
-- **Wände:** keine Stem-Auskleidung (`STEM_SIDES_WALL_THICKNESS = 0`), dafür `WALL_THICKNESS = 1.8`.
-- **Druck:** aufrecht rendern, Seiten plan schneiden, danach drehen; herausziehbare Stütze statt der
-  eingebauten.
+- **Profile:** KAT with rows R1–R4.
+- **Stem:** `round_cherry` with 5.7 mm (`STEM_OUTSIDE_TOLERANCE_X = -0.23`).
+- **Per-row fixes:** `STEM_HEIGHT`, so the round stem reaches the top in tall rows; `KEY_HEIGHT` and
+  `HOMING_DOT_Z`, so legend and homing dot do not end up below the dish; `LEGEND_TRANS` centers the
+  legend on its visible shape and on the top instead of the base.
+- **Walls:** no stem lining (`STEM_SIDES_WALL_THICKNESS = 0`), `WALL_THICKNESS = 1.8` instead.
+- **Printing:** render upright, cut the sides flat, then rotate; removable support instead of the
+  built-in one.
 
-## Credits und Lizenzen
+## Credits and licenses
 
-- **[PseudoMakeMeKeyCapProfiles](https://github.com/pseudoku/PseudoMakeMeKeyCapProfiles)** von
-  pseudoku: DES-Profil (Distorted Elliptical Saddle), GPL-3.0. Das DES-Modul in
-  `lily58_keycaps.sh` übernimmt Code daraus. Deshalb steht dieses Projekt ebenfalls unter GPL-3.0.
-- **[keycap_playground](https://github.com/riskable/keycap_playground)** von Riskable:
-  parametrischer Keycap-Generator, Grundlage des KAT-Modus. Das Repository nennt keine Lizenz. Das
-  Skript lädt es deshalb nur zur Laufzeit herunter und verteilt weder seinen Code noch daraus
-  erzeugte KAT-Kappen.
-- **scad-utils** (Oskar Linde, MIT) sowie `skin.scad`/`sweep.scad` aus der `libraries.zip` des
-  DES-Repositories; werden ebenfalls zur Laufzeit geladen.
-- **Schriften** (nicht enthalten): Liberation Sans (SIL OFL 1.1); JetBrains Mono Nerd Font
-  (JetBrains Mono: SIL OFL 1.1, Symbole aus dem Nerd-Fonts-Satz, u. a. Material Design Icons).
-- **Lily58** von kata0510.
+- **[PseudoMakeMeKeyCapProfiles](https://github.com/pseudoku/PseudoMakeMeKeyCapProfiles)** by
+  pseudoku: DES profile (Distorted Elliptical Saddle), GPL-3.0. The DES module in
+  `lily58_keycaps.sh` contains code derived from it, which is why this project is GPL-3.0 as well.
+- **[keycap_playground](https://github.com/riskable/keycap_playground)** by Riskable: parametric
+  keycap generator, basis of the KAT mode. The repository does not state a license. The script
+  therefore only downloads it at runtime and distributes neither its code nor KAT caps generated
+  with it.
+- **scad-utils** (Oskar Linde, MIT) and `skin.scad`/`sweep.scad` from the `libraries.zip` of the DES
+  repository; also loaded at runtime.
+- **Fonts** (not included): Liberation Sans (SIL OFL 1.1); JetBrains Mono Nerd Font (JetBrains Mono:
+  SIL OFL 1.1, symbols from the Nerd Fonts set, including Material Design Icons).
+- **Lily58** by kata0510.
 
-Dieses Projekt steht unter der **GNU General Public License v3.0**, siehe [LICENSE](LICENSE).
-Das gilt auch für die im Release verteilten STL-Dateien des DES-Satzes.
+This project is licensed under the **GNU General Public License v3.0**, see [LICENSE](LICENSE).
+This also applies to the STL files of the DES set distributed in the release.
