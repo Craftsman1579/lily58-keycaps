@@ -31,20 +31,32 @@ Lily58 Pro KiCad file (kata0510/Lily58, MIT) is the best available source.
 - **1:1 paper template** (`template.pdf`/`.svg`, 100 mm scale bar) to lay the real PCB on.
 - Work happens on the branch `lily58-case` until the case is verified.
 
-## Measurements needed (MEASURE n in the code)
+## Measurements (MEASURE n in the code)
+
+Owner's values after the arrow. 1 and 2: the printed paper template fits the PCB exactly, so the
+kata0510 outline, hole and switch positions are valid for the PandaKB board.
 
 1. PCB width × depth (expected 142.5 × 106.3 mm) and thickness (1.6 mm).
 2. Standoff holes: count and diameter (5 × 4.7 mm), centre distances (top pair 76.2 mm apart,
    left pair 38.0 mm, right pair 38.2 mm) – or simply lay the PCB on the printed template.
 3. Encoders: fitted or planned, and at which key position.
-4. USB-C: height of the connector centre above the PCB top, overhang past the PCB edge.
+4. USB-C: height of the connector centre above the PCB top, overhang past the PCB edge. -> hight to usb-c center: 5,4mm; overhang: 0 mm
 5. TRRS: distance of its centre from the inner PCB edge, height, overhang.
-6. OLED: fitted? Height of its top above the PCB.
-7. Bottom side: tallest part below the PCB (sockets, LEDs, reset); free area around the holes.
+6. OLED: fitted? Height of its top above the PCB. yes, 9mm above pcb 
+7. Bottom side: tallest part below the PCB (sockets, LEDs, reset); free area around the holes. -> 3,5mm
 8. Existing plate from the kit: material and thickness.
-9. Wireless later? Then a battery needs space.
+9. Wireless later? Then a battery needs space. -> no
+
+Applied: `under_clear` 4.0 (3.5 + 0.5), USB notch at 5.4 mm (notch bottom 1.4 mm above the PCB).
+Still open:
+
+- 3, 5, 8 (encoders, TRRS, kit plate).
+- 7b: free area around the five holes on the bottom (the PCB rests on Ø 6.5 mm rings there).
+- 10: reset switch on the top or the bottom side? (A bottom reset needs a hole in the floor.)
+- 11: OLED module: outer size, and the display window's distance from the PCB's top and inner edge
+  (for the OLED/controller cover, which must clear 9 mm above the PCB).
 
 ## Consequences
 
-- Until the measurements are in, only `plate_test` and the paper template are worth printing.
+- Before the open measurements are in, only `plate_test` and the paper template are worth printing.
 - `case/build.sh` exports to `stl/case/`; check every part with `tools/f32.py` and `tools/shells.py`.

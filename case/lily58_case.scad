@@ -10,8 +10,8 @@ part = "assembly";   // tray | plate | plate_test | template | assembly
 side = "right";      // right | left (left = mirrored right half)
 
 /* [PCB and switches] */
-pcb_t       = lily58_pcb_thickness;  // MEASURE 1
-under_clear = 3.0;    // MEASURE 7: free height below the PCB (hotswap sockets, underglow LEDs)
+pcb_t       = lily58_pcb_thickness;  // outline and holes verified with the paper template
+under_clear = 4.0;    // tallest part below the PCB measured 3.5 mm, + 0.5 mm
 plate_above = 5.0;    // MX standard: plate top 5.0 mm above the PCB top
 plate_t     = 1.5;    // MX switch clips need 1.5 mm
 cutout      = 14.0;   // switch cutout; choose with part="plate_test"
@@ -25,7 +25,7 @@ plate_gap = 0.25;     // plate edge to wall
 foot_ef   = 0.4;      // elephant-foot chamfer at the bottom edge
 
 /* [Mounting] */
-post_d  = 4.2;        // MEASURE 2: posts run through the 4.7 mm PCB holes up to the plate
+post_d  = 4.2;        // posts run through the 4.7 mm PCB holes up to the plate
 pilot_d = 1.8;        // M2 self-tapping screw into the post
 ring_d  = 6.5;        // MEASURE 7: the PCB rests on these rings (keep clear of sockets/LEDs)
 screw_d = 2.4;        // M2 clearance in the plate
@@ -36,9 +36,9 @@ foot_depth = 2.0;     // 4 mm high feet stick out 2 mm
 feet = [[10, 96], [132, 88], [132, 29], [46, 10]];
 
 /* [Ports on the top edge] */
-usb_x    = lily58_promicro[0];  // MEASURE 4
+usb_x    = lily58_promicro[0];
 usb_w    = 13;
-usb_z    = 11.5;      // MEASURE 4: USB-C centre above the PCB top
+usb_z    = 5.4;       // USB-C centre above the PCB top (measured, no overhang)
 usb_h    = 8;
 trrs_x   = lily58_trrs[0];      // MEASURE 5
 trrs_w   = 9.5;
