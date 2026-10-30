@@ -7,3 +7,5 @@ jobs/
 stl/
 .DS_Store
 __pycache__/
+# eigene Bambu-Studio-Projekte (nicht Teil des Repos)
+/*.3mf
