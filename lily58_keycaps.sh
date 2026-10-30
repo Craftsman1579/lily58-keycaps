@@ -9,9 +9,11 @@
 #  Aufruf:
 #    ./lily58_keycaps.sh test          -> 4 Testkappen (Stem-Toleranz 0.10/0.15/0.20/0.25)
 #    ./lily58_keycaps.sh all 0.20      -> kompletter Satz mit Toleranz 0.20
-#    ./lily58_keycaps.sh kat-test 0.20 -> je eine KAT-Kappe pro Reihe R1-R5 (Test)
+#    ./lily58_keycaps.sh kat-test      -> KAT-Passtest: leere Home-Kappen, je Toleranz eine
+#                                         Datei (Standard 0.025 0.05 0.075 0.10)
 #    ./lily58_keycaps.sh kat-all       -> KAT-Satz, deutsches Layout, Symbole,
 #                                         Seiten plan (Standard-Toleranz 0.20)
+#    LAYOUT=us ./lily58_keycaps.sh kat-all -> KAT-Satz mit US-QWERTY-Belegung
 #    ./lily58_keycaps.sh des-all       -> derselbe Satz im DES-Profil (pseudoku):
 #                                         MX_DES_Standard + MX_DES_Thumb
 #                                         (Standard-Toleranz 0.025)
@@ -152,34 +154,6 @@ EOF
   exit 0
 fi
 
-# --- 6a'. KAT-Testkappen (Reihen-Formung) ---------------------------------------
-# Eine Kappe je KAT-Reihe, Legende = Reihenname. Lily58-Zuordnung (aus der Neigung
-# der Oberseite ermittelt): R4 Zahlen, R3 QWERT, R2 Home, R1 ZXCV, R5 = F-Reihe.
-# Seitendruck-Winkel je Reihe: Sehne untere Randecke -> obere Seitenkante, d.h.
-# beide Enden der gewoelbten Seitenwand (~0.8 mm) stehen gleich hoch ueber dem Bett.
-# KEY_HEIGHT wirkt bei KAT nur auf die Legenden-Hoehe und muss der Reihenhoehe
-# entsprechen, sonst wird die Legende abgeschnitten oder fehlt ganz.
-# STEM_HEIGHT: Der runde Stem reicht nur bis 1 + 2*STEM_HEIGHT mm hoch; bei den
-# hohen Reihen haengt er sonst lose unter der Oberseite. Das Kreuzloch bleibt 4 mm tief.
-if [ "$MODE" = "kat-test" ]; then
-  OUT="$WORK/stl/kat_test_tol_${TOL}"; mkdir -p "$OUT"
-  #        Reihe Winkel Hoehe Stem
-  for spec in "1 106.4 10.95 4" "2 109.3 9.15 4" "3 106.5 10.9 4" "4 105.0 11.9 4.5" "5 103.3 13.8 5.5"; do
-    read -r ROWNR ANGLE HEIGHT STEMH <<< "$spec"
-    job "kat_R${ROWNR}" single <<EOF
-KEY_PROFILE  = "kat";
-KEY_ROW      = ${ROWNR};
-KEY_HEIGHT   = ${HEIGHT};
-KEY_ROTATION = [0,${ANGLE},90];
-STEM_HEIGHT  = ${STEMH};
-LEGENDS      = ["R${ROWNR}"];
-EOF
-  done
-  echo
-  echo ">> Fertig. KAT-Testkappen (Toleranz $TOL) liegen in: $OUT"
-  exit 0
-fi
-
 # Symbole kommen aus der JetBrains Mono Nerd Font (Material-Design-Tastensymbole);
 # sie wird neben die Jobs kopiert und dort per use <symbols.ttf> geladen.
 copy_symfont () {
@@ -250,10 +224,14 @@ EOF
 # dreiecke), Zwischenschritte als 3MF, Stem-Waende 0.3 mm ueber dem Rand enden
 # lassen (deckungsgleiche Flaechen mit dem Rand ergeben sonst offene Kanten).
 # Die Gruppen sind STL, weil Bambu Studio nur STL als ein Objekt mit Teilen laedt.
-if [ "$MODE" = "kat-all" ]; then
-  OUT="$WORK/stl/kat_set_tol_${TOL}"; RAW="$OUT/raw"
+if [ "$MODE" = "kat-all" ] || [ "$MODE" = "kat-test" ]; then
+  KATLAYOUT="${LAYOUT:-de}"   # de = QWERTZ ohne Sonderzeichen, us = US-QWERTY wie im Lily58-Standard
+  if [ "$MODE" = "kat-test" ]; then OUT="$WORK/stl/kat_passtest"
+  elif [ "$KATLAYOUT" = us ]; then OUT="$WORK/stl/kat_set_us_tol_${TOL}"
+  else OUT="$WORK/stl/kat_set_tol_${TOL}"; fi
+  RAW="$OUT/raw"
   rm -rf "$RAW"; rm -f "$OUT"/*.stl "$OUT"/*.3mf; mkdir -p "$RAW"
-  REL="../stl/kat_set_tol_${TOL}/raw"   # Pfad aus Sicht von $JOBS
+  REL="../stl/$(basename "$OUT")/raw"   # Pfad aus Sicht von $JOBS
 
   need_textmetrics
   copy_symfont
@@ -337,17 +315,29 @@ EOF
     echo "$name $ang $xb $xt $zt $kind $h" >> "$RAW/${name%_*}.lst"
   }
 
-  # Gruppe <name> <reihe> <art:wert> ...   (Reihenfolge von aussen nach innen bzw. links nach rechts)
-  i=0
-  while read -r grp row keys; do
-    [ -z "$grp" ] && continue
-    n=0
-    for k in $keys; do
-      IFS=: read -r kind val units <<< "$k"
-      kat_key "${grp}_$(printf '%02d' $n)" "$row" "$kind" "$val" "$units"
-      n=$((n+1))
-    done
-  done <<'KEYS'
+  if [ "$MODE" = "kat-test" ]; then
+  # Passtest: leere Home-Kappe (KAT R2, das Kreuzloch ist in allen Reihen gleich), je Toleranz eine
+  # Datei. KAT verrechnet die Toleranz anders als DES: waagerechter Arm 1.3+t, senkrechter 1.1+2t.
+  for TOL in ${2:-0.025 0.05 0.075 0.10}; do
+    kat_key "Passtest_tol_${TOL}_00" 2 b -
+  done
+  else
+  # Gruppe <name> <reihe> <art:wert> ...   (Reihenfolge von aussen nach innen bzw. links nach rechts);
+  # Belegung der Hauptreihen je nach Layout, danach die fuer beide gleichen Gruppen
+  if [ "$KATLAYOUT" = us ]; then
+    KEYLIST=$(cat <<'KEYS'
+R4_links      4  s:987831 t:1 t:2 t:3 t:4 t:5
+R4_rechts     4  t:6 t:7 t:8 t:9 t:0 t:`
+R3_links      3  s:983826 t:Q t:W t:E t:R t:T
+R3_rechts     3  t:Y t:U t:I t:O t:P t:-
+R2_links      2  s:984628 t:A t:S t:D h:F t:G
+R2_rechts     2  t:H h:J t:K t:L t:; t:'
+R1_links      1  s:984630 t:Z t:X t:C t:V t:B t:[
+R1_rechts     1  t:] t:N t:M t:, t:. t:/ s:984630
+KEYS
+)
+  else
+    KEYLIST=$(cat <<'KEYS'
 R4_links      4  s:987831 t:1 t:2 t:3 t:4 t:5
 R4_rechts     4  t:6 t:7 t:8 t:9 t:0 s:8998
 R3_links      3  s:983826 t:Q t:W t:E t:R t:T
@@ -356,6 +346,10 @@ R2_links      2  s:984628 t:A t:S t:D h:F t:G
 R2_rechts     2  t:H h:J t:K t:L b:- b:-
 R1_links      1  s:984630 t:Y t:X t:C t:V t:B b:-
 R1_rechts     1  b:- t:N t:M b:- b:- b:- s:984630
+KEYS
+)
+  fi
+  KEYLIST+=$'\n'"$(cat <<'KEYS'
 Daumen_links  1  s:984629 s:984627 s:9660 s:987216:1.5
 Daumen_rechts 1  s:983825:1.5 s:9650 s:9003 s:984627
 Ersatz_R4     4  b:-
@@ -365,6 +359,19 @@ Ersatz_R1     1  b:-
 Daumen_leer   1  b:- b:- b:- b:-:1.5 b:-:1.5 b:- b:- b:-
 Homing_leer   2  d:- d:-
 KEYS
+)"
+  set -f   # Satzzeichen wie [ nicht als Dateinamen-Muster auslegen
+  while read -r grp row keys; do
+    [ -z "$grp" ] && continue
+    n=0
+    for k in $keys; do
+      IFS=: read -r kind val units <<< "$k"
+      kat_key "${grp}_$(printf '%02d' $n)" "$row" "$kind" "$val" "$units"
+      n=$((n+1))
+    done
+  done <<< "$KEYLIST"
+  set +f
+  fi
   # Daumen: Space und Enter 1.5u (innerste Daumentaste des Lily58 Pro)
   # Symbole: 987831 Esc, 8998 Entf, 983826 Tab, 984628 Strg, 984630 Shift,
   #          984629 Alt, 984627 GUI, 9660 Lower, 987216 Space, 983825 Enter,
