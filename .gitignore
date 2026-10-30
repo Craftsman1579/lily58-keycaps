@@ -1,0 +1,8 @@
+# Vorlagen und Bibliotheken werden vom Skript selbst heruntergeladen
+keycap_playground/
+PseudoMakeMeKeyCapProfiles/
+des_libs/
+# erzeugte Dateien (OpenSCAD-Jobs, Renders)
+jobs/
+stl/
+.DS_Store
