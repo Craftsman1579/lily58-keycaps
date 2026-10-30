@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Exports the case parts to stl/case/: tray_right, tray_left, plate (print 2, flip one for the left
-# half), plate_test, and template.pdf/.svg (1:1 paper template of the PCB).
-# Extra arguments go to OpenSCAD, e.g.: case/build.sh -D cutout=14.1 -D under_clear=3.5
+# Exports the case parts to stl/case/: tray_right/left, plate_right/left (with the controller cover),
+# washer (print 10), plate_test, and template.pdf/.svg (1:1 paper template of the PCB).
+# Extra arguments go to OpenSCAD, e.g.: case/build.sh -D cutout=14.1 -D standoff_l=5
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 out="$here/../stl/case"
@@ -20,7 +20,9 @@ run() {  # <output file> <openscad -D args…>
 
 run tray_right.stl -D 'part="tray"' -D 'side="right"' "$@"
 run tray_left.stl  -D 'part="tray"' -D 'side="left"'  "$@"
-run plate.stl      -D 'part="plate"' "$@"
+run washer.stl     -D 'part="washer"' "$@"
+run plate_right.stl -D 'part="plate"' -D 'side="right"' "$@"
+run plate_left.stl  -D 'part="plate"' -D 'side="left"'  "$@"
 run plate_test.stl -D 'part="plate_test"' "$@"
 run template.svg   -D 'part="template"' "$@"
 run template.pdf   -D 'part="template"' "$@" || echo "   (no PDF export in this OpenSCAD build, use the SVG)"

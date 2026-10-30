@@ -1,14 +1,16 @@
 # 0012 – Case: printed tray with a switch plate
 
-- **Status:** proposed (draft v1, waiting for measurements of the owner's PCB)
-- **Decided by:** owner (tray with plate, feet, tenting later, separate branch), derived (geometry)
+- **Status:** proposed (draft v2, M3 mounting; hex size of the standoffs still to confirm)
+- **Decided by:** owner (tray with plate, M3 screws and standoffs, no OLED, feet, tenting later,
+  separate branch), derived (geometry)
 
 ## Context
 
 The owner's board is a **PandaKB Lily58 RGB MX**: a Lily58 Pro derivative with hotswap MX sockets,
 per-key and underglow RGB (underglow LEDs face down), two optional EC11 encoders in place of two
-keys, ProMicro RP2040 (USB-C) on sockets, TRRS, OLED. PandaKB publishes no PCB files. The original
-Lily58 Pro KiCad file (kata0510/Lily58, MIT) is the best available source.
+keys, ProMicro RP2040 (USB-C), TRRS, OLED. PandaKB publishes no PCB files. The original Lily58 Pro
+KiCad file (kata0510/Lily58, MIT) is the best available source – and it fits: the 1:1 paper
+template matches the owner's PCB exactly.
 
 ## Decision
 
@@ -18,45 +20,52 @@ Lily58 Pro KiCad file (kata0510/Lily58, MIT) is the best available source.
   half from the top, the left half is the mirror image. Shared by the case and (later) the cap
   renders – the 1.5u thumb is rotated by 300° (30° from vertical), not 90° as in `tools/scene.py`.
 - **Tray with plate** (`case/lily58_case.scad`): the tray follows the PCB outline (gap 0.6 mm,
-  wall 2.4 mm, floor 3 mm). Five posts stand on the floor, run through the PCB holes and carry the
-  plate; the PCB rests on rings around them. The plate (1.5 mm, MX) sits on a rebate in the wall
-  that lies outside the PCB outline, so plate + switches + PCB go in from the top as one unit.
-  M2 self-tapping screws through the plate into the posts. Plate top = wall top = PCB top + 5 mm.
-- **No plate over the controller zone** (Pro Micro, OLED, reset); an OLED/controller cover follows
-  once the heights are measured. USB and TRRS get open notches in the top wall.
-- **Plate is symmetric for both halves** (flip one over); trays are exported as right and left.
+  wall 2.4 mm, floor 3 mm). The plate (1.5 mm, MX) sits on a rebate in the wall that lies outside
+  the PCB outline. Plate top = wall top = PCB top + 5 mm.
+- **M3 mounting (owner's screws and standoffs):** M3 hex standoffs do not fit through the 4.7 mm
+  PCB holes, so they stand **below** the PCB: each sits 2 mm deep in a hex pocket (a boss on the
+  3 mm floor) and is held by an M3 button-head screw from below (head recessed 1 mm, sticks out
+  0.65 mm, the feet add 2 mm). A printed washer (Ø 6.5 × 1 mm) gives the PCB a seat, because the standoff is barely
+  wider than the hole. An M3 socket-head screw (DIN 912, Ø 5.5 mm) clamps the PCB from the top; the
+  nearest switch housing is 2.9 mm from a hole centre, so wider heads do not fit. Clearance below
+  The owner has female-female (and male-female) standoffs of 4, 6, 8 and 10 mm; **6 mm** is used:
+  M3x4 below (3 mm thread), M3x5 on top (2.4 mm). 4 mm would leave too little thread for both
+  screws. PCB bottom 9 mm above the bed, 6 mm above the floor.
+- **The plate is not screwed.** It is held by the switches; assembly: screw the bare PCB in, lay
+  the plate on, plug the switches through it (hotswap). No screw heads under the keycaps.
+- **No OLED** (owner's choice). The plate carries a **cover box** over the controller zone: its
+  outer skirts stand on the rebate, its underside is 8 mm above the PCB top (Pro Micro measured
+  7.4 mm), the top 2 mm thick (0.85 mm above the USB slot),
+  its inner edges stay 1 mm clear of the neighbouring keycaps, and the inner skirt stops above the
+  Pro Micro. A Ø 2.5 mm hole above the reset switch takes a paper clip. Plates are therefore
+  exported as right and left; printed with the plate on the bed (the cover top bridges ~26 mm).
+- **USB and TRRS** get rounded slots through the top wall and the cover skirt.
 - **Rubber feet:** Ø 8 × 4 mm, recessed 2 mm (pockets Ø 8.4 mm), four per half.
-- **Tenting** is a later stage; the 3 mm floor leaves room for inserts or bolt-on legs.
+- **Tenting** is a later stage; the floor leaves room for inserts or bolt-on legs.
 - **Plate fit test** (`part="plate_test"`) with cutouts 13.9–14.2 mm, like the stem fit tests.
 - **1:1 paper template** (`template.pdf`/`.svg`, 100 mm scale bar) to lay the real PCB on.
 - Work happens on the branch `lily58-case` until the case is verified.
 
 ## Measurements (MEASURE n in the code)
 
-Owner's values after the arrow. 1 and 2: the printed paper template fits the PCB exactly, so the
-kata0510 outline, hole and switch positions are valid for the PandaKB board.
-
-1. PCB width × depth (expected 142.5 × 106.3 mm) and thickness (1.6 mm).
-2. Standoff holes: count and diameter (5 × 4.7 mm), centre distances (top pair 76.2 mm apart,
-   left pair 38.0 mm, right pair 38.2 mm) – or simply lay the PCB on the printed template.
-3. Encoders: fitted or planned, and at which key position.
-4. USB-C: height of the connector centre above the PCB top, overhang past the PCB edge. -> hight to usb-c center: 5,4mm; overhang: 0 mm
-5. TRRS: distance of its centre from the inner PCB edge, height, overhang.
-6. OLED: fitted? Height of its top above the PCB. yes, 9mm above pcb 
-7. Bottom side: tallest part below the PCB (sockets, LEDs, reset); free area around the holes. -> 3,5mm
-8. Existing plate from the kit: material and thickness.
-9. Wireless later? Then a battery needs space. -> no
-
-Applied: `under_clear` 4.0 (3.5 + 0.5), USB notch at 5.4 mm (notch bottom 1.4 mm above the PCB).
-Still open:
-
-- 3, 5, 8 (encoders, TRRS, kit plate).
-- 7b: free area around the five holes on the bottom (the PCB rests on Ø 6.5 mm rings there).
-- 10: reset switch on the top or the bottom side? (A bottom reset needs a hole in the floor.)
-- 11: OLED module: outer size, and the display window's distance from the PCB's top and inner edge
-  (for the OLED/controller cover, which must clear 9 mm above the PCB).
+1. PCB size and thickness – confirmed with the paper template.
+2. Standoff holes – confirmed with the paper template.
+3. Encoders – not answered; the 14 mm plate cutout takes an EC11 shaft anyway.
+4. USB-C centre 5.4 mm above the PCB top, no overhang.
+5. TRRS jack axis 3.7 mm above the PCB centre (2.9 mm above its top). Position along the edge:
+   from the KiCad data, the 9.5 mm slot covers both footprint variants.
+6. OLED: removed by the owner.
+7. Tallest part below the PCB 3.5 mm; area around the five holes is free.
+8. No plate in the kit – the printed plate is the plate.
+9. No wireless/battery.
+10. Reset switch on the top, about 3.5 mm high.
+11. (OLED window – obsolete.)
+12. Highest point of the Pro Micro: 9.0 mm above the PCB bottom = 7.4 mm above its top.
+13. M3 standoffs: 4/6/8/10 mm, female-female and male-female (3 mm male thread).
+    Hex across flats still open (assumed 5.0 mm; the pocket is 5.3 mm).
 
 ## Consequences
 
-- Before the open measurements are in, only `plate_test` and the paper template are worth printing.
+- Before the hex size is confirmed, only `plate_test`, the washer and the paper template are worth
+  printing.
 - `case/build.sh` exports to `stl/case/`; check every part with `tools/f32.py` and `tools/shells.py`.
