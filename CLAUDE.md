@@ -1,4 +1,4 @@
-# CLAUDE.md – Lily58 keycap generator
+# CLAUDE.md – Lily58 keycap generator and case
 
 Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the *why*.
 
@@ -27,6 +27,9 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 3. DES thumb mirroring is not yet verified on real hands (ADR 0008).
 4. Optional: a full blank set as ready-made plates (currently 1 spare cap per row + thumbs + homing).
 5. Script comments are still German.
+6. **Case** (branch `lily58-case`, ADR 0012): draft v1 tray + plate for the owner's PandaKB
+   Lily58 RGB MX. Waiting for the owner's measurements (list in ADR 0012, `MEASURE n` in the code);
+   then OLED/controller cover, tenting later. Ask the owner to measure instead of guessing.
 
 ## Commands
 
@@ -38,6 +41,16 @@ LAYOUT=us ./lily58_keycaps.sh des-all      # DES US
 LAYOUT=us ./lily58_keycaps.sh kat-all      # KAT US
 ./lily58_keycaps.sh kat-test ["t1 t2 …"]   # KAT fit test (default 0.025 0.05 0.075 0.10)
 ```
+
+Case (ADR 0012):
+
+```bash
+case/build.sh [-D name=value …]             # trays L/R, plate, plate_test, template.pdf → stl/case/
+python3 tools/kicad2scad.py <Lily58_Pro.kicad_pcb> common/lily58_layout.scad   # regenerate layout
+```
+
+The KiCad file comes from `github.com/kata0510/Lily58` (`Pro/PCB/`, MIT); it is not cloned by any
+script. `case/lily58_case.scad` takes `part=tray|plate|plate_test|template|assembly`, `side=right|left`.
 
 `test` and `all` are legacy DSA modes (no flat sides, old support) – not maintained.
 Output: `~/Documents/lily58_keycaps/stl/<mode folder>/` = `<Group>_body.stl` + `<Group>_legends.stl`,
