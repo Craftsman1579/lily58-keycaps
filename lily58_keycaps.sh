@@ -15,6 +15,7 @@
 #    ./lily58_keycaps.sh des-all       -> derselbe Satz im DES-Profil (pseudoku):
 #                                         MX_DES_Standard + MX_DES_Thumb
 #                                         (Standard-Toleranz 0.025)
+#    LAYOUT=us ./lily58_keycaps.sh des-all -> DES-Satz mit US-QWERTY-Belegung
 #    ./lily58_keycaps.sh des-test      -> DES-Passtest: leere Home-Kappen, je Toleranz eine
 #                                         Datei (Standard 0.00 0.025 0.05 0.075,
 #                                         eigene Werte: des-test "0.03 0.06")
@@ -419,7 +420,10 @@ if [ "$MODE" = "des-all" ] || [ "$MODE" = "des-test" ]; then
   [ -d "$DESLIB/libraries" ] || { mkdir -p "$DESLIB" && unzip -q -o "$DESREPO/libraries.zip" -d "$DESLIB"; }
   export OPENSCADPATH="$DESLIB/libraries"
 
-  if [ "$MODE" = "des-test" ]; then OUT="$WORK/stl/des_passtest"; else OUT="$WORK/stl/des_set_tol_${TOL}"; fi
+  DESLAYOUT="${LAYOUT:-de}"   # de = QWERTZ ohne Sonderzeichen, us = US-QWERTY wie im Lily58-Standard
+  if [ "$MODE" = "des-test" ]; then OUT="$WORK/stl/des_passtest"
+  elif [ "$DESLAYOUT" = us ]; then OUT="$WORK/stl/des_set_us_tol_${TOL}"
+  else OUT="$WORK/stl/des_set_tol_${TOL}"; fi
   RAW="$OUT/raw"; mkdir -p "$RAW"
   for lst in "$RAW"/*.lst; do [ -e "$lst" ] && : > "$lst"; done   # Gruppenlisten neu beginnen
   REL="../stl/$(basename "$OUT")/raw"   # Pfad aus Sicht von $JOBS
@@ -568,15 +572,21 @@ EOF
     des_key "Passtest_tol_${TOL}_00" S_R3 b -
   done
   else
-  while read -r grp keys; do
-    [ -z "$grp" ] && continue
-    n=0
-    for k in $keys; do
-      IFS=: read -r shape kind val <<< "$k"
-      des_key "${grp}_$(printf '%02d' $n)" "$shape" "$kind" "$val"
-      n=$((n+1))
-    done
-  done <<'KEYS'
+  # Belegung der Hauptreihen je nach Layout, danach die fuer beide gleichen Gruppen
+  if [ "$DESLAYOUT" = us ]; then
+    KEYLIST=$(cat <<'KEYS'
+R1_links      S_R1:s:987831 S_R1:t:1 S_R1:t:2 S_R1:t:3 S_R1:t:4 S_R1:t:5
+R1_rechts     S_R1:t:6 S_R1:t:7 S_R1:t:8 S_R1:t:9 S_R1:t:0 S_R1:t:`
+R2_links      S_R2:s:983826 S_R2:t:Q S_R2:t:W S_R2:t:E S_R2:t:R S_R2:t:T
+R2_rechts     S_R2:t:Y S_R2:t:U S_R2:t:I S_R2:t:O S_R2:t:P S_R2:t:-
+R3_links      S_R3:s:984628 S_R3:t:A S_R3:t:S S_R3:t:D S_R3:h:F S_R3:t:G
+R3_rechts     S_R3:t:H S_R3:h:J S_R3:t:K S_R3:t:L S_R3:t:; S_R3:t:'
+R4_links      S_R4:s:984630 S_R4:t:Z S_R4:t:X S_R4:t:C S_R4:t:V S_R4:t:B S_R4:t:[
+R4_rechts     S_R4:t:] S_R4:t:N S_R4:t:M S_R4:t:, S_R4:t:. S_R4:t:/ S_R4:s:984630
+KEYS
+)
+  else
+    KEYLIST=$(cat <<'KEYS'
 R1_links      S_R1:s:987831 S_R1:t:1 S_R1:t:2 S_R1:t:3 S_R1:t:4 S_R1:t:5
 R1_rechts     S_R1:t:6 S_R1:t:7 S_R1:t:8 S_R1:t:9 S_R1:t:0 S_R1:s:8998
 R2_links      S_R2:s:983826 S_R2:t:Q S_R2:t:W S_R2:t:E S_R2:t:R S_R2:t:T
@@ -585,6 +595,10 @@ R3_links      S_R3:s:984628 S_R3:t:A S_R3:t:S S_R3:t:D S_R3:h:F S_R3:t:G
 R3_rechts     S_R3:t:H S_R3:h:J S_R3:t:K S_R3:t:L S_R3:b:- S_R3:b:-
 R4_links      S_R4:s:984630 S_R4:t:Y S_R4:t:X S_R4:t:C S_R4:t:V S_R4:t:B S_R4:b:-
 R4_rechts     S_R4:b:- S_R4:t:N S_R4:t:M S_R4:b:- S_R4:b:- S_R4:b:- S_R4:s:984630
+KEYS
+)
+  fi
+  KEYLIST+=$'\n'"$(cat <<'KEYS'
 Daumen_links  T2L:s:984629 T1L:s:984627 T1L:s:9660 T15L:s:987216
 Daumen_rechts T15R:s:983825 T1R:s:9650 T1R:s:9003 T2R:s:984627
 Ersatz_R1     S_R1:b:-
@@ -594,8 +608,20 @@ Ersatz_R4     S_R4:b:-
 Daumen_leer   T2L:b:- T1L:b:- T1L:b:- T15L:b:- T15R:b:- T1R:b:- T1R:b:- T2R:b:-
 Homing_leer   S_R3:d:- S_R3:d:-
 KEYS
+)"
+  set -f   # Satzzeichen wie [ nicht als Dateinamen-Muster auslegen
+  while read -r grp keys; do
+    [ -z "$grp" ] && continue
+    n=0
+    for k in $keys; do
+      IFS=: read -r shape kind val <<< "$k"
+      des_key "${grp}_$(printf '%02d' $n)" "$shape" "$kind" "$val"
+      n=$((n+1))
+    done
+  done <<< "$KEYLIST"
+  set +f
   fi
-  # Reihen: R1 Zahlen, R2 QWERTZ, R3 Home, R4 unten (DES-Bezeichnung); Daumen links von
+  # Reihen: R1 Zahlen, R2 QWERTZ/QWERTY, R3 Home, R4 unten (DES-Bezeichnung); Daumen links von
   # aussen nach innen, rechts von innen nach aussen. Symbole wie bei kat-all.
 
   # Gruppen: Kappen nebeneinander (Abstand nach Kappenlaenge), Seiten plan, auf die Seite gelegt
