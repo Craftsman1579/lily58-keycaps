@@ -8,6 +8,15 @@ FDM-Drucker optimiert.
 Die fertigen STL-Dateien für den DES-Satz liegen als ZIP am
 [neuesten Release](../../releases/latest).
 
+![DES-Satz mit Beschriftung in Lily58-Anordnung](docs/des_satz_beschriftet.png)
+
+![DES-Satz ohne Beschriftung](docs/des_satz_leer.png)
+
+![Nahaufnahme: Esc, Q, F mit Homing-Steg, Space (1,5u) und GUI](docs/des_nahaufnahme.png)
+
+*Renderbilder aus OpenSCAD (Kappen mit plan geschnittenen Seiten, wie sie gedruckt werden; R1 um
+180° gedreht, wie sie aufgesteckt wird).*
+
 ## Seitwärts gedruckt – optimiert für FDM
 
 Die Kappen werden **auf der Seite liegend** gedruckt, nicht aufrecht:
