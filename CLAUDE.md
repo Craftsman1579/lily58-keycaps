@@ -28,8 +28,8 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 4. Optional: a full blank set as ready-made plates (currently 1 spare cap per row + thumbs + homing).
 5. Script comments are still German.
 6. **Case** (branch `lily58-case`, ADR 0012): draft v2 tray + plate (with controller cover, no
-   OLED) for the owner's PandaKB Lily58 RGB MX, 6 mm M3 standoffs below the PCB. Waiting for the
-   standoffs' hex size (ADR 0012, `MEASURE 13`) and the plate fit test; tenting later.
+   OLED) for the owner's PandaKB Lily58 RGB MX, 6 mm M2 standoffs below the PCB. Switch cutout
+   13.8 mm, exact plate fit test pending; tenting later.
    Ask the owner to measure instead of guessing.
 
 ## Commands

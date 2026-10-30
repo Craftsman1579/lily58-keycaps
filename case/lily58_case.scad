@@ -1,9 +1,9 @@
 // Lily58 case: printed tray with a switch plate (PandaKB Lily58 RGB MX, a Lily58 Pro derivative).
 // Values marked MEASURE n are still to be confirmed on the owner's hardware (docs/adr/0012).
 //
-// Mounting (M3): a hex standoff stands in a pocket in the floor at each of the five PCB holes,
+// Mounting (M2): a hex standoff stands in a pocket in the floor at each of the five PCB holes,
 // held by a button-head screw from below. The PCB lies on a printed washer on the standoff (the
-// 4.7 mm PCB holes are about as wide as the standoff) and is screwed down with a socket-head screw
+// 4.7 mm PCB holes are wider than the standoff) and is screwed down with a socket-head screw
 // from the top. The plate is not screwed: it sits on the rebate and is held by the switches.
 // Assembly: screw the bare PCB in, lay the plate on, then plug the switches through it.
 //
@@ -18,18 +18,18 @@ side = "right";      // right | left (left = mirrored right half)
 pcb_t       = lily58_pcb_thickness;  // outline and holes verified with the paper template
 plate_above = 5.0;    // MX standard: plate top 5.0 mm above the PCB top
 plate_t     = 1.5;    // MX switch clips need 1.5 mm
-cutout      = 14.0;   // switch cutout; choose with part="plate_test"
+cutout      = 13.8;   // switch cutout: owner's first test 13.8; fine-tune with part="plate_test"
 
-/* [M3 standoffs] */
+/* [M2 standoffs] */
 standoff_l  = 6.0;    // female-female; owner has 4, 6, 8, 10 mm (6 gives both screws enough thread)
-standoff_af = 5.0;    // MEASURE 13: hex across flats
+standoff_af = 2.8;    // hex across flats (measured)
 pocket      = 2.0;    // standoff sits this deep in the floor (keeps it from turning)
 skin        = 1.0;    // floor between the screw head recess and the standoff
-head_d      = 6.2;    // recess for the M3 button head below (ISO 7380: 5.7 × 1.65 mm)
-head_h      = 1.0;    // the head sticks out 0.65 mm; the feet add 2 mm
+head_d      = 4.0;    // recess for the M2 button head below (about 3.5 × 1.1 mm)
+head_h      = 1.3;    // head sits flush
 washer_d    = 6.5;    // printed washer between standoff and PCB (bottom side is free there)
 washer_t    = 1.0;
-m3_d        = 3.4;
+screw_d     = 2.4;    // M2 clearance
 // The tallest part below the PCB is 3.5 mm; the standoff sets the actual clearance.
 z_base      = head_h + skin;                       // standoff bottom
 under_clear = z_base + standoff_l + washer_t - 3.0; // above a 3 mm floor
@@ -80,9 +80,9 @@ y_top   = lily58_pcb_size[1];
 outer   = pcb_gap + rebate + wall_t;
 plate_r = pcb_gap + rebate - plate_gap;           // plate outline offset from the PCB
 
-// Screws: below M3x(skin + a) button head, on top M3x(pcb_t + washer_t + b) socket head (DIN 912,
-// Ø 5.5: the switch housings are 2.9 mm from the hole centres), with a + b <= standoff_l.
-// 6 mm standoff: M3x4 below (a = 3), M3x5 on top (b = 2.4).
+// Screws: below M2x(skin + a) button head, on top M2x(pcb_t + washer_t + b) socket head (DIN 912,
+// Ø 3.8; the switch housings are 2.9 mm from the hole centres), with a + b <= standoff_l.
+// 6 mm standoff: M2x4 below (a = 3), M2x5 on top (b = 2.4).
 
 module outline(d) offset(r = d) lily58_pcb_2d();
 module zone(x, y) translate([-50, y]) square([50 + x, 100]);
@@ -114,7 +114,7 @@ module tray() {
     for (f = feet) translate([f[0], f[1], -eps]) cylinder(d = foot_d, h = foot_depth + eps);
     for (h = lily58_mount_holes) translate(h) {
       translate([0, 0, -eps]) cylinder(d = head_d, h = head_h + eps);
-      cylinder(d = m3_d, h = 20, center = true);
+      cylinder(d = screw_d, h = 20, center = true);
       translate([0, 0, z_base]) hex(standoff_af + 0.3, 20);
     }
     ports();
@@ -150,7 +150,7 @@ module plate() {
 
 module washer() difference() {
   cylinder(d = washer_d, h = washer_t);
-  translate([0, 0, -eps]) cylinder(d = m3_d, h = washer_t + 2 * eps);
+  translate([0, 0, -eps]) cylinder(d = screw_d, h = washer_t + 2 * eps);
 }
 
 // Fit test: cutouts cutout-0.1 … cutout+0.2; the number of notches on the edge = position 1…4.
@@ -181,7 +181,7 @@ module assembly() {
   for (h = lily58_mount_holes) translate([h[0], h[1], z_base]) {
     color("#c9a227") difference() {
       hex(standoff_af, standoff_l);
-      translate([0, 0, -eps]) cylinder(d = 3, h = standoff_l + 2 * eps);
+      translate([0, 0, -eps]) cylinder(d = 2, h = standoff_l + 2 * eps);
     }
     color("#d0d0d0") translate([0, 0, standoff_l]) washer();
   }

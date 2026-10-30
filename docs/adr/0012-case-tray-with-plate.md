@@ -1,7 +1,7 @@
 # 0012 – Case: printed tray with a switch plate
 
-- **Status:** proposed (draft v2, M3 mounting; hex size of the standoffs still to confirm)
-- **Decided by:** owner (tray with plate, M3 screws and standoffs, no OLED, feet, tenting later,
+- **Status:** proposed (draft v2, M2 mounting; switch cutout to be fine-tuned)
+- **Decided by:** owner (tray with plate, M2 screws and standoffs, no OLED, feet, tenting later,
   separate branch), derived (geometry)
 
 ## Context
@@ -22,15 +22,15 @@ template matches the owner's PCB exactly.
 - **Tray with plate** (`case/lily58_case.scad`): the tray follows the PCB outline (gap 0.6 mm,
   wall 2.4 mm, floor 3 mm). The plate (1.5 mm, MX) sits on a rebate in the wall that lies outside
   the PCB outline. Plate top = wall top = PCB top + 5 mm.
-- **M3 mounting (owner's screws and standoffs):** M3 hex standoffs do not fit through the 4.7 mm
-  PCB holes, so they stand **below** the PCB: each sits 2 mm deep in a hex pocket (a boss on the
-  3 mm floor) and is held by an M3 button-head screw from below (head recessed 1 mm, sticks out
-  0.65 mm, the feet add 2 mm). A printed washer (Ø 6.5 × 1 mm) gives the PCB a seat, because the standoff is barely
-  wider than the hole. An M3 socket-head screw (DIN 912, Ø 5.5 mm) clamps the PCB from the top; the
-  nearest switch housing is 2.9 mm from a hole centre, so wider heads do not fit. Clearance below
-  The owner has female-female (and male-female) standoffs of 4, 6, 8 and 10 mm; **6 mm** is used:
-  M3x4 below (3 mm thread), M3x5 on top (2.4 mm). 4 mm would leave too little thread for both
-  screws. PCB bottom 9 mm above the bed, 6 mm above the floor.
+- **M2 mounting (owner's screws and standoffs; first noted as M3 by mistake):** a hex standoff
+  (2.8 mm across flats) stands **below** the PCB at each of the five holes: it sits 2 mm deep in a
+  hex pocket (a boss on the 3 mm floor) and is held by an M2 button-head screw from below (head
+  recessed flush). A printed washer (Ø 6.5 × 1 mm) gives the PCB a seat, because the standoff is
+  narrower than the 4.7 mm hole. An M2 socket-head screw (DIN 912, Ø 3.8 mm) clamps the PCB from
+  the top; the nearest switch housing is 2.9 mm from a hole centre. The owner has female-female
+  (and male-female) standoffs of 4, 6, 8 and 10 mm; **6 mm** is used: M2x4 below (3 mm thread),
+  M2x5 on top (2.4 mm). 4 mm would leave too little thread for both screws. PCB bottom 9.3 mm
+  above the bed, 6.3 mm above the floor.
 - **The plate is not screwed.** It is held by the switches; assembly: screw the bare PCB in, lay
   the plate on, plug the switches through it (hotswap). No screw heads under the keycaps.
 - **No OLED** (owner's choice). The plate carries a **cover box** over the controller zone: its
@@ -42,7 +42,8 @@ template matches the owner's PCB exactly.
 - **USB and TRRS** get rounded slots through the top wall and the cover skirt.
 - **Rubber feet:** Ø 8 × 4 mm, recessed 2 mm (pockets Ø 8.4 mm), four per half.
 - **Tenting** is a later stage; the floor leaves room for inserts or bolt-on legs.
-- **Plate fit test** (`part="plate_test"`) with cutouts 13.9–14.2 mm, like the stem fit tests.
+- **Switch cutout 13.8 mm** (owner's first test; printed holes come out smaller). The plate fit test
+  (`part="plate_test"`) prints cutout −0.1 … +0.2 mm (13.7–14.0) for the exact value.
 - **1:1 paper template** (`template.pdf`/`.svg`, 100 mm scale bar) to lay the real PCB on.
 - Work happens on the branch `lily58-case` until the case is verified.
 
@@ -61,11 +62,12 @@ template matches the owner's PCB exactly.
 10. Reset switch on the top, about 3.5 mm high.
 11. (OLED window – obsolete.)
 12. Highest point of the Pro Micro: 9.0 mm above the PCB bottom = 7.4 mm above its top.
-13. M3 standoffs: 4/6/8/10 mm, female-female and male-female (3 mm male thread).
-    Hex across flats still open (assumed 5.0 mm; the pocket is 5.3 mm).
+13. M2 standoffs: 4/6/8/10 mm, female-female and male-female (3 mm male thread), hex 2.8 mm
+    across flats (pocket 3.1 mm).
+14. Switch cutout: 13.8 mm from the owner's first test; exact test pending.
 
 ## Consequences
 
-- Before the hex size is confirmed, only `plate_test`, the washer and the paper template are worth
-  printing.
+- All parts are ready for a first test print; the plate cutout may still change after the exact
+  fit test.
 - `case/build.sh` exports to `stl/case/`; check every part with `tools/f32.py` and `tools/shells.py`.
