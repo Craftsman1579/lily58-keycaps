@@ -21,7 +21,7 @@ with both halves side by side would be ~320 mm long and not fit a 256 mm bed in 
   far. No parts on the tray.
 - **Grip:** rounded finger notches (30 × 20 mm) in both side walls at the opening of each chamber.
 - **Print:** back wall on the bed, opening up – the divider and side walls are vertical, no
-  support. Outside ≈ 157 × 119 × 92 mm (with 24 mm keycap height), ~175 cm³ of filament.
+  support. Outside ≈ 157 × 119 × 87 mm (with 24 mm keycap height), ~175 cm³ of filament.
 - `part="travel"` renders the sleeve with both halves inside.
 
 ## Measurements

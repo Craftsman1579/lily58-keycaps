@@ -1,6 +1,6 @@
 # 0012 – Case: printed tray with a switch plate
 
-- **Status:** proposed (draft v2, M2 mounting; switch cutout to be fine-tuned)
+- **Status:** proposed (draft v3, flat; switch cutout to be fine-tuned)
 - **Decided by:** owner (tray with plate, M2 screws and standoffs, no OLED, feet, tenting later,
   separate branch), derived (geometry)
 
@@ -20,27 +20,30 @@ template matches the owner's PCB exactly.
   half from the top, the left half is the mirror image. Shared by the case and (later) the cap
   renders – the 1.5u thumb is rotated by 300° (30° from vertical), not 90° as in `tools/scene.py`.
 - **Tray with plate** (`case/lily58_case.scad`): the tray follows the PCB outline (gap 0.6 mm,
-  wall 2.4 mm, floor 3 mm). The plate (1.5 mm, MX) sits on a rebate in the wall that lies outside
-  the PCB outline. Plate top = wall top = PCB top + 5 mm.
-- **M2 mounting (owner's screws and standoffs; first noted as M3 by mistake):** a hex standoff
-  (2.8 mm across flats) stands **below** the PCB at each of the five holes: it sits 2 mm deep in a
-  hex pocket (a boss on the 3 mm floor) and is held by an M2 button-head screw from below (head
-  recessed flush). A printed washer (Ø 6.5 × 1 mm) gives the PCB a seat, because the standoff is
-  narrower than the 4.7 mm hole. An M2 socket-head screw (DIN 912, Ø 3.8 mm) clamps the PCB from
-  the top; the nearest switch housing is 2.9 mm from a hole centre. The owner has female-female
-  (and male-female) standoffs of 4, 6, 8 and 10 mm; **6 mm** is used: M2x4 below (3 mm thread),
-  M2x5 on top (2.4 mm). 4 mm would leave too little thread for both screws. PCB bottom 9.3 mm
-  above the bed, 6.3 mm above the floor.
+  wall 2.4 mm, floor 2 mm, 3 mm 45° bevel round the bottom edge). The plate (1.5 mm, MX) sits on a
+  rebate in the wall that lies outside the PCB outline. Plate top = wall top = PCB top + 5 mm.
+- **As flat as possible** (owner's wish, v3): plate top 15.2 mm above the desk (v2: 17.9). Only
+  the 5 mm PCB-to-plate-top of MX and the 3.5 mm parts below the PCB are fixed; the rest was
+  trimmed (standoffs → bosses −2.3, floor −0.4, cover −1.1). The keycaps (DES vs KAT) matter more
+  than anything left in the case.
+- **M2 mounting:** the PCB lies directly on five printed bosses (Ø 6.5 mm, 4.0 mm high: the
+  3.5 mm parts below + 0.5); a Ø 4.3 mm spigot centres it in each 4.7 mm hole. M2x8 socket-head
+  screws (DIN 912, Ø 3.8 mm) tap their own thread into the bosses (pilot Ø 1.7 mm, 5.4 mm of
+  thread). A printed washer (Ø 5.4 × 1 mm) on the PCB keeps the head from slipping through the hole;
+  the nearest switch housing is 2.9 mm from a hole centre. The owner's M2 standoffs (v2) were
+  dropped: 6 mm standoffs raised the PCB 2.3 mm more than needed.
 - **The plate is not screwed.** It is held by the switches; assembly: screw the bare PCB in, lay
   the plate on, plug the switches through it (hotswap). No screw heads under the keycaps.
 - **No OLED** (owner's choice). The plate carries a **cover box** over the controller zone: its
-  outer skirts stand on the rebate, its underside is 8 mm above the PCB top (Pro Micro measured
-  7.4 mm), the top 2 mm thick (0.85 mm above the USB slot),
+  outer skirts stand on the rebate, its underside is 7.7 mm above the PCB top (Pro Micro measured
+  7.4 mm), the top 1.2 mm thick – 3.9 mm above the plate; the USB slot opens through its edge,
   its inner edges stay 1 mm clear of the neighbouring keycaps, and the inner skirt stops above the
   Pro Micro. A Ø 2.5 mm hole above the reset switch takes a paper clip. Plates are therefore
   exported as right and left; printed with the plate on the bed (the cover top bridges ~26 mm).
-- **USB and TRRS** get rounded slots through the top wall and the cover skirt.
-- **Rubber feet:** Ø 8 × 4 mm, recessed 2 mm (pockets Ø 8.4 mm), four per half.
+- **USB and TRRS** get rounded slots through the top wall and the cover skirt, 2 mm closer to the
+  inner edge than the KiCad positions (owner's test print).
+- **Rubber feet:** Ø 8 × 4 mm, recessed 1.4 mm (pockets Ø 8.4 mm, 0.6 mm floor above), sticking
+  out 2.6 mm; four per half. Thinner feet (e.g. 8 × 2 mm) would save another 1.6 mm.
 - **Tenting** is a later stage; the floor leaves room for inserts or bolt-on legs.
 - **Switch cutout 13.8 mm** (owner's first test; printed holes come out smaller). The plate fit test
   (`part="plate_test"`) prints cutout −0.1 … +0.2 mm (13.7–14.0) for the exact value.
@@ -62,8 +65,7 @@ template matches the owner's PCB exactly.
 10. Reset switch on the top, about 3.5 mm high.
 11. (OLED window – obsolete.)
 12. Highest point of the Pro Micro: 9.0 mm above the PCB bottom = 7.4 mm above its top.
-13. M2 standoffs: 4/6/8/10 mm, female-female and male-female (3 mm male thread), hex 2.8 mm
-    across flats (pocket 3.1 mm).
+13. M2 standoffs: 4/6/8/10 mm, hex 2.8 mm across flats – no longer used (v3).
 14. Switch cutout: 13.8 mm from the owner's first test; exact test pending.
 
 ## Consequences

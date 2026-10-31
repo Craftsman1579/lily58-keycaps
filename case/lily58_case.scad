@@ -1,10 +1,10 @@
 // Lily58 case: printed tray with a switch plate (PandaKB Lily58 RGB MX, a Lily58 Pro derivative).
 // Values marked MEASURE n are still to be confirmed on the owner's hardware (docs/adr/0012).
 //
-// Mounting (M2): a hex standoff stands in a pocket in the floor at each of the five PCB holes,
-// held by a button-head screw from below. The PCB lies on a printed washer on the standoff (the
-// 4.7 mm PCB holes are wider than the standoff) and is screwed down with a socket-head screw
-// from the top. The plate is not screwed: it sits on the rebate and is held by the switches.
+// Mounting (M2): the PCB lies directly on five printed bosses (a spigot centres it in each 4.7 mm
+// hole) and is held by M2x8 socket-head screws that tap their own thread into the bosses; a printed
+// washer on the PCB keeps the head from slipping through the hole. The plate is not screwed: it sits
+// on the rebate and is held by the switches.
 // Assembly: screw the bare PCB in, lay the plate on, then plug the switches through it.
 //
 // Usage: openscad -D 'part="tray"' -D 'side="left"' -o tray_left.stl case/lily58_case.scad
@@ -20,34 +20,27 @@ plate_above = 5.0;    // MX standard: plate top 5.0 mm above the PCB top
 plate_t     = 1.5;    // MX switch clips need 1.5 mm
 cutout      = 13.8;   // switch cutout: owner's first test 13.8; fine-tune with part="plate_test"
 
-/* [M2 standoffs] */
-standoff_l  = 6.0;    // female-female; owner has 4, 6, 8, 10 mm (6 gives both screws enough thread)
-standoff_af = 2.8;    // hex across flats (measured)
-pocket      = 2.0;    // standoff sits this deep in the floor (keeps it from turning)
-skin        = 1.0;    // floor between the screw head recess and the standoff
-head_d      = 4.0;    // recess for the M2 button head below (about 3.5 × 1.1 mm)
-head_h      = 1.3;    // head sits flush
-washer_d    = 6.5;    // printed washer between standoff and PCB (bottom side is free there)
+/* [M2 mounting] */
+under_clear = 4.0;    // tallest part below the PCB measured 3.5 mm, + 0.5 mm
+boss_d      = 6.5;    // the PCB rests on these (bottom side is free within Ø 6.6 around the holes)
+spigot_d    = 4.3;    // centres the PCB in its 4.7 mm holes
+pilot_d     = 1.7;    // M2 self-tapping into the boss
+washer_d    = 5.4;    // on top of the PCB, under the screw head; switch housings are 2.9 mm away
 washer_t    = 1.0;
-screw_d     = 2.4;    // M2 clearance
-// The tallest part below the PCB is 3.5 mm; the standoff sets the actual clearance.
-z_base      = head_h + skin;                       // standoff bottom
-under_clear = z_base + standoff_l + washer_t - 3.0; // above a 3 mm floor
-assert(under_clear >= 3.5, "standoff too short: parts below the PCB are 3.5 mm high");
+screw_d     = 2.4;    // M2 clearance in the washer
 
 /* [Tray] */
 wall_t    = 2.4;      // 6 perimeters with a 0.4 mm nozzle
 pcb_gap   = 0.6;      // PCB edge to inner wall
 rebate    = 1.6;      // ledge the plate rests on; lies outside the PCB, so the PCB passes it
 plate_gap = 0.25;     // plate edge to wall
-foot_ef   = 0.4;      // elephant-foot chamfer at the bottom edge
+bevel     = 3.0;      // 45° chamfer round the bottom edge: looks thinner, no elephant foot
 ring_d    = 6.5;      // support rings under the PCB at the two OLED holes
-floor_t   = 3.0;
-boss_d    = standoff_af / cos(30) + 2.4;  // hex pocket rises from the floor where needed
+floor_t   = 2.0;
 
 /* [Rubber feet] */
 foot_d     = 8.4;     // 8 mm feet
-foot_depth = 2.0;     // 4 mm high feet stick out 2 mm
+foot_depth = 1.4;     // 4 mm high feet stick out 2.6 mm; 0.6 mm floor stays above them
 feet = [[10, 96], [132, 88], [132, 29], [46, 10]];
 
 /* [Travel sleeve (ADR 0013): two chambers, the halves slide in keys up, the tray stays as it is] */
@@ -60,11 +53,12 @@ grip_w     = 30;      // finger notches in the side walls at the opening
 grip_d     = 20;
 
 /* [Ports on the top edge] */
-usb_x    = lily58_promicro[0];
+port_dx  = -2;        // test print: both connectors sit 2 mm closer to the inner edge
+usb_x    = lily58_promicro[0] + port_dx;
 usb_w    = 13;
 usb_z    = 5.4;       // USB-C centre above the PCB top (measured, no overhang)
 usb_h    = 7.5;      // USB-C overmolds are about 6.5 mm high
-trrs_x   = lily58_trrs[0];      // wide slot covers the footprint's ±1.3 mm variants
+trrs_x   = lily58_trrs[0] + port_dx;
 trrs_w   = 9.5;
 trrs_z   = 3.7 - pcb_t / 2;     // measured: jack axis 3.7 mm above the PCB centre
 trrs_h   = 8.5;
@@ -73,8 +67,8 @@ trrs_h   = 8.5;
 ctrl_x = 28.5;        // plate starts right of this
 cover_x = 27.0;       // cover edges: 1 mm clear of the neighbouring keycaps (they overhang the zone)
 cover_y = 56.0;
-cover_clear = 8.0;    // underside above the PCB top: Pro Micro top measured 9.0 above the PCB bottom
-cover_t = 2.0;        // leaves 0.85 mm above the USB slot
+cover_clear = 7.7;    // underside above the PCB top: Pro Micro top measured 7.4 (9.0 above the bottom)
+cover_t = 1.2;        // the USB slot opens through the top edge as a notch
 skirt_t = 1.2;        // the outer skirts stand on the rebate like the plate edge
 reset_d = 2.5;        // paper-clip hole above the reset switch
 
@@ -89,13 +83,10 @@ y_top   = lily58_pcb_size[1];
 outer   = pcb_gap + rebate + wall_t;
 plate_r = pcb_gap + rebate - plate_gap;           // plate outline offset from the PCB
 
-// Screws: below M2x(skin + a) button head, on top M2x(pcb_t + washer_t + b) socket head (DIN 912,
-// Ø 3.8; the switch housings are 2.9 mm from the hole centres), with a + b <= standoff_l.
-// 6 mm standoff: M2x4 below (a = 3), M2x5 on top (b = 2.4).
+// Screw: M2x8 socket head (DIN 912, Ø 3.8): washer 1 + PCB 1.6 + 5.4 mm into the boss.
 
 module outline(d) offset(r = d) lily58_pcb_2d();
 module zone(x, y) translate([-50, y]) square([50 + x, 100]);
-module hex(af, h) cylinder(d = af / cos(30), h = h, $fn = 6);
 
 // Slot through the top edge; the tray wall holds its lower part, the cover skirt the upper part.
 module port(x, z, w, h) {
@@ -112,20 +103,19 @@ module tray() {
     union() {
       difference() {
         union() {
-          translate([0, 0, foot_ef]) linear_extrude(z_top - foot_ef) outline(outer);
-          linear_extrude(foot_ef + eps) outline(outer - foot_ef);
+          translate([0, 0, bevel]) linear_extrude(z_top - bevel) outline(outer);
+          for (i = [0 : 0.2 : bevel - 0.1]) translate([0, 0, i]) linear_extrude(0.2 + eps) outline(outer - bevel + i + 0.2);
         }
         translate([0, 0, floor_t]) linear_extrude(z_top) outline(pcb_gap);
         translate([0, 0, z_plate]) linear_extrude(z_top) outline(pcb_gap + rebate);
       }
-      for (h = lily58_mount_holes) translate(h) cylinder(d = boss_d, h = max(floor_t, z_base + pocket));
+      for (h = lily58_mount_holes) translate(h) {
+        cylinder(d = boss_d, h = z_pcb);
+        cylinder(d = spigot_d, h = z_pcb + pcb_t - 0.1);
+      }
     }
     for (f = feet) translate([f[0], f[1], -eps]) cylinder(d = foot_d, h = foot_depth + eps);
-    for (h = lily58_mount_holes) translate(h) {
-      translate([0, 0, -eps]) cylinder(d = head_d, h = head_h + eps);
-      cylinder(d = screw_d, h = 20, center = true);
-      translate([0, 0, z_base]) hex(standoff_af + 0.3, 20);
-    }
+    for (h = lily58_mount_holes) translate([h[0], h[1], foot_depth + 0.6]) cylinder(d = pilot_d, h = 20);
     ports();
   }
   for (h = lily58_oled_holes) translate(h) cylinder(d = ring_d, h = z_pcb);
@@ -223,13 +213,7 @@ module template() {
 
 module assembly() {
   color("#3a3a3a") tray();
-  for (h = lily58_mount_holes) translate([h[0], h[1], z_base]) {
-    color("#c9a227") difference() {
-      hex(standoff_af, standoff_l);
-      translate([0, 0, -eps]) cylinder(d = 2, h = standoff_l + 2 * eps);
-    }
-    color("#d0d0d0") translate([0, 0, standoff_l]) washer();
-  }
+  for (h = lily58_mount_holes) color("#d0d0d0") translate([h[0], h[1], z_pcb + pcb_t]) washer();
   color("#2e7d32") translate([0, 0, z_pcb]) linear_extrude(pcb_t) lily58_pcb_2d();
   color("#b0b0b0") plate();
 }
