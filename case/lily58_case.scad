@@ -3,15 +3,15 @@
 //
 // Mounting (M2): the PCB lies directly on five printed bosses (a spigot centres it in each 4.7 mm
 // hole) and is held by M2x8 socket-head screws that tap their own thread into the bosses; a printed
-// washer on the PCB keeps the head from slipping through the hole. The plate is not screwed: it sits
-// on the rebate and is held by the switches.
-// Assembly: screw the bare PCB in, lay the plate on, then plug the switches through it.
+// washer on the PCB keeps the head from slipping through the hole. The plate covers the wall top
+// flush with the outside and snaps into a groove in it; holes let the screwdriver and heads through.
+// Assembly: PCB on the bosses, washers on the holes, plate on, switches in, then screw down.
 //
 // Usage: openscad -D 'part="tray"' -D 'side="left"' -o tray_left.stl case/lily58_case.scad
 // Coordinates: right half seen from the top (see common/lily58_layout.scad), z = 0 is the bed.
 include <../common/lily58_layout.scad>
 
-part = "assembly";   // tray | plate | washer | sleeve | plate_test | template | assembly | travel
+part = "assembly";   // tray | plate | washer | sleeve | snap_test | plate_test | template | assembly | travel
 side = "right";      // right | left (left = mirrored right half)
 
 /* [PCB and switches] */
@@ -26,17 +26,24 @@ boss_d      = 6.5;    // the PCB rests on these (bottom side is free within Ø 6
 spigot_d    = 4.3;    // centres the PCB in its 4.7 mm holes
 pilot_d     = 1.7;    // M2 self-tapping into the boss
 washer_d    = 5.4;    // on top of the PCB, under the screw head; switch housings are 2.9 mm away
+access_d    = 4.4;    // hole in the plate above each screw: the Ø 3.8 head passes, the washer not
 washer_t    = 1.0;
 screw_d     = 2.4;    // M2 clearance in the washer
 
 /* [Tray] */
-wall_t    = 2.4;      // 6 perimeters with a 0.4 mm nozzle
+wall_t    = 4.0;      // the plate lies on the wall top, flush with the outside
 pcb_gap   = 0.6;      // PCB edge to inner wall
-rebate    = 1.6;      // ledge the plate rests on; lies outside the PCB, so the PCB passes it
-plate_gap = 0.25;     // plate edge to wall
+plate_er  = 1.0;      // rounded top edge of the plate
 bevel     = 3.0;      // 45° chamfer round the bottom edge: looks thinner, no elephant foot
 ring_d    = 6.5;      // support rings under the PCB at the two OLED holes
 floor_t   = 2.0;
+
+/* [Snap: a tongue under the plate edge clicks into a groove in the wall top] */
+snap_c  = pcb_gap + wall_t / 2;   // centre line, offset from the PCB outline
+// [depth from the plate bottom / wall top: from, to, width from, width to]
+tongue  = [[0, 0.8, 1.2, 1.2], [0.8, 1.1, 1.2, 1.5], [1.1, 1.3, 1.5, 1.5], [1.3, 1.6, 1.5, 1.0]];
+groove  = [[0, 0.9, 1.4, 1.4], [0.9, 1.1, 1.4, 1.7], [1.1, 2.0, 1.7, 1.7]];
+// the 1.5 mm bulge passes the 1.4 mm neck and sits in the 1.7 mm widening: tune with snap_test
 
 /* [Rubber feet] */
 foot_d     = 8.4;     // 8 mm feet
@@ -63,32 +70,31 @@ trrs_w   = 9.5;
 trrs_z   = 3.7 - pcb_t / 2;     // measured: jack axis 3.7 mm above the PCB centre
 trrs_h   = 8.5;
 
-/* [Controller zone: no OLED; the plate carries a cover box there] */
+/* [Controller zone: open; a separate cover follows later (no OLED)] */
 ctrl_x = 28.5;        // plate starts right of this
-cover_x = 27.0;       // cover edges: 1 mm clear of the neighbouring keycaps (they overhang the zone)
-cover_y = 56.0;
-cover_clear = 7.7;    // underside above the PCB top: Pro Micro top measured 7.4 (9.0 above the bottom)
-cover_t = 1.2;        // the USB slot opens through the top edge as a notch
-skirt_t = 1.2;        // the outer skirts stand on the rebate like the plate edge
-reset_d = 2.5;        // paper-clip hole above the reset switch
+ctrl_y = 56.6;        // ... or below this
 
 eps = 0.01;
 $fn = 48;
 
 z_pcb   = floor_t + under_clear;                  // PCB bottom
 z_plate = z_pcb + pcb_t + plate_above - plate_t;  // plate bottom
-z_top   = z_plate + plate_t;                      // plate top = wall top
-z_cover = z_pcb + pcb_t + cover_clear;            // cover underside
+z_top   = z_plate + plate_t;                      // plate top
 y_top   = lily58_pcb_size[1];
-outer   = pcb_gap + rebate + wall_t;
-plate_r = pcb_gap + rebate - plate_gap;           // plate outline offset from the PCB
+outer   = pcb_gap + wall_t;
 
 // Screw: M2x8 socket head (DIN 912, Ø 3.8): washer 1 + PCB 1.6 + 5.4 mm into the boss.
 
 module outline(d) offset(r = d) lily58_pcb_2d();
 module zone(x, y) translate([-50, y]) square([50 + x, 100]);
+module ring(c, w) difference() { outline(c + w / 2); outline(c - w / 2); }
 
-// Slot through the top edge; the tray wall holds its lower part, the cover skirt the upper part.
+// Ring with a varying cross-section, built from 0.1 mm slices, going down from z = 0.
+module snap_ring(segs) for (g = segs) for (d = [g[0] : 0.1 : g[1] - 0.05])
+  translate([0, 0, -d - 0.1]) linear_extrude(0.1 + eps)
+    ring(snap_c, g[2] + (g[3] - g[2]) * (d + 0.05 - g[0]) / (g[1] - g[0]));
+
+// Slot through the top wall.
 module port(x, z, w, h) {
   translate([x, y_top + 0.5, z]) rotate([-90, 0, 0]) linear_extrude(outer + 1)
     hull() for (s = [-1, 1]) translate([s * (w - h) / 2, 0]) circle(d = h);
@@ -103,11 +109,10 @@ module tray() {
     union() {
       difference() {
         union() {
-          translate([0, 0, bevel]) linear_extrude(z_top - bevel) outline(outer);
+          translate([0, 0, bevel]) linear_extrude(z_plate - bevel) outline(outer);
           for (i = [0 : 0.2 : bevel - 0.1]) translate([0, 0, i]) linear_extrude(0.2 + eps) outline(outer - bevel + i + 0.2);
         }
         translate([0, 0, floor_t]) linear_extrude(z_top) outline(pcb_gap);
-        translate([0, 0, z_plate]) linear_extrude(z_top) outline(pcb_gap + rebate);
       }
       for (h = lily58_mount_holes) translate(h) {
         cylinder(d = boss_d, h = z_pcb);
@@ -117,34 +122,31 @@ module tray() {
     for (f = feet) translate([f[0], f[1], -eps]) cylinder(d = foot_d, h = foot_depth + eps);
     for (h = lily58_mount_holes) translate([h[0], h[1], foot_depth + 0.6]) cylinder(d = pilot_d, h = 20);
     ports();
+    translate([0, 0, z_plate + eps]) snap_ring(groove);
   }
-  for (h = lily58_oled_holes) translate(h) cylinder(d = ring_d, h = z_pcb);
-}
-
-module plate_2d() difference() {
-  outline(plate_r);
-  zone(ctrl_x, cover_y + skirt_t / 2);
-  for (k = lily58_keys) translate([k[0], k[1]]) rotate(k[2]) square(cutout, center = true);
-}
-
-// Cover box over the controller zone, part of the plate. Its outer skirts stand on the rebate;
-// the inner skirt (towards the keys) stops at the plate top, clear of the Pro Micro.
-module cover() {
-  difference() {
-    translate([0, 0, z_plate]) linear_extrude(z_cover + cover_t - z_plate)
-      intersection() { outline(plate_r); zone(cover_x, cover_y); }
-    translate([0, 0, z_plate - eps]) linear_extrude(z_cover - z_plate + eps)
-      intersection() { outline(plate_r - skirt_t); zone(cover_x - skirt_t, cover_y + skirt_t); }
-    translate([cover_x - skirt_t - 1, cover_y + skirt_t + 1, z_plate - eps])
-      cube([skirt_t + 2, 100, z_top - z_plate + eps]);
-    translate([lily58_reset[0], lily58_reset[1], z_plate]) cylinder(d = reset_d, h = 20);
-    ports();
+  for (h = lily58_oled_holes) translate(h) difference() {   // pilot holes for the later cover
+    cylinder(d = ring_d, h = z_pcb);
+    translate([0, 0, foot_depth + 0.6]) cylinder(d = pilot_d, h = 20);
   }
 }
 
+module plate_shape(inset = 0) difference() { outline(outer - inset); zone(ctrl_x, ctrl_y); }
+
+// Plate in its own coordinates: z = 0 is its bottom, the tongue hangs below.
 module plate() {
-  translate([0, 0, z_plate]) linear_extrude(plate_t) plate_2d();
-  cover();
+  difference() {
+    union() {
+      linear_extrude(plate_t - plate_er) plate_shape();
+      for (z = [0 : 0.1 : plate_er - 0.05]) translate([0, 0, plate_t - plate_er + z])
+        linear_extrude(0.1 + eps) plate_shape(plate_er - sqrt(plate_er * plate_er - (z + 0.1) * (z + 0.1)));
+    }
+    for (k = lily58_keys) translate([k[0], k[1], -1]) rotate(k[2]) linear_extrude(plate_t + 2) square(cutout, center = true);
+    for (h = lily58_mount_holes) translate([h[0], h[1], -1]) cylinder(d = access_d, h = plate_t + 2);
+  }
+  intersection() {
+    snap_ring(tongue);
+    translate([0, 0, -5]) linear_extrude(5 + eps) plate_shape();
+  }
 }
 
 module washer() difference() {
@@ -188,6 +190,13 @@ module in_chamber(i, left) {
     if (left) mirror([1, 0, 0]) children(); else children();
 }
 
+// Snap fit test: the real wall and plate edge on a straight piece of the bottom edge.
+module snap_box() translate([50, -8, -1]) cube([30, 16, 40]);
+module snap_test() {
+  intersection() { tray(); snap_box(); }
+  translate([0, 25, plate_t]) rotate([180, 0, 0]) intersection() { plate(); translate([0, 0, -z_plate]) snap_box(); }
+}
+
 // Fit test: cutouts cutout-0.1 … cutout+0.2; the number of notches on the edge = position 1…4.
 module plate_test() linear_extrude(plate_t) difference() {
   square([4 * 20 + 4, 24]);
@@ -215,13 +224,13 @@ module assembly() {
   color("#3a3a3a") tray();
   for (h = lily58_mount_holes) color("#d0d0d0") translate([h[0], h[1], z_pcb + pcb_t]) washer();
   color("#2e7d32") translate([0, 0, z_pcb]) linear_extrude(pcb_t) lily58_pcb_2d();
-  color("#b0b0b0") plate();
+  color("#b0b0b0") translate([0, 0, z_plate]) plate();
 }
 
 module sided() { if (side == "left") mirror([1, 0, 0]) children(); else children(); }
 
 if (part == "tray")       sided() tray();
-if (part == "plate")      sided() translate([0, 0, -z_plate]) plate();   // plate bottom on the bed
+if (part == "plate")      sided() translate([0, 0, plate_t]) rotate([180, 0, 0]) plate();   // top on the bed
 if (part == "washer")     washer();
 if (part == "sleeve")     translate([0, 0, sl_size[1]]) rotate([-90, 0, 0]) sleeve();  // back wall on the bed
 if (part == "travel") {   // both halves in the sleeve
@@ -229,6 +238,7 @@ if (part == "travel") {   // both halves in the sleeve
   in_chamber(0, false) assembly();
   in_chamber(1, true) assembly();
 }
+if (part == "snap_test")  snap_test();
 if (part == "plate_test") plate_test();
 if (part == "template")   template();
 if (part == "assembly")   sided() assembly();

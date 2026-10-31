@@ -1,6 +1,6 @@
 # 0012 – Case: printed tray with a switch plate
 
-- **Status:** proposed (draft v3, flat; switch cutout to be fine-tuned)
+- **Status:** proposed (draft v5, plate snapped onto the wall; snap and switch cutout to be tuned)
 - **Decided by:** owner (tray with plate, M2 screws and standoffs, no OLED, feet, tenting later,
   separate branch), derived (geometry)
 
@@ -20,11 +20,17 @@ template matches the owner's PCB exactly.
   half from the top, the left half is the mirror image. Shared by the case and (later) the cap
   renders – the 1.5u thumb is rotated by 300° (30° from vertical), not 90° as in `tools/scene.py`.
 - **Tray with plate** (`case/lily58_case.scad`): the tray follows the PCB outline (gap 0.6 mm,
-  wall 2.4 mm, floor 2 mm, 3 mm 45° bevel round the bottom edge). The plate (1.5 mm, MX) sits on a
-  rebate in the wall that lies outside the PCB outline. Plate top = wall top = PCB top + 5 mm.
+  wall 4 mm, floor 2 mm, 3 mm 45° bevel round the bottom edge). Plate top = PCB top + 5 mm.
+- **Plate over the wall, snapped in** (owner, v5: the plate sat loose in a rebate and looked
+  poor): the plate (1.5 mm, MX) covers the wall top flush with the outside, its top edge rounded
+  (r 1 mm). A tongue under its edge (1.2 mm, with a 1.5 mm bulge near the tip) clicks into a groove
+  in the middle of the wall top (1.4 mm neck widening to 1.7 mm, 2 mm deep). The groove runs all
+  round, also along the open controller zone, where a later cover can use it. `part="snap_test"`
+  prints a 30 mm piece of wall and plate edge to tune the profiles. Plates are right and left
+  again (the tongue is on one side) and are printed top down.
 - **As flat as possible** (owner's wish, v3): plate top 15.2 mm above the desk (v2: 17.9). Only
   the 5 mm PCB-to-plate-top of MX and the 3.5 mm parts below the PCB are fixed; the rest was
-  trimmed (standoffs → bosses −2.3, floor −0.4, cover −1.1). The keycaps (DES vs KAT) matter more
+  trimmed (standoffs → bosses −2.3, floor −0.4). The keycaps (DES vs KAT) matter more
   than anything left in the case.
 - **M2 mounting:** the PCB lies directly on five printed bosses (Ø 6.5 mm, 4.0 mm high: the
   3.5 mm parts below + 0.5); a Ø 4.3 mm spigot centres it in each 4.7 mm hole. M2x8 socket-head
@@ -32,15 +38,13 @@ template matches the owner's PCB exactly.
   thread). A printed washer (Ø 5.4 × 1 mm) on the PCB keeps the head from slipping through the hole;
   the nearest switch housing is 2.9 mm from a hole centre. The owner's M2 standoffs (v2) were
   dropped: 6 mm standoffs raised the PCB 2.3 mm more than needed.
-- **The plate is not screwed.** It is held by the switches; assembly: screw the bare PCB in, lay
-  the plate on, plug the switches through it (hotswap). No screw heads under the keycaps.
-- **No OLED** (owner's choice). The plate carries a **cover box** over the controller zone: its
-  outer skirts stand on the rebate, its underside is 7.7 mm above the PCB top (Pro Micro measured
-  7.4 mm), the top 1.2 mm thick – 3.9 mm above the plate; the USB slot opens through its edge,
-  its inner edges stay 1 mm clear of the neighbouring keycaps, and the inner skirt stops above the
-  Pro Micro. A Ø 2.5 mm hole above the reset switch takes a paper clip. Plates are therefore
-  exported as right and left; printed with the plate on the bed (the cover top bridges ~26 mm).
-- **USB and TRRS** get rounded slots through the top wall and the cover skirt, 2 mm closer to the
+- **The plate is not screwed.** It is held by the snap and the switches. Ø 4.4 mm holes above the five screws
+  let the screwdriver and the Ø 3.8 mm heads through (0.8 mm web to the nearest switch cutout); the
+  washers are laid on the PCB first. Assembly: PCB on the bosses, washers, plate, switches, screws.
+- **No OLED, no cover yet** (owner's choice, v4): the controller zone stays open; the plate ends
+  1 mm clear of the neighbouring keycaps. A separate cover follows later; the support rings under
+  the two OLED holes already have M2 pilot holes for it.
+- **USB and TRRS** get rounded slots through the top wall, 2 mm closer to the
   inner edge than the KiCad positions (owner's test print).
 - **Rubber feet:** Ø 8 × 4 mm, recessed 1.4 mm (pockets Ø 8.4 mm, 0.6 mm floor above), sticking
   out 2.6 mm; four per half. Thinner feet (e.g. 8 × 2 mm) would save another 1.6 mm.
