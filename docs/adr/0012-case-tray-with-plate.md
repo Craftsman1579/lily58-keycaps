@@ -22,8 +22,9 @@ template matches the owner's PCB exactly.
 - **Tray with plate** (`case/lily58_case.scad`): the tray follows the PCB outline (gap 0.6 mm,
   wall 4 mm, floor 2 mm, 3 mm 45° bevel round the bottom edge). Plate top = PCB top + 5 mm.
 - **Plate over the wall, snapped in** (owner, v5: the plate sat loose in a rebate and looked
-  poor): the plate (1.5 mm, MX) covers the wall top flush with the outside, its top edge rounded
-  (r 1 mm). A tongue under its edge (1.2 mm, with a 1.5 mm bulge near the tip) clicks into a groove
+  poor): the plate (1.5 mm, MX) covers the wall top flush with the outside, its top edge with a 0.8 mm
+  45° chamfer (owner: must print cleanly – the plate prints top down, a radius on the bed side
+  would overhang too flat, a 45° chamfer does not). A tongue under its edge (1.2 mm, with a 1.5 mm bulge near the tip) clicks into a groove
   in the middle of the wall top (1.4 mm neck widening to 1.7 mm, 2 mm deep). The groove runs all
   round, also along the open controller zone, where a later cover can use it. `part="snap_test"`
   prints a 30 mm piece of wall and plate edge to tune the profiles. Plates are right and left

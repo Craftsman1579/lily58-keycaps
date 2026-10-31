@@ -34,7 +34,8 @@ pilot_d     = 1.7;    // M2 pilot in the OLED rings for the later cover
 /* [Tray] */
 wall_t    = 4.0;      // the plate lies on the wall top, flush with the outside
 pcb_gap   = 0.6;      // PCB edge to inner wall
-plate_er  = 1.0;      // rounded top edge of the plate
+plate_ch  = 0.8;      // 45° chamfer on the top edge: the plate prints top down, so it lies on the bed
+                      // side and grows outward at 45° – a radius there would overhang too flat
 bevel     = 3.0;      // 45° chamfer round the bottom edge: looks thinner, no elephant foot
 ring_d    = 6.5;      // support rings under the PCB at the two OLED holes
 floor_t   = 2.0;
@@ -140,9 +141,9 @@ module plate_shape(inset = 0) difference() { outline(outer - inset); zone(ctrl_x
 module plate() {
   difference() {
     union() {
-      linear_extrude(plate_t - plate_er) plate_shape();
-      for (z = [0 : 0.1 : plate_er - 0.05]) translate([0, 0, plate_t - plate_er + z])
-        linear_extrude(0.1 + eps) plate_shape(plate_er - sqrt(plate_er * plate_er - (z + 0.1) * (z + 0.1)));
+      linear_extrude(plate_t - plate_ch) plate_shape();
+      for (z = [0 : 0.1 : plate_ch - 0.05]) translate([0, 0, plate_t - plate_ch + z])
+        linear_extrude(0.1 + eps) plate_shape(z + 0.1);
     }
     for (k = lily58_keys) translate([k[0], k[1], -1]) rotate(k[2]) linear_extrude(plate_t + 2) square(cutout, center = true);
     for (h = lily58_mount_holes) translate([h[0], h[1], -1]) cylinder(d = pboss_pilot, h = 1 + plate_t - pboss_skin);
