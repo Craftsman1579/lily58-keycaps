@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Exports the case parts to stl/case/: tray_right/left, plate_right/left (top down on the bed),
-# washer (print 10), travel sleeve, snap_test, plate_test, and template.pdf/.svg (1:1 paper template of the PCB).
+# travel sleeve, snap_test, plate_test, and template.pdf/.svg (1:1 paper template of the PCB).
 # Extra arguments go to OpenSCAD, e.g.: case/build.sh -D cutout=14.0 -D under_clear=3.8
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -20,7 +20,6 @@ run() {  # <output file> <openscad -D args…>
 
 run tray_right.stl -D 'part="tray"' -D 'side="right"' "$@"
 run tray_left.stl  -D 'part="tray"' -D 'side="left"'  "$@"
-run washer.stl     -D 'part="washer"' "$@"
 run plate_right.stl -D 'part="plate"' -D 'side="right"' "$@"
 run plate_left.stl  -D 'part="plate"' -D 'side="left"'  "$@"
 run snap_test.stl  -D 'part="snap_test"' "$@"

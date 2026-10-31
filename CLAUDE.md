@@ -27,10 +27,10 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 3. DES thumb mirroring is not yet verified on real hands (ADR 0008).
 4. Optional: a full blank set as ready-made plates (currently 1 spare cap per row + thumbs + homing).
 5. Script comments are still German.
-6. **Case** (branch `lily58-case`, ADR 0012): draft v2 tray + plate (with controller cover, no
-   OLED) for the owner's PandaKB Lily58 RGB MX; v3 is as flat as possible (PCB on printed bosses,
-   M2x8 self-tapping, access holes in the plate); the plate covers the wall and snaps into a groove
-   (tune with `part="snap_test"`). Controller zone open, separate cover later.
+6. **Case** (branch `lily58-case`, ADR 0012): draft v6 tray + plate for the owner's PandaKB
+   Lily58 RGB MX (no OLED), as flat as possible. The PCB is clamped between printed bosses by
+   M3x10 screws from below into bosses under the plate; the plate covers the wall and snaps into a
+   groove (tune with `part="snap_test"`). Controller zone open, separate cover later.
    Switch cutout 13.8 mm, exact plate fit test pending; tenting later.
 7. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
    Waiting for the keycap height above the plate (`MEASURE 15`).
@@ -49,12 +49,12 @@ LAYOUT=us ./lily58_keycaps.sh kat-all      # KAT US
 Case (ADR 0012):
 
 ```bash
-case/build.sh [-D name=value …]             # trays + plates L/R, sleeve, washer, snap/plate tests, template → stl/case/
+case/build.sh [-D name=value …]             # trays + plates L/R, sleeve, snap/plate tests, template → stl/case/
 python3 tools/kicad2scad.py <Lily58_Pro.kicad_pcb> common/lily58_layout.scad   # regenerate layout
 ```
 
 The KiCad file comes from `github.com/kata0510/Lily58` (`Pro/PCB/`, MIT); it is not cloned by any
-script. `case/lily58_case.scad` takes `part=tray|plate|washer|sleeve|snap_test|plate_test|template|assembly|travel`, `side=right|left`.
+script. `case/lily58_case.scad` takes `part=tray|plate|sleeve|snap_test|plate_test|template|assembly|travel`, `side=right|left`.
 
 `test` and `all` are legacy DSA modes (no flat sides, old support) – not maintained.
 Output: `~/Documents/lily58_keycaps/stl/<mode folder>/` = `<Group>_body.stl` + `<Group>_legends.stl`,

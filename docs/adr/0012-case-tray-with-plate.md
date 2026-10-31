@@ -1,6 +1,6 @@
 # 0012 – Case: printed tray with a switch plate
 
-- **Status:** proposed (draft v5, plate snapped onto the wall; snap and switch cutout to be tuned)
+- **Status:** proposed (draft v6, M3 from below; snap and switch cutout to be tuned)
 - **Decided by:** owner (tray with plate, M2 screws and standoffs, no OLED, feet, tenting later,
   separate branch), derived (geometry)
 
@@ -32,15 +32,15 @@ template matches the owner's PCB exactly.
   the 5 mm PCB-to-plate-top of MX and the 3.5 mm parts below the PCB are fixed; the rest was
   trimmed (standoffs → bosses −2.3, floor −0.4). The keycaps (DES vs KAT) matter more
   than anything left in the case.
-- **M2 mounting:** the PCB lies directly on five printed bosses (Ø 6.5 mm, 4.0 mm high: the
-  3.5 mm parts below + 0.5); a Ø 4.3 mm spigot centres it in each 4.7 mm hole. M2x8 socket-head
-  screws (DIN 912, Ø 3.8 mm) tap their own thread into the bosses (pilot Ø 1.7 mm, 5.4 mm of
-  thread). A printed washer (Ø 5.4 × 1 mm) on the PCB keeps the head from slipping through the hole;
-  the nearest switch housing is 2.9 mm from a hole centre. The owner's M2 standoffs (v2) were
-  dropped: 6 mm standoffs raised the PCB 2.3 mm more than needed.
-- **The plate is not screwed.** It is held by the snap and the switches. Ø 4.4 mm holes above the five screws
-  let the screwdriver and the Ø 3.8 mm heads through (0.8 mm web to the nearest switch cutout); the
-  washers are laid on the PCB first. Assembly: PCB on the bosses, washers, plate, switches, screws.
+- **M3 from below** (owner, v6: thicker screw, stronger thread): five M3x10 button-head screws
+  (ISO 7380, head recessed flush in the bottom) run up through the floor, the tray bosses the PCB
+  rests on (Ø 6.5 mm, 4.0 mm high: the 3.5 mm parts below + 0.5) and the 4.7 mm PCB holes, and tap
+  their thread into bosses under the plate (Ø 5.2 mm, pilot 2.5 mm, 4.4 mm deep; the nearest switch
+  housing is 2.9 mm from a hole centre). The PCB is clamped between the two bosses and the plate is
+  pulled onto the wall. No washers, no holes in the plate top. Earlier variants (M2 standoffs,
+  M2 self-tapping from the top) are in the history of this file.
+- **Assembly:** PCB onto the tray bosses, plate with the switches on top (it snaps into the
+  groove, the switches go into the hotswap sockets), then the screws from below.
 - **No OLED, no cover yet** (owner's choice, v4): the controller zone stays open; the plate ends
   1 mm clear of the neighbouring keycaps. A separate cover follows later; the support rings under
   the two OLED holes already have M2 pilot holes for it.

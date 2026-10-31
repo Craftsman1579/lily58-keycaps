@@ -1,17 +1,17 @@
 // Lily58 case: printed tray with a switch plate (PandaKB Lily58 RGB MX, a Lily58 Pro derivative).
 // Values marked MEASURE n are still to be confirmed on the owner's hardware (docs/adr/0012).
 //
-// Mounting (M2): the PCB lies directly on five printed bosses (a spigot centres it in each 4.7 mm
-// hole) and is held by M2x8 socket-head screws that tap their own thread into the bosses; a printed
-// washer on the PCB keeps the head from slipping through the hole. The plate covers the wall top
-// flush with the outside and snaps into a groove in it; holes let the screwdriver and heads through.
-// Assembly: PCB on the bosses, washers on the holes, plate on, switches in, then screw down.
+// Mounting (M3, from below): five M3x10 button-head screws run up through the floor, the tray
+// bosses the PCB rests on and the 4.7 mm PCB holes, and tap their thread into bosses under the
+// plate that stand on the PCB. The PCB is clamped between the two bosses, the plate pulled onto the
+// wall top, where it also snaps into a groove. The plate top stays closed.
+// Assembly: PCB on the tray bosses, plate with switches on (snaps in), screws in from below.
 //
 // Usage: openscad -D 'part="tray"' -D 'side="left"' -o tray_left.stl case/lily58_case.scad
 // Coordinates: right half seen from the top (see common/lily58_layout.scad), z = 0 is the bed.
 include <../common/lily58_layout.scad>
 
-part = "assembly";   // tray | plate | washer | sleeve | snap_test | plate_test | template | assembly | travel
+part = "assembly";   // tray | plate | sleeve | snap_test | plate_test | template | assembly | travel
 side = "right";      // right | left (left = mirrored right half)
 
 /* [PCB and switches] */
@@ -20,15 +20,16 @@ plate_above = 5.0;    // MX standard: plate top 5.0 mm above the PCB top
 plate_t     = 1.5;    // MX switch clips need 1.5 mm
 cutout      = 13.8;   // switch cutout: owner's first test 13.8; fine-tune with part="plate_test"
 
-/* [M2 mounting] */
+/* [M3 mounting from below] */
 under_clear = 4.0;    // tallest part below the PCB measured 3.5 mm, + 0.5 mm
-boss_d      = 6.5;    // the PCB rests on these (bottom side is free within Ø 6.6 around the holes)
-spigot_d    = 4.3;    // centres the PCB in its 4.7 mm holes
-pilot_d     = 1.7;    // M2 self-tapping into the boss
-washer_d    = 5.4;    // on top of the PCB, under the screw head; switch housings are 2.9 mm away
-access_d    = 4.4;    // hole in the plate above each screw: the Ø 3.8 head passes, the washer not
-washer_t    = 1.0;
-screw_d     = 2.4;    // M2 clearance in the washer
+boss_d      = 6.5;    // tray bosses the PCB rests on (bottom side is free within Ø 6.6 around the holes)
+screw_d     = 3.4;    // M3 clearance in floor and boss
+head_d      = 6.2;    // recess for the M3 button head (ISO 7380: 5.7 × 1.65 mm), flush with the bottom
+head_h      = 1.9;
+pboss_d     = 5.2;    // bosses under the plate, standing on the PCB; switch housings are 2.9 mm away
+pboss_pilot = 2.5;    // M3 self-tapping into the plate boss
+pboss_skin  = 0.6;    // keeps the plate top closed above the screw tip
+pilot_d     = 1.7;    // M2 pilot in the OLED rings for the later cover
 
 /* [Tray] */
 wall_t    = 4.0;      // the plate lies on the wall top, flush with the outside
@@ -83,7 +84,8 @@ z_top   = z_plate + plate_t;                      // plate top
 y_top   = lily58_pcb_size[1];
 outer   = pcb_gap + wall_t;
 
-// Screw: M2x8 socket head (DIN 912, Ø 3.8): washer 1 + PCB 1.6 + 5.4 mm into the boss.
+// Screw: M3x10 button head: tray boss above the head (z_pcb - head_h) + PCB 1.6 + 4.3 mm into the
+// plate boss (4.4 mm of pilot hole).
 
 module outline(d) offset(r = d) lily58_pcb_2d();
 module zone(x, y) translate([-50, y]) square([50 + x, 100]);
@@ -116,11 +118,13 @@ module tray() {
       }
       for (h = lily58_mount_holes) translate(h) {
         cylinder(d = boss_d, h = z_pcb);
-        cylinder(d = spigot_d, h = z_pcb + pcb_t - 0.1);
       }
     }
     for (f = feet) translate([f[0], f[1], -eps]) cylinder(d = foot_d, h = foot_depth + eps);
-    for (h = lily58_mount_holes) translate([h[0], h[1], foot_depth + 0.6]) cylinder(d = pilot_d, h = 20);
+    for (h = lily58_mount_holes) translate(h) {
+      translate([0, 0, -eps]) cylinder(d = head_d, h = head_h + eps);
+      cylinder(d = screw_d, h = 20, center = true);
+    }
     ports();
     translate([0, 0, z_plate + eps]) snap_ring(groove);
   }
@@ -141,17 +145,17 @@ module plate() {
         linear_extrude(0.1 + eps) plate_shape(plate_er - sqrt(plate_er * plate_er - (z + 0.1) * (z + 0.1)));
     }
     for (k = lily58_keys) translate([k[0], k[1], -1]) rotate(k[2]) linear_extrude(plate_t + 2) square(cutout, center = true);
-    for (h = lily58_mount_holes) translate([h[0], h[1], -1]) cylinder(d = access_d, h = plate_t + 2);
+    for (h = lily58_mount_holes) translate([h[0], h[1], -1]) cylinder(d = pboss_pilot, h = 1 + plate_t - pboss_skin);
+  }
+  pboss_h = plate_above - plate_t;                 // plate bottom down to the PCB top
+  for (h = lily58_mount_holes) translate([h[0], h[1], -pboss_h]) difference() {
+    cylinder(d = pboss_d, h = pboss_h + eps);
+    translate([0, 0, -eps]) cylinder(d = pboss_pilot, h = pboss_h + plate_t - pboss_skin + eps);
   }
   intersection() {
     snap_ring(tongue);
     translate([0, 0, -5]) linear_extrude(5 + eps) plate_shape();
   }
-}
-
-module washer() difference() {
-  cylinder(d = washer_d, h = washer_t);
-  translate([0, 0, -eps]) cylinder(d = screw_d, h = washer_t + 2 * eps);
 }
 
 // Travel sleeve: open at the front, chamber 0 at the bottom, chamber 1 above; local y runs from
@@ -222,7 +226,6 @@ module template() {
 
 module assembly() {
   color("#3a3a3a") tray();
-  for (h = lily58_mount_holes) color("#d0d0d0") translate([h[0], h[1], z_pcb + pcb_t]) washer();
   color("#2e7d32") translate([0, 0, z_pcb]) linear_extrude(pcb_t) lily58_pcb_2d();
   color("#b0b0b0") translate([0, 0, z_plate]) plate();
 }
@@ -231,7 +234,6 @@ module sided() { if (side == "left") mirror([1, 0, 0]) children(); else children
 
 if (part == "tray")       sided() tray();
 if (part == "plate")      sided() translate([0, 0, plate_t]) rotate([180, 0, 0]) plate();   // top on the bed
-if (part == "washer")     washer();
 if (part == "sleeve")     translate([0, 0, sl_size[1]]) rotate([-90, 0, 0]) sleeve();  // back wall on the bed
 if (part == "travel") {   // both halves in the sleeve
   color("#6d6d6d", 0.35) sleeve();
