@@ -1,6 +1,6 @@
 # 0012 – Case: printed tray with a switch plate
 
-- **Status:** proposed (draft v6, M3 from below; snap and switch cutout to be tuned)
+- **Status:** proposed (draft v7, tenting pockets; snap, switch cutout and pocket size to be tuned)
 - **Decided by:** owner (tray with plate, M2 screws and standoffs, no OLED, feet, tenting later,
   separate branch), derived (geometry)
 
@@ -20,7 +20,7 @@ template matches the owner's PCB exactly.
   half from the top, the left half is the mirror image. Shared by the case and (later) the cap
   renders – the 1.5u thumb is rotated by 300° (30° from vertical), not 90° as in `tools/scene.py`.
 - **Tray with plate** (`case/lily58_case.scad`): the tray follows the PCB outline (gap 0.6 mm,
-  wall 4 mm, floor 2 mm, 3 mm 45° bevel round the bottom edge). Plate top = PCB top + 5 mm.
+  wall 4 mm, floor 3.6 mm, 3 mm 45° bevel round the bottom edge). Plate top = PCB top + 5 mm.
 - **Plate over the wall, snapped in** (owner, v5: the plate sat loose in a rebate and looked
   poor): the plate (1.5 mm, MX) covers the wall top flush with the outside, its top edge with a 0.8 mm
   45° chamfer (owner: must print cleanly – the plate prints top down, a radius on the bed side
@@ -29,12 +29,13 @@ template matches the owner's PCB exactly.
   round, also along the open controller zone, where a later cover can use it. `part="snap_test"`
   prints a 30 mm piece of wall and plate edge to tune the profiles. Plates are right and left
   again (the tongue is on one side) and are printed top down.
-- **As flat as possible** (owner's wish, v3): plate top 15.2 mm above the desk (v2: 17.9). Only
+- **As flat as possible** (owner's wish, v3): plate top 15.2 mm above the desk (v2: 17.9); 16.8 mm
+  since the tenting pockets (v7) need a 3.6 mm floor. Only
   the 5 mm PCB-to-plate-top of MX and the 3.5 mm parts below the PCB are fixed; the rest was
   trimmed (standoffs → bosses −2.3, floor −0.4). The keycaps (DES vs KAT) matter more
   than anything left in the case.
-- **M3 from below** (owner, v6: thicker screw, stronger thread): five M3x10 button-head screws
-  (ISO 7380, head recessed flush in the bottom) run up through the floor, the tray bosses the PCB
+- **M3 from below** (owner, v6: thicker screw, stronger thread): five M3x10 screws (the owner's
+  round heads are 3 mm high; recessed flush, Ø 6.2 × 3.2 mm) run up through the floor, the tray bosses the PCB
   rests on (Ø 6.5 mm, 4.0 mm high: the 3.5 mm parts below + 0.5) and the 4.7 mm PCB holes, and tap
   their thread into bosses under the plate (Ø 5.2 mm, pilot 2.5 mm, 4.4 mm deep; the nearest switch
   housing is 2.9 mm from a hole centre). The PCB is clamped between the two bosses and the plate is
@@ -49,7 +50,12 @@ template matches the owner's PCB exactly.
   inner edge than the KiCad positions (owner's test print).
 - **Rubber feet:** Ø 8 × 4 mm, recessed 1.4 mm (pockets Ø 8.4 mm, 0.6 mm floor above), sticking
   out 2.6 mm; four per half. Thinner feet (e.g. 8 × 2 mm) would save another 1.6 mm.
-- **Tenting** is a later stage; the floor leaves room for inserts or bolt-on legs.
+- **Tenting** (v7): two folding feet per half (owner's, housing 66 × 20 × 5.5 mm, hinge on a short
+  side) sit in pockets in the bottom, long side across the inner edge: one below the controller
+  zone (x 1–67, y 55–75), one by the thumb cluster (x 25.5–91.5, y 12–32), both clear of the five
+  screw heads. The pockets are 2.9 mm deep, so the housings stick out 2.6 mm like the rubber feet
+  and sit flush with them (owner's wish); that needs a 3.6 mm floor (0.7 mm above the pockets).
+  The rubber foot by the thumb cluster moved to (12, 42).
 - **Switch cutout 13.8 mm** (owner's first test; printed holes come out smaller). The plate fit test
   (`part="plate_test"`) prints cutout −0.1 … +0.2 mm (13.7–14.0) for the exact value.
 - **1:1 paper template** (`template.pdf`/`.svg`, 100 mm scale bar) to lay the real PCB on.
@@ -71,6 +77,7 @@ template matches the owner's PCB exactly.
 11. (OLED window – obsolete.)
 12. Highest point of the Pro Micro: 9.0 mm above the PCB bottom = 7.4 mm above its top.
 13. M2 standoffs: 4/6/8/10 mm, hex 2.8 mm across flats – no longer used (v3).
+17. Folding feet housing: 66 × 20 × 5.5 mm (pockets + 0.3 mm); exact size to confirm.
 14. Switch cutout: 13.8 mm from the owner's first test; exact test pending.
 
 ## Consequences

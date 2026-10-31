@@ -1,7 +1,7 @@
 // Lily58 case: printed tray with a switch plate (PandaKB Lily58 RGB MX, a Lily58 Pro derivative).
 // Values marked MEASURE n are still to be confirmed on the owner's hardware (docs/adr/0012).
 //
-// Mounting (M3, from below): five M3x10 button-head screws run up through the floor, the tray
+// Mounting (M3, from below): five M3x10 screws run up through the floor, the tray
 // bosses the PCB rests on and the 4.7 mm PCB holes, and tap their thread into bosses under the
 // plate that stand on the PCB. The PCB is clamped between the two bosses, the plate pulled onto the
 // wall top, where it also snaps into a groove. The plate top stays closed.
@@ -24,8 +24,8 @@ cutout      = 13.8;   // switch cutout: owner's first test 13.8; fine-tune with 
 under_clear = 4.0;    // tallest part below the PCB measured 3.5 mm, + 0.5 mm
 boss_d      = 6.5;    // tray bosses the PCB rests on (bottom side is free within Ø 6.6 around the holes)
 screw_d     = 3.4;    // M3 clearance in floor and boss
-head_d      = 6.2;    // recess for the M3 button head (ISO 7380: 5.7 × 1.65 mm), flush with the bottom
-head_h      = 1.9;
+head_d      = 6.2;    // recess for the owner's M3 heads (round, 3 mm high), flush with the bottom
+head_h      = 3.2;
 pboss_d     = 5.2;    // bosses under the plate, standing on the PCB; switch housings are 2.9 mm away
 pboss_pilot = 2.5;    // M3 self-tapping into the plate boss
 pboss_skin  = 0.6;    // keeps the plate top closed above the screw tip
@@ -38,7 +38,6 @@ plate_ch  = 0.8;      // 45° chamfer on the top edge: the plate prints top down
                       // side and grows outward at 45° – a radius there would overhang too flat
 bevel     = 3.0;      // 45° chamfer round the bottom edge: looks thinner, no elephant foot
 ring_d    = 6.5;      // support rings under the PCB at the two OLED holes
-floor_t   = 2.0;
 
 /* [Snap: a tongue under the plate edge clicks into a groove in the wall top] */
 snap_c  = pcb_gap + wall_t / 2;   // centre line, offset from the PCB outline
@@ -50,7 +49,16 @@ groove  = [[0, 0.9, 1.4, 1.4], [0.9, 1.1, 1.4, 1.7], [1.1, 2.0, 1.7, 1.7]];
 /* [Rubber feet] */
 foot_d     = 8.4;     // 8 mm feet
 foot_depth = 1.4;     // 4 mm high feet stick out 2.6 mm; 0.6 mm floor stays above them
-feet = [[10, 96], [132, 88], [132, 29], [46, 10]];
+feet = [[10, 96], [132, 88], [132, 29], [12, 42]];
+foot_out   = 4 - foot_depth;
+
+/* [Tenting: two folding feet per half, recessed so their housings sit flush with the rubber feet] */
+tent_size = [66.3, 20.3];   // MEASURE 17: housing 66 × 20 mm + 0.3
+tent_h    = 5.5;
+// lower-left corners; long side across the inner edge, clear of the five screw heads
+tent      = [[1.0, 55], [25.5, 12]];
+tent_skin = 0.7;            // floor above the pockets
+floor_t   = tent_h - foot_out + tent_skin;   // pockets are tent_h - foot_out = 2.9 mm deep
 
 /* [Travel sleeve (ADR 0013): two chambers, the halves slide in keys up, the tray stays as it is] */
 caps_above = 24.0;    // MEASURE 15: tallest keycap top above the plate top
@@ -85,8 +93,8 @@ z_top   = z_plate + plate_t;                      // plate top
 y_top   = lily58_pcb_size[1];
 outer   = pcb_gap + wall_t;
 
-// Screw: M3x10 button head: tray boss above the head (z_pcb - head_h) + PCB 1.6 + 4.3 mm into the
-// plate boss (4.4 mm of pilot hole).
+// Screw: M3x10: tray boss above the head (z_pcb - head_h = 4.4) + PCB 1.6 + 4.0 mm into the plate
+// boss (4.4 mm of pilot hole).
 
 module outline(d) offset(r = d) lily58_pcb_2d();
 module zone(x, y) translate([-50, y]) square([50 + x, 100]);
@@ -122,6 +130,7 @@ module tray() {
       }
     }
     for (f = feet) translate([f[0], f[1], -eps]) cylinder(d = foot_d, h = foot_depth + eps);
+    for (t = tent) translate([t[0], t[1], -eps]) cube([tent_size[0], tent_size[1], tent_h - foot_out + eps]);
     for (h = lily58_mount_holes) translate(h) {
       translate([0, 0, -eps]) cylinder(d = head_d, h = head_h + eps);
       cylinder(d = screw_d, h = 20, center = true);
@@ -130,8 +139,8 @@ module tray() {
     translate([0, 0, z_plate + eps]) snap_ring(groove);
   }
   for (h = lily58_oled_holes) translate(h) difference() {   // pilot holes for the later cover
-    cylinder(d = ring_d, h = z_pcb);
-    translate([0, 0, foot_depth + 0.6]) cylinder(d = pilot_d, h = 20);
+    translate([0, 0, floor_t - eps]) cylinder(d = ring_d, h = z_pcb - floor_t + eps);
+    translate([0, 0, floor_t]) cylinder(d = pilot_d, h = 20);
   }
 }
 
@@ -161,7 +170,6 @@ module plate() {
 
 // Travel sleeve: open at the front, chamber 0 at the bottom, chamber 1 above; local y runs from
 // the opening (0) to the back wall. A half goes in keys up, its top (USB) edge first.
-foot_out = 4 - foot_depth;                        // 4 mm feet stick out this far
 half_w   = lily58_pcb_size[0] + 2 * outer;
 half_d   = lily58_pcb_size[1] + 2 * outer;
 half_h   = foot_out + z_top + caps_above;
