@@ -18,3 +18,4 @@ development (usually after measuring or testing), with the owner's approval.
 | [0010](0010-publishing-and-licensing.md) | Publishing: public GitHub repo, GPL-3.0, release ZIPs | accepted |
 | [0011](0011-toolchain.md) | Toolchain: OpenSCAD snapshot via Nix, single bash script | accepted |
 | [0012](0012-case-tray-with-plate.md) | Case: printed tray with a switch plate | proposed |
+| [0013](0013-travel-lids.md) | Travel case: snap-on lid per half, magnets back to back | proposed |
