@@ -11,7 +11,7 @@
 // Coordinates: right half seen from the top (see common/lily58_layout.scad), z = 0 is the bed.
 include <../common/lily58_layout.scad>
 
-part = "assembly";   // tray | plate | washer | lid | lid_test | plate_test | template | assembly | travel
+part = "assembly";   // tray | plate | washer | sleeve | plate_test | template | assembly | travel
 side = "right";      // right | left (left = mirrored right half)
 
 /* [PCB and switches] */
@@ -50,25 +50,14 @@ foot_d     = 8.4;     // 8 mm feet
 foot_depth = 2.0;     // 4 mm high feet stick out 2 mm
 feet = [[10, 96], [132, 88], [132, 29], [46, 10]];
 
-/* [Travel lid (ADR 0013)] */
-caps_above  = 24.0;   // MEASURE 15: tallest keycap top above the plate top
-lid_gap     = 0.2;    // lid skirt to tray wall
-lid_wall    = 2.0;
-lid_top_t   = 2.0;
-lid_overlap = 8.0;    // the skirt reaches this far down the tray wall
-lid_air     = 1.5;    // above the tallest keycap
-groove_d    = 0.5;    // snap groove around the tray wall …
-groove_h    = 1.6;
-rib_h       = 0.35;   // … and short ribs on the lid skirt that click into it
-rib_l       = 20;
-// rib positions on straight PCB edges: [x, y, outward normal x, y]
-ribs = [[40, 106.327, 0, 1], [64, 7.902, 0, -1], [142.522, 58, 1, 0]];
-
-/* [Magnets: the halves stick together back to back] */
-mag_d = 6.2;          // MEASURE 16: magnet Ø + 0.2
-mag_h = 2.0;          // MEASURE 16: magnet height (pocket depth from below)
-// mirrored for the left half, so the pockets meet when the halves lie bottom to bottom
-magnets = [[25, 75], [90, 98], [95, 30], [128, 60]];
+/* [Travel sleeve (ADR 0013): two chambers, the halves slide in keys up, the tray stays as it is] */
+caps_above = 24.0;    // MEASURE 15: tallest keycap top above the plate top
+sl_gap     = 0.5;     // around the half in x and y
+sl_air     = 1.2;     // above the keycaps; also lets the feet climb over the detent
+sl_wall    = 2.0;
+detent_h   = 0.8;     // ridge on each chamber floor; the front rubber feet click in behind it
+grip_w     = 30;      // finger notches in the side walls at the opening
+grip_d     = 20;
 
 /* [Ports on the top edge] */
 usb_x    = lily58_promicro[0];
@@ -96,8 +85,6 @@ z_pcb   = floor_t + under_clear;                  // PCB bottom
 z_plate = z_pcb + pcb_t + plate_above - plate_t;  // plate bottom
 z_top   = z_plate + plate_t;                      // plate top = wall top
 z_cover = z_pcb + pcb_t + cover_clear;            // cover underside
-z_groove = z_top - lid_overlap / 2;               // snap groove centre
-z_lid   = z_top + caps_above + lid_air;           // lid ceiling
 y_top   = lily58_pcb_size[1];
 outer   = pcb_gap + rebate + wall_t;
 plate_r = pcb_gap + rebate - plate_gap;           // plate outline offset from the PCB
@@ -134,9 +121,6 @@ module tray() {
       for (h = lily58_mount_holes) translate(h) cylinder(d = boss_d, h = max(floor_t, z_base + pocket));
     }
     for (f = feet) translate([f[0], f[1], -eps]) cylinder(d = foot_d, h = foot_depth + eps);
-    for (m = magnets) translate([m[0], m[1], -eps]) cylinder(d = mag_d, h = mag_h + eps);
-    translate([0, 0, z_groove - groove_h / 2]) linear_extrude(groove_h)
-      difference() { outline(outer + 1); outline(outer - groove_d); }
     for (h = lily58_mount_holes) translate(h) {
       translate([0, 0, -eps]) cylinder(d = head_d, h = head_h + eps);
       cylinder(d = screw_d, h = 20, center = true);
@@ -178,26 +162,40 @@ module washer() difference() {
   translate([0, 0, -eps]) cylinder(d = screw_d, h = washer_t + 2 * eps);
 }
 
-// Travel lid: slides over the tray wall, ribs on three straight edges click into the groove.
-module lid() {
+// Travel sleeve: open at the front, chamber 0 at the bottom, chamber 1 above; local y runs from
+// the opening (0) to the back wall. A half goes in keys up, its top (USB) edge first.
+foot_out = 4 - foot_depth;                        // 4 mm feet stick out this far
+half_w   = lily58_pcb_size[0] + 2 * outer;
+half_d   = lily58_pcb_size[1] + 2 * outer;
+half_h   = foot_out + z_top + caps_above;
+ch_w     = half_w + 2 * sl_gap;
+ch_d     = half_d + 2 * sl_gap;
+ch_h     = half_h + sl_air;
+sl_size  = [ch_w + 2 * sl_wall, ch_d + sl_wall, 2 * ch_h + 3 * sl_wall];
+y_detent = min([for (f = feet) f[1]]) + outer + 2 * sl_gap - foot_d / 2 - 2.5;
+echo(str("sleeve outside: ", sl_size));
+
+function ch_z(i) = sl_wall + i * (ch_h + sl_wall);   // chamber floor
+module sleeve() {
   difference() {
-    translate([0, 0, z_top - lid_overlap]) linear_extrude(z_lid + lid_top_t - z_top + lid_overlap)
-      outline(outer + lid_gap + lid_wall);
-    translate([0, 0, z_top - lid_overlap - eps]) linear_extrude(z_lid - z_top + lid_overlap + eps)
-      outline(outer + lid_gap);
+    cube(sl_size);
+    for (i = [0, 1]) {
+      translate([sl_wall, -eps, ch_z(i)]) cube([ch_w, ch_d + eps, ch_h]);
+      for (x = [-1, ch_w + sl_wall - 1])
+        translate([x, -eps, ch_z(i) + ch_h / 2 - grip_w / 2]) hull() {
+          cube([sl_wall + 2, eps, grip_w]);
+          translate([0, grip_d - grip_w / 2, grip_w / 2]) rotate([0, 90, 0]) cylinder(d = grip_w, h = sl_wall + 2);
+        }
+    }
   }
-  for (b = ribs) {
-    n = [b[2], b[3]];
-    translate([b[0], b[1], z_groove] + concat(n * (outer + lid_gap + 0.8 - rib_h), 0))
-      rotate([0, 0, atan2(n[1], n[0])]) rotate([90, 0, 0]) cylinder(r = 0.8, h = rib_l, center = true);
-  }
+  for (i = [0, 1]) translate([sl_wall, y_detent, ch_z(i) + detent_h - 1.5])
+    rotate([0, 90, 0]) cylinder(r = 1.5, h = ch_w);
 }
 
-// Snap fit test: the real tray wall and lid skirt around the first rib (print both, try the click).
-module lid_test_box() translate([ribs[0][0] - 15, ribs[0][1] - 8, -1]) cube([30, 20, 100]);
-module lid_test() {
-  intersection() { tray(); lid_test_box(); }
-  translate([40, 0, z_lid + lid_top_t]) rotate([180, 0, 0]) intersection() { lid(); lid_test_box(); }
+// A half (tray coordinates) placed in chamber i; mirrored for the left half.
+module in_chamber(i, left) {
+  translate([sl_wall + sl_gap + outer + (left ? lily58_pcb_size[0] : 0), sl_gap + outer, ch_z(i) + foot_out])
+    if (left) mirror([1, 0, 0]) children(); else children();
 }
 
 // Fit test: cutouts cutout-0.1 … cutout+0.2; the number of notches on the edge = position 1…4.
@@ -236,17 +234,16 @@ module assembly() {
   color("#b0b0b0") plate();
 }
 
-function foot_ref() = 4 - foot_depth;   // 4 mm feet stick out this far
 module sided() { if (side == "left") mirror([1, 0, 0]) children(); else children(); }
 
 if (part == "tray")       sided() tray();
 if (part == "plate")      sided() translate([0, 0, -z_plate]) plate();   // plate bottom on the bed
 if (part == "washer")     washer();
-if (part == "lid")        sided() translate([0, 0, z_lid + lid_top_t]) rotate([180, 0, 0]) lid();  // top on the bed
-if (part == "lid_test")   lid_test();
-if (part == "travel") {   // both halves bottom to bottom, lids on
-  translate([0, 0, 2 * foot_ref()]) { assembly(); color("#6d6d6d", 0.35) lid(); }
-  rotate([0, 180, 0]) mirror([1, 0, 0]) { assembly(); color("#6d6d6d", 0.35) lid(); }
+if (part == "sleeve")     translate([0, 0, sl_size[1]]) rotate([-90, 0, 0]) sleeve();  // back wall on the bed
+if (part == "travel") {   // both halves in the sleeve
+  color("#6d6d6d", 0.35) sleeve();
+  in_chamber(0, false) assembly();
+  in_chamber(1, true) assembly();
 }
 if (part == "plate_test") plate_test();
 if (part == "template")   template();
