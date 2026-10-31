@@ -18,6 +18,9 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 - KAT sets German + US rendered at the old default 0.20 (images only). **KAT fit test**
   (`stl/kat_passtest`, tolerances 0.025/0.05/0.075/0.10) is waiting for the owner's print result.
 
+- **DES for Choc v1** (`des-choc-*`, ADR 0014): fit test printed, leg tol 0.025 chosen; German set
+  rendered and checked, not yet printed. US set not rendered.
+
 ### Open items
 
 1. KAT fit test result → set it as `kat-all` default (like the `des-all` override after `TOL=`),
@@ -34,6 +37,8 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 ./lily58_keycaps.sh des-all [tol]          # DES German (default tol 0.025)
 LAYOUT=us ./lily58_keycaps.sh des-all      # DES US
 ./lily58_keycaps.sh des-test ["t1 t2 …"]   # DES fit test (default 0.00 0.025 0.05 0.075)
+./lily58_keycaps.sh des-choc-all [tol]     # DES for Choc v1, MX spacing (default leg tol 0.025)
+./lily58_keycaps.sh des-choc-test ["t1 …"] # Choc fit test
 ./lily58_keycaps.sh kat-all [tol]          # KAT German (default tol 0.20, to be replaced)
 LAYOUT=us ./lily58_keycaps.sh kat-all      # KAT US
 ./lily58_keycaps.sh kat-test ["t1 t2 …"]   # KAT fit test (default 0.025 0.05 0.075 0.10)
