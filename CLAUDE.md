@@ -54,6 +54,7 @@ Case (ADR 0012):
 
 ```bash
 case/build.sh [-D name=value …]             # trays + plates L/R, sleeve, snap/plate tests, template → stl/case/
+case/render_carry.sh [-D name=value …]      # carry case images → docs/case_carry_*.png (needs the DES-Choc set)
 python3 tools/kicad2scad.py <Lily58_Pro.kicad_pcb> common/lily58_layout.scad   # regenerate layout
 ```
 

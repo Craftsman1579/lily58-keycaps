@@ -44,3 +44,4 @@ themselves are the outer shell. The tray stays unchanged (ADR 0012).
 Choc halves with the DES-Choc caps (cap height above the plate estimated):
 [closed](../case_carry_view.png), [exploded](../case_carry_explode.png),
 [section through the number row](../case_carry_section.png).
+Rendered by `case/render_carry.sh` (scene: `case/carry_scene.scad`).
