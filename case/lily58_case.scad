@@ -13,11 +13,14 @@ include <../common/lily58_layout.scad>
 
 part = "assembly";   // tray | plate | sleeve | snap_test | plate_test | template | assembly | travel
 side = "right";      // right | left (left = mirrored right half)
+switch_type = "mx";  // mx (PandaKB board) | choc (owner's second Lily58, Choc v1 at MX spacing)
+choc = switch_type == "choc";
 
 /* [PCB and switches] */
 pcb_t       = lily58_pcb_thickness;  // outline and holes verified with the paper template
-plate_above = 5.0;    // MX standard: plate top 5.0 mm above the PCB top
-plate_t     = 1.5;    // MX switch clips need 1.5 mm
+plate_above = choc ? 1.9 : 5.0;   // MX standard: plate top 5.0 mm above the PCB top; Choc: the plate
+                                  // lies directly on the PCB, else the switches don't reach it (owner)
+plate_t     = choc ? 1.9 : 1.5;   // MX switch clips need 1.5 mm; Choc plate 1.9 mm (owner)
 cutout      = 13.8;   // switch cutout: owner's first test 13.8; fine-tune with part="plate_test"
 
 /* [M3 mounting from below] */
@@ -25,7 +28,7 @@ under_clear = 4.0;    // tallest part below the PCB measured 3.5 mm, + 0.5 mm
 boss_d      = 6.5;    // tray bosses the PCB rests on (bottom side is free within Ø 6.6 around the holes)
 screw_d     = 3.4;    // M3 clearance in floor and boss
 head_d      = 6.2;    // recess for the owner's M3 heads (round, 3 mm high), flush with the bottom
-head_h      = 3.2;
+head_h      = choc ? 4.5 : 3.2;   // Choc: deeper, so an M3x6 ends 0.6 mm below the plate top
 pboss_d     = 5.2;    // bosses under the plate, standing on the PCB; switch housings are 2.9 mm away
 pboss_pilot = 2.5;    // M3 self-tapping into the plate boss
 pboss_skin  = 0.6;    // keeps the plate top closed above the screw tip
@@ -55,8 +58,9 @@ foot_out   = 4 - foot_depth;
 /* [Tenting: two folding feet per half, recessed so their housings sit flush with the rubber feet] */
 tent_size = [66.3, 20.3];   // MEASURE 17: housing 66 × 20 mm + 0.3
 tent_h    = 5.5;
-// lower-left corners; long side across the inner edge, clear of the five screw heads
-tent      = [[1.0, 55], [25.5, 12]];
+// lower-left corners; long side across the inner edge, clear of the five screw heads. Both start at
+// the same x, so the unfolded feet lift the half along one line (the thumb cluster allows no less).
+tent      = [[25.5, 87.3], [25.5, 12]];   // rear one against the long back edge, just behind a screw head
 tent_skin = 0.7;            // floor above the pockets
 floor_t   = tent_h - foot_out + tent_skin;   // pockets are tent_h - foot_out = 2.9 mm deep
 
@@ -94,7 +98,8 @@ y_top   = lily58_pcb_size[1];
 outer   = pcb_gap + wall_t;
 
 // Screw: M3x10: tray boss above the head (z_pcb - head_h = 4.4) + PCB 1.6 + 4.0 mm into the plate
-// boss (4.4 mm of pilot hole).
+// boss (4.4 mm of pilot hole). Choc: no plate bosses; M3x6: tray boss 3.1 + PCB 1.6 + 1.3 mm into the
+// plate itself (1.3 mm of pilot hole).
 
 module outline(d) offset(r = d) lily58_pcb_2d();
 module zone(x, y) translate([-50, y]) square([50 + x, 100]);
@@ -157,8 +162,8 @@ module plate() {
     for (k = lily58_keys) translate([k[0], k[1], -1]) rotate(k[2]) linear_extrude(plate_t + 2) square(cutout, center = true);
     for (h = lily58_mount_holes) translate([h[0], h[1], -1]) cylinder(d = pboss_pilot, h = 1 + plate_t - pboss_skin);
   }
-  pboss_h = plate_above - plate_t;                 // plate bottom down to the PCB top
-  for (h = lily58_mount_holes) translate([h[0], h[1], -pboss_h]) difference() {
+  pboss_h = plate_above - plate_t;                 // plate bottom down to the PCB top (0 for Choc)
+  if (pboss_h > 0) for (h = lily58_mount_holes) translate([h[0], h[1], -pboss_h]) difference() {
     cylinder(d = pboss_d, h = pboss_h + eps);
     translate([0, 0, -eps]) cylinder(d = pboss_pilot, h = pboss_h + plate_t - pboss_skin + eps);
   }

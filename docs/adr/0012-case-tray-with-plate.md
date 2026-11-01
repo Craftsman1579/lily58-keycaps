@@ -52,12 +52,19 @@ template matches the owner's PCB exactly.
   out 2.6 mm; four per half. Thinner feet (e.g. 8 × 2 mm) would save another 1.6 mm.
 - **Tenting** (v7): two folding feet per half (owner's, housing 66 × 20 × 5.5 mm, hinge on a short
   side) sit in pockets in the bottom, long side across the inner edge: one below the controller
-  zone (x 1–67, y 55–75), one by the thumb cluster (x 25.5–91.5, y 12–32), both clear of the five
-  screw heads. The pockets are 2.9 mm deep, so the housings stick out 2.6 mm like the rubber feet
+  zone (y 55–75), one by the thumb cluster (y 12–32), both from x 25.5 to 91.8 – aligned, so the
+  unfolded feet lift the half evenly (owner); the thumb cluster and its screw allow no smaller x –
+  and clear of the five screw heads. The pockets are 2.9 mm deep, so the housings stick out 2.6 mm like the rubber feet
   and sit flush with them (owner's wish); that needs a 3.6 mm floor (0.7 mm above the pockets).
   The rubber foot by the thumb cluster moved to (12, 42).
 - **Switch cutout 13.8 mm** (owner's first test; printed holes come out smaller). The plate fit test
   (`part="plate_test"`) prints cutout −0.1 … +0.2 mm (13.7–14.0) for the exact value.
+- **Choc variant** (`switch_type="choc"`, files `*_choc.stl`) for the owner's second Lily58 with
+  Choc v1 switches at MX spacing: with the MX plate height the switches hung in the air above the
+  PCB. The 1.9 mm plate now lies directly on the PCB (plate_above = plate_t = 1.9), so the tray wall
+  ends at the PCB top. No plate bosses; the head recess is 4.5 mm deep so an M3x6 ends 0.6 mm below
+  the plate top (1.3 mm of thread in the plate, the snap holds the rest). Same PCB outline, holes,
+  ports and clearance below the PCB assumed as on the MX board – not measured on the Choc board.
 - **1:1 paper template** (`template.pdf`/`.svg`, 100 mm scale bar) to lay the real PCB on.
 - Work happens on the branch `lily58-case` until the case is verified.
 
