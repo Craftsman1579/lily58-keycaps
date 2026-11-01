@@ -93,6 +93,9 @@ template matches the owner's PCB exactly.
 13. M2 standoffs: 4/6/8/10 mm, 2.7 mm across flats (re-measured); MX uses 10 mm, Choc 6 mm.
 17. Folding feet housing: 66 × 20 × 5.5 mm (pockets + 0.3 mm); exact size to confirm.
 14. Switch cutout: 13.8 mm – confirmed by the plate fit test.
+19. Cover (OLED) holes on the owner's PCB: Ø 2.1 mm, centres at x 2.2 / 25.05 mm from the inner
+    edge, 47.25 mm below the top edge (Lily58 Pro data: 3.06 / 25.06, 47.91, Ø 2.4). Measured edge
+    to edge from the PCB and from the case outside; both agree. Choc board not measured.
 
 ## Consequences
 

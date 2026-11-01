@@ -28,7 +28,7 @@ cutout      = 13.8;   // switch cutout: confirmed by the plate_test print (2 not
 /* [Mounting: M2 hex standoffs] */
 under_clear = 4.0;    // tallest part below the PCB measured 3.5 mm, + 0.5 mm
 boss_d      = 6.5;    // tray bosses the PCB rests on (bottom side is free within Ø 6.6 around the holes)
-pilot_d     = 1.7;    // M2 pilot in the OLED rings for the later cover
+pilot_d     = 1.7;    // M2 pilot in the cover rings for the later cover
 so_len    = choc ? 6 : 10;  // owner has 6, 8 and 10 mm; MX: reaches from the floor to the plate
 so_flat   = 2.7;      // measured: 2.7 across flats, 3.1 across corners – passes the 4.7 mm PCB hole
 so_clear  = 0.3;      // hex pocket = so_flat + so_clear (printed holes come out smaller)
@@ -45,7 +45,7 @@ pcb_gap   = 0.6;      // PCB edge to inner wall
 plate_ch  = 0.8;      // 45° chamfer on the top edge: the plate prints top down, so it lies on the bed
                       // side and grows outward at 45° – a radius there would overhang too flat
 bevel     = 3.0;      // 45° chamfer round the bottom edge: looks thinner, no elephant foot
-ring_d    = 6.5;      // support rings under the PCB at the two OLED holes
+ring_d    = 6.5;      // support rings under the PCB at the two cover holes
 
 /* [Snap: a tongue under the plate edge clicks into a groove in the wall top] */
 snap_c  = pcb_gap + wall_t / 2;   // centre line, offset from the PCB outline
@@ -108,6 +108,11 @@ trrs_z   = 3.7 - pcb_t / 2;     // measured: jack axis 3.7 mm above the PCB cent
 trrs_h   = 8.5;
 
 /* [Controller zone: open; a separate cover follows later (no OLED)] */
+// Cover holes (the OLED holes): measured on the owner's PCB (MEASURE 19), Ø 2.1 mm. Hole 1 sits
+// 0.9 mm closer to the inner edge than in the Lily58 Pro data (lily58_oled_holes), both 0.65 mm
+// further up; x of hole 1 is the mean of the edge measurement and the hole spacing (2.05 / 2.35).
+cover_holes  = [[2.2, 59.08], [25.05, 59.08]];
+cover_hole_d = 2.1;
 ctrl_x = 28.5;        // plate starts right of this
 ctrl_y = 56.6;        // ... or below this
 
@@ -169,7 +174,7 @@ module tray() {
     ports();
     translate([0, 0, z_plate + eps]) snap_ring(groove);
   }
-  for (h = lily58_oled_holes) translate(h) difference() {   // pilot holes for the later cover
+  for (h = cover_holes) translate(h) difference() {   // pilot holes for the later cover
     translate([0, 0, floor_t - eps]) cylinder(d = ring_d, h = z_pcb - floor_t + eps);
     translate([0, 0, floor_t]) cylinder(d = pilot_d, h = 20);
   }
@@ -301,7 +306,12 @@ module line(w = 0.3) difference() { children(); offset(delta = -w) children(); }
 module template() {
   line() lily58_pcb_2d();
   for (h = lily58_mount_holes) translate(h) line() circle(d = lily58_mount_hole_d);
-  for (h = lily58_oled_holes) translate(h) line() circle(d = 2.2);
+  // cover holes (measured) with a 4 mm ring and a cross through the centre
+  for (h = cover_holes) translate(h) {
+    line() circle(d = cover_hole_d);
+    line() circle(d = 4);
+    for (r = [0, 90]) rotate(r) square([8, 0.2], center = true);
+  }
   for (k = lily58_keys) translate([k[0], k[1]]) rotate(k[2]) line() square(cutout, center = true);
   // 100 mm scale bar: check the print scale with a ruler
   translate([0, -12]) {
