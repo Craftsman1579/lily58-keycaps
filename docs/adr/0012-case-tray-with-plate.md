@@ -52,7 +52,8 @@ template matches the owner's PCB exactly.
   out 2.6 mm; four per half. Thinner feet (e.g. 8 × 2 mm) would save another 1.6 mm.
 - **Tenting** (v7): two folding feet per half (owner's, housing 66 × 20 × 5.5 mm, hinge on a short
   side) sit in pockets in the bottom, long side across the inner edge: one below the controller
-  zone (y 55–75), one by the thumb cluster (y 12–32), both from x 25.5 to 91.8 – aligned, so the
+  zone against the long back edge, just behind a screw head (y 87.3–107.6), one by the thumb cluster
+  (y 12–32), both from x 25.5 to 91.8 – aligned, so the
   unfolded feet lift the half evenly (owner); the thumb cluster and its screw allow no smaller x –
   and clear of the five screw heads. The pockets are 2.9 mm deep, so the housings stick out 2.6 mm like the rubber feet
   and sit flush with them (owner's wish); that needs a 3.6 mm floor (0.7 mm above the pockets).
