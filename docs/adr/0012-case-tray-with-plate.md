@@ -1,6 +1,6 @@
 # 0012 – Case: printed tray with a switch plate
 
-- **Status:** proposed (draft v7, tenting pockets; snap, pocket size to be tuned)
+- **Status:** proposed (draft v8, M2 standoffs in both variants; tenting pockets; snap, pocket size to be tuned)
 - **Decided by:** owner (tray with plate, M2 screws and standoffs, no OLED, feet, tenting later,
   separate branch), derived (geometry)
 
@@ -34,15 +34,17 @@ template matches the owner's PCB exactly.
   the 5 mm PCB-to-plate-top of MX and the 3.5 mm parts below the PCB are fixed; the rest was
   trimmed (standoffs → bosses −2.3, floor −0.4). The keycaps (DES vs KAT) matter more
   than anything left in the case.
-- **M3 from below** (owner, v6: thicker screw, stronger thread): five M3x10 screws (the owner's
-  round heads are 3 mm high; recessed flush, Ø 6.2 × 3.2 mm) run up through the floor, the tray bosses the PCB
-  rests on (Ø 6.5 mm, 4.0 mm high: the 3.5 mm parts below + 0.5) and the 4.7 mm PCB holes, and tap
-  their thread into bosses under the plate (Ø 5.2 mm, pilot 2.5 mm, 4.4 mm deep; the nearest switch
-  housing is 2.9 mm from a hole centre). The PCB is clamped between the two bosses and the plate is
-  pulled onto the wall. No washers, no holes in the plate top. Earlier variants (M2 standoffs,
-  M2 self-tapping from the top) are in the history of this file.
-- **Assembly:** PCB onto the tray bosses, plate with the switches on top (it snaps into the
-  groove, the switches go into the hotswap sockets), then the screws from below.
+- **M2 hex standoffs, like the Choc variant** (owner, v8: liked the Choc mounting): an M2 standoff
+  (female both ends, 2.7 mm across flats, passes the 4.7 mm PCB hole) sits in a hex pocket in each
+  tray boss (Ø 6.5 mm, 4.0 mm high: the 3.5 mm parts below + 0.5). MX uses **10 mm** standoffs
+  (z 2.6–12.6), ending 0.1 mm below the plate; sleeves under the plate (Ø 5.2 / 3.6 mm, the nearest
+  switch housing is 2.9 mm from a hole centre) stand on the PCB, so the top screw clamps plate,
+  sleeve and PCB onto the tray boss. M2x4 from below (2.5 mm of thread), M2x4 from the top (3.5 mm);
+  both heads (Ø 3.7 × 1 mm, recesses Ø 4.1) flush in 1.1 mm recesses. Metal threads both ways instead of v6's M3x10
+  tapping into a plastic boss. Earlier variants are in the history of this file.
+- **Assembly:** standoffs into the pockets, M2x4 from below; PCB onto the tray bosses; plate with
+  the switches on top (it snaps into the groove, the switches go into the hotswap sockets); M2x4 from
+  the top through the plate into the standoffs.
 - **No OLED, no cover yet** (owner's choice, v4): the controller zone stays open; the plate ends
   1 mm clear of the neighbouring keycaps. A separate cover follows later; the support rings under
   the two OLED holes already have M2 pilot holes for it.
@@ -67,7 +69,7 @@ template matches the owner's PCB exactly.
   6 mm, 2.7 mm across flats / 3.1 across corners, so they pass the 4.7 mm PCB holes) sit in hex
   pockets in the tray bosses (z 3.1–9.1, 0.1 mm below the PCB top). An M2x4 from below holds each
   standoff, an M2x4 from the top pulls the plate onto the PCB and the PCB onto the boss; both heads
-  (Ø 3.2 × 1 mm) sit flush in 1.1 mm recesses. Metal threads both ways instead of the first draft's
+  (Ø 3.7 × 1 mm, recesses Ø 4.1) sit flush in 1.1 mm recesses. Metal threads both ways instead of the first draft's
   M3x6 tapping 1.3 mm into the plate (owner's idea). Same PCB outline, holes,
   ports and clearance below the PCB assumed as on the MX board – not measured on the Choc board.
 - **1:1 paper template** (`template.pdf`/`.svg`, 100 mm scale bar) to lay the real PCB on.
@@ -88,7 +90,7 @@ template matches the owner's PCB exactly.
 10. Reset switch on the top, about 3.5 mm high.
 11. (OLED window – obsolete.)
 12. Highest point of the Pro Micro: 9.0 mm above the PCB bottom = 7.4 mm above its top.
-13. M2 standoffs: 4/6/8/10 mm, hex 2.8 mm across flats – no longer used (v3).
+13. M2 standoffs: 4/6/8/10 mm, 2.7 mm across flats (re-measured); MX uses 10 mm, Choc 6 mm.
 17. Folding feet housing: 66 × 20 × 5.5 mm (pockets + 0.3 mm); exact size to confirm.
 14. Switch cutout: 13.8 mm – confirmed by the plate fit test.
 

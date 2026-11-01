@@ -28,8 +28,8 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 4. Optional: a full blank set as ready-made plates (currently 1 spare cap per row + thumbs + homing).
 5. Script comments are still German.
 6. **Case** (branch `lily58-case`, ADR 0012): draft v6 tray + plate for the owner's PandaKB
-   Lily58 RGB MX (no OLED), as flat as possible. The PCB is clamped between printed bosses by
-   M3x10 screws from below into bosses under the plate; the plate covers the wall and snaps into a
+   Lily58 RGB MX (no OLED), as flat as possible. M2 hex standoffs in the tray bosses (MX 10 mm,
+   Choc 6 mm), M2x4 from below and from the top; the plate covers the wall and snaps into a
    groove (tune with `part="snap_test"`). Controller zone open, separate cover later.
    Two folding tenting feet per half in pockets in the bottom, flush with the rubber feet.
    Switch cutout 13.8 mm, confirmed by the plate fit test.
