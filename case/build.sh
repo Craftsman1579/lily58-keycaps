@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Exports the case parts to stl/case/: tray_right/left, plate_right/left (top down on the bed),
 # the same four for the Choc board (*_choc.stl, plate directly on the PCB),
-# travel sleeve, snap_test, plate_test, and template.pdf/.svg (1:1 paper template of the PCB).
+# travel sleeve, carry case for the Choc board (carry_frame_right/left, carry_mid), snap_test,
+# plate_test, and template.pdf/.svg (1:1 paper template of the PCB).
 # Extra arguments go to OpenSCAD, e.g.: case/build.sh -D cutout=14.0 -D under_clear=3.8
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -27,6 +28,9 @@ run tray_right_choc.stl  -D 'part="tray"'  -D 'side="right"' -D 'switch_type="ch
 run tray_left_choc.stl   -D 'part="tray"'  -D 'side="left"'  -D 'switch_type="choc"' "$@"
 run plate_right_choc.stl -D 'part="plate"' -D 'side="right"' -D 'switch_type="choc"' "$@"
 run plate_left_choc.stl  -D 'part="plate"' -D 'side="left"'  -D 'switch_type="choc"' "$@"
+run carry_frame_right.stl -D 'part="frame"' -D 'side="right"' -D 'switch_type="choc"' "$@"
+run carry_frame_left.stl  -D 'part="frame"' -D 'side="left"'  -D 'switch_type="choc"' "$@"
+run carry_mid.stl         -D 'part="mid"'                     -D 'switch_type="choc"' "$@"
 run snap_test.stl  -D 'part="snap_test"' "$@"
 run sleeve.stl     -D 'part="sleeve"' "$@"
 run plate_test.stl -D 'part="plate_test"' "$@"

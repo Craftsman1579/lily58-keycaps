@@ -35,6 +35,9 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
    Switch cutout 13.8 mm, confirmed by the plate fit test.
 7. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
    Waiting for the keycap height above the plate (`MEASURE 15`).
+8. **Carry case** (ADR 0015, Choc board): halves keys facing each other, a frame on each, a middle
+   plate between, rubber bands round it. `caps_above` for Choc is an estimate (18 mm) – wall height
+   still to be confirmed by the owner. Not printed.
 
 ## Commands
 
@@ -55,7 +58,7 @@ python3 tools/kicad2scad.py <Lily58_Pro.kicad_pcb> common/lily58_layout.scad   #
 ```
 
 The KiCad file comes from `github.com/kata0510/Lily58` (`Pro/PCB/`, MIT); it is not cloned by any
-script. `case/lily58_case.scad` takes `part=tray|plate|sleeve|snap_test|plate_test|template|assembly|travel`, `side=right|left`.
+script. `case/lily58_case.scad` takes `part=tray|plate|sleeve|frame|mid|snap_test|plate_test|template|assembly|travel|carry`, `side=right|left`.
 
 `test` and `all` are legacy DSA modes (no flat sides, old support) – not maintained.
 Output: `~/Documents/lily58_keycaps/stl/<mode folder>/` = `<Group>_body.stl` + `<Group>_legends.stl`,

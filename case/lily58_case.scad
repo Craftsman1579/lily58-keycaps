@@ -12,7 +12,8 @@
 // Coordinates: right half seen from the top (see common/lily58_layout.scad), z = 0 is the bed.
 include <../common/lily58_layout.scad>
 
-part = "assembly";   // tray | plate | sleeve | snap_test | plate_test | template | assembly | travel
+part = "assembly";   // tray | plate | sleeve | frame | mid | snap_test | plate_test | template | assembly
+                     // | travel | carry
 side = "right";      // right | left (left = mirrored right half)
 switch_type = "mx";  // mx (PandaKB board) | choc (owner's second Lily58, Choc v1 at MX spacing)
 choc = switch_type == "choc";
@@ -68,8 +69,10 @@ tent      = [[25.5, 87.3], [25.5, 12]];   // rear one against the long back edge
 tent_skin = 0.7;            // floor above the pockets
 floor_t   = tent_h - foot_out + tent_skin;   // pockets are tent_h - foot_out = 2.9 mm deep
 
+caps_above = choc ? 18.0 : 24.0;  // MEASURE 15: tallest keycap top above the plate top. Choc
+                      // estimate: DES-Choc R1 cap is 12.8 mm tall from the skirt, skirt ~4.6 mm above the plate
+
 /* [Travel sleeve (ADR 0013): two chambers, the halves slide in keys up, the tray stays as it is] */
-caps_above = 24.0;    // MEASURE 15: tallest keycap top above the plate top
 sl_gap     = 0.5;     // around the half in x and y
 sl_air     = 1.2;     // above the keycaps; also lets the feet climb over the detent
 sl_wall    = 2.0;
@@ -77,7 +80,21 @@ detent_h   = 0.8;     // ridge on each chamber floor; the front rubber feet clic
 grip_w     = 30;      // finger notches in the side walls at the opening
 grip_d     = 20;
 
-/* [Ports on the top edge] */
+/* [Carry case (ADR 0015): halves keys facing each other, a frame on each, a middle plate between,
+   held by rubber bands; the trays are the outside] */
+cc_air    = 1.0;      // above the tallest keycap, to the middle plate
+cc_mid    = 2.0;      // middle plate
+cc_rest   = 3.0;      // the frame rests this wide on the plate rim (keycaps stay inside the PCB outline)
+cc_gap    = 0.3;      // skirt to the half
+cc_skirt  = [1.6, 3.0];   // skirt round the plate edge and the wall top: thickness, depth
+cc_dowel  = [[-4, 80], [146.5, 60], [60, 110.35], [70, 3.9]];   // on the frame's centre line
+cc_dowel_d = 2.0;     // 1.75 mm filament pieces as dowels
+cc_dowel_h = 5;       // hole depth in the frame (middle plate: through)
+cc_band   = [65, 90]; // y of the rubber band grooves; they cross the straight left and right edges
+cc_band_w = 8;
+cc_band_d = 0.8;
+
+
 port_dx  = -2;        // test print: both connectors sit 2 mm closer to the inner edge
 usb_x    = lily58_promicro[0] + port_dx;
 usb_w    = 13;
@@ -218,6 +235,49 @@ module in_chamber(i, left) {
     if (left) mirror([1, 0, 0]) children(); else children();
 }
 
+// Carry case: frame in its own coordinates, z = 0 lies on the middle plate, the half rests on z = cc_h
+// (plate top; in the open controller zone one plate_t lower, on the wall top).
+cc_h   = caps_above + cc_air;
+cc_out = outer + cc_gap + cc_skirt[0];
+echo(str("carry case height: ", 2 * (foot_out + z_top + cc_h) + cc_mid, " (", 2 * cc_h + cc_mid, " without the halves)"));
+
+module cc_band_cut() for (y = cc_band) difference() {
+  translate([-50, y - cc_band_w / 2]) square([250, cc_band_w]);
+  outline(cc_out - cc_band_d);
+}
+module cc_dowels(h) for (d = cc_dowel) translate([d[0], d[1], -eps]) cylinder(d = cc_dowel_d, h = h + eps, $fn = 24);
+
+module frame() difference() {
+  union() {
+    linear_extrude(cc_h) difference() { outline(cc_out); outline(outer - cc_rest); }
+    translate([0, 0, cc_h - eps]) linear_extrude(cc_skirt[1] + eps) difference() { outline(cc_out); outline(outer + cc_gap); }
+    translate([0, 0, cc_h - eps]) linear_extrude(plate_t + eps) intersection() {
+      difference() { outline(outer + cc_gap); outline(outer - cc_rest); }
+      offset(delta = -cc_gap) zone(ctrl_x, ctrl_y);
+    }
+  }
+  translate([0, 0, -1]) linear_extrude(cc_h + cc_skirt[1] + 2) cc_band_cut();
+  cc_dowels(cc_dowel_h);
+}
+
+// The right half lies keys up below it, the left half keys down on top: turned over, the left
+// outline covers the right one, so the stack is the right outline; "L" faces the left half.
+module mid() difference() {
+  linear_extrude(cc_mid) outline(cc_out);
+  translate([0, 0, -1]) linear_extrude(cc_mid + 2) cc_band_cut();
+  translate([0, 0, -1]) cc_dowels(cc_mid + 2);
+  translate([90, 60, cc_mid - 0.4]) linear_extrude(1) text("L", size = 12, halign = "center", valign = "center");
+}
+
+module carry() {
+  z_mid = foot_out + z_top + cc_h;
+  translate([0, 0, foot_out]) assembly();
+  color("#6d6d6d") translate([0, 0, z_mid]) mirror([0, 0, 1]) frame();
+  color("#9e9e9e") translate([0, 0, z_mid]) mid();
+  color("#6d6d6d") translate([0, 0, z_mid + cc_mid]) frame();   // left frame, turned over
+  translate([0, 0, 2 * z_mid + cc_mid - foot_out]) mirror([0, 0, 1]) assembly();
+}
+
 // Snap fit test: the real wall and plate edge on a straight piece of the bottom edge.
 module snap_box() translate([50, -8, -1]) cube([30, 16, 40]);
 module snap_test() {
@@ -264,6 +324,9 @@ if (part == "travel") {   // both halves in the sleeve
   in_chamber(0, false) assembly();
   in_chamber(1, true) assembly();
 }
+if (part == "frame")      sided() frame();    // middle-plate face on the bed
+if (part == "mid")        mid();
+if (part == "carry")      carry();
 if (part == "snap_test")  snap_test();
 if (part == "plate_test") plate_test();
 if (part == "template")   template();
