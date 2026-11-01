@@ -32,7 +32,7 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
    M3x10 screws from below into bosses under the plate; the plate covers the wall and snaps into a
    groove (tune with `part="snap_test"`). Controller zone open, separate cover later.
    Two folding tenting feet per half in pockets in the bottom, flush with the rubber feet.
-   Switch cutout 13.8 mm, exact plate fit test pending.
+   Switch cutout 13.8 mm, confirmed by the plate fit test.
 7. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
    Waiting for the keycap height above the plate (`MEASURE 15`).
 

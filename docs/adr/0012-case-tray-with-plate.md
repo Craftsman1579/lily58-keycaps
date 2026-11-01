@@ -1,6 +1,6 @@
 # 0012 – Case: printed tray with a switch plate
 
-- **Status:** proposed (draft v7, tenting pockets; snap, switch cutout and pocket size to be tuned)
+- **Status:** proposed (draft v7, tenting pockets; snap, pocket size to be tuned)
 - **Decided by:** owner (tray with plate, M2 screws and standoffs, no OLED, feet, tenting later,
   separate branch), derived (geometry)
 
@@ -58,8 +58,8 @@ template matches the owner's PCB exactly.
   and clear of the five screw heads. The pockets are 2.9 mm deep, so the housings stick out 2.6 mm like the rubber feet
   and sit flush with them (owner's wish); that needs a 3.6 mm floor (0.7 mm above the pockets).
   The rubber foot by the thumb cluster moved to (12, 42).
-- **Switch cutout 13.8 mm** (owner's first test; printed holes come out smaller). The plate fit test
-  (`part="plate_test"`) prints cutout −0.1 … +0.2 mm (13.7–14.0) for the exact value.
+- **Switch cutout 13.8 mm** (printed holes come out smaller than drawn). Confirmed by the plate fit
+  test (`part="plate_test"`, 13.7–14.0 mm): the cutout with two notches (13.8) fits best (owner).
 - **Choc variant** (`switch_type="choc"`, files `*_choc.stl`) for the owner's second Lily58 with
   Choc v1 switches at MX spacing: with the MX plate height the switches hung in the air above the
   PCB. The 1.9 mm plate now lies directly on the PCB (plate_above = plate_t = 1.9), so the tray wall
@@ -90,10 +90,9 @@ template matches the owner's PCB exactly.
 12. Highest point of the Pro Micro: 9.0 mm above the PCB bottom = 7.4 mm above its top.
 13. M2 standoffs: 4/6/8/10 mm, hex 2.8 mm across flats – no longer used (v3).
 17. Folding feet housing: 66 × 20 × 5.5 mm (pockets + 0.3 mm); exact size to confirm.
-14. Switch cutout: 13.8 mm from the owner's first test; exact test pending.
+14. Switch cutout: 13.8 mm – confirmed by the plate fit test.
 
 ## Consequences
 
-- All parts are ready for a first test print; the plate cutout may still change after the exact
-  fit test.
+- All parts are ready for a first test print; the switch cutout is confirmed.
 - `case/build.sh` exports to `stl/case/`; check every part with `tools/f32.py` and `tools/shells.py`.

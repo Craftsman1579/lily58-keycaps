@@ -25,7 +25,7 @@ pcb_t       = lily58_pcb_thickness;  // outline and holes verified with the pape
 plate_above = choc ? 1.9 : 5.0;   // MX standard: plate top 5.0 mm above the PCB top; Choc: the plate
                                   // lies directly on the PCB, else the switches don't reach it (owner)
 plate_t     = choc ? 1.9 : 1.5;   // MX switch clips need 1.5 mm; Choc plate 1.9 mm (owner)
-cutout      = 13.8;   // switch cutout: owner's first test 13.8; fine-tune with part="plate_test"
+cutout      = 13.8;   // switch cutout: confirmed by the plate_test print (2 notches = 13.8 fit best)
 
 /* [M3 mounting from below] */
 under_clear = 4.0;    // tallest part below the PCB measured 3.5 mm, + 0.5 mm
