@@ -6,6 +6,10 @@
 // plate that stand on the PCB. The PCB is clamped between the two bosses, the plate pulled onto the
 // wall top, where it also snaps into a groove. The plate top stays closed.
 // Assembly: PCB on the tray bosses, plate with switches on (snaps in), screws in from below.
+// Choc variant (switch_type="choc"): the plate lies on the PCB. M2 hex standoffs (female both ends)
+// sit in hex pockets in the tray bosses and reach up through the PCB holes; an M2x4 from below
+// holds each standoff in the tray, an M2x4 from the top pulls the plate onto the PCB. Both heads
+// sit flush in recesses.
 //
 // Usage: openscad -D 'part="tray"' -D 'side="left"' -o tray_left.stl case/lily58_case.scad
 // Coordinates: right half seen from the top (see common/lily58_layout.scad), z = 0 is the bed.
@@ -28,11 +32,20 @@ under_clear = 4.0;    // tallest part below the PCB measured 3.5 mm, + 0.5 mm
 boss_d      = 6.5;    // tray bosses the PCB rests on (bottom side is free within Ø 6.6 around the holes)
 screw_d     = 3.4;    // M3 clearance in floor and boss
 head_d      = 6.2;    // recess for the owner's M3 heads (round, 3 mm high), flush with the bottom
-head_h      = choc ? 4.5 : 3.2;   // Choc: deeper, so an M3x6 ends 0.6 mm below the plate top
+head_h      = 3.2;
 pboss_d     = 5.2;    // bosses under the plate, standing on the PCB; switch housings are 2.9 mm away
 pboss_pilot = 2.5;    // M3 self-tapping into the plate boss
 pboss_skin  = 0.6;    // keeps the plate top closed above the screw tip
 pilot_d     = 1.7;    // M2 pilot in the OLED rings for the later cover
+
+/* [Choc: M2 hex standoffs instead of the M3 screws] */
+so_len    = 6;        // owner has 6, 8 and 10 mm; 6 fits without making the case taller
+so_flat   = 2.7;      // measured: 2.7 across flats, 3.1 across corners – passes the 4.7 mm PCB hole
+so_clear  = 0.3;      // hex pocket = so_flat + so_clear (printed holes come out smaller)
+so_top    = 0.1;      // the standoff ends this far below the PCB top, so the plate clamps the PCB
+m2_d      = 2.4;      // M2 clearance
+m2_head_d = 3.6;      // measured head Ø 3.2 × 1.0 mm, + clearance
+m2_head_h = 1.1;      // recesses: flush in the plate top and in the tray bottom
 
 /* [Tray] */
 wall_t    = 4.0;      // the plate lies on the wall top, flush with the outside
@@ -98,8 +111,10 @@ y_top   = lily58_pcb_size[1];
 outer   = pcb_gap + wall_t;
 
 // Screw: M3x10: tray boss above the head (z_pcb - head_h = 4.4) + PCB 1.6 + 4.0 mm into the plate
-// boss (4.4 mm of pilot hole). Choc: no plate bosses; M3x6: tray boss 3.1 + PCB 1.6 + 1.3 mm into the
-// plate itself (1.3 mm of pilot hole).
+// boss (4.4 mm of pilot hole).
+// Choc: standoff z 3.1 … 9.1; below it 3.1 - 1.1 = 2.0 mm of floor, so an M2x4 has 2.0 mm of thread;
+// from the top an M2x4 passes 0.8 mm of plate and 0.1 mm gap and has 3.1 mm (5.1 of the 6 mm together).
+so_bot  = z_pcb + pcb_t - so_top - so_len;        // standoff bottom
 
 module outline(d) offset(r = d) lily58_pcb_2d();
 module zone(x, y) translate([-50, y]) square([50 + x, 100]);
@@ -136,7 +151,11 @@ module tray() {
     }
     for (f = feet) translate([f[0], f[1], -eps]) cylinder(d = foot_d, h = foot_depth + eps);
     for (t = tent) translate([t[0], t[1], -eps]) cube([tent_size[0], tent_size[1], tent_h - foot_out + eps]);
-    for (h = lily58_mount_holes) translate(h) {
+    if (choc) for (h = lily58_mount_holes) translate(h) {
+      translate([0, 0, -eps]) cylinder(d = m2_head_d, h = m2_head_h + eps);
+      cylinder(d = m2_d, h = 20, center = true);
+      translate([0, 0, so_bot]) cylinder(d = (so_flat + so_clear) / cos(30), h = 20, $fn = 6);
+    } else for (h = lily58_mount_holes) translate(h) {
       translate([0, 0, -eps]) cylinder(d = head_d, h = head_h + eps);
       cylinder(d = screw_d, h = 20, center = true);
     }
@@ -160,7 +179,10 @@ module plate() {
         linear_extrude(0.1 + eps) plate_shape(z + 0.1);
     }
     for (k = lily58_keys) translate([k[0], k[1], -1]) rotate(k[2]) linear_extrude(plate_t + 2) square(cutout, center = true);
-    for (h = lily58_mount_holes) translate([h[0], h[1], -1]) cylinder(d = pboss_pilot, h = 1 + plate_t - pboss_skin);
+    if (choc) for (h = lily58_mount_holes) translate([h[0], h[1], 0]) {
+      translate([0, 0, -1]) cylinder(d = m2_d, h = plate_t + 2);
+      translate([0, 0, plate_t - m2_head_h]) cylinder(d = m2_head_d, h = m2_head_h + 1);
+    } else for (h = lily58_mount_holes) translate([h[0], h[1], -1]) cylinder(d = pboss_pilot, h = 1 + plate_t - pboss_skin);
   }
   pboss_h = plate_above - plate_t;                 // plate bottom down to the PCB top (0 for Choc)
   if (pboss_h > 0) for (h = lily58_mount_holes) translate([h[0], h[1], -pboss_h]) difference() {

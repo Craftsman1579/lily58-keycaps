@@ -63,8 +63,12 @@ template matches the owner's PCB exactly.
 - **Choc variant** (`switch_type="choc"`, files `*_choc.stl`) for the owner's second Lily58 with
   Choc v1 switches at MX spacing: with the MX plate height the switches hung in the air above the
   PCB. The 1.9 mm plate now lies directly on the PCB (plate_above = plate_t = 1.9), so the tray wall
-  ends at the PCB top. No plate bosses; the head recess is 4.5 mm deep so an M3x6 ends 0.6 mm below
-  the plate top (1.3 mm of thread in the plate, the snap holds the rest). Same PCB outline, holes,
+  ends at the PCB top. No plate bosses; instead **M2 hex standoffs** (owner's, female both ends,
+  6 mm, 2.7 mm across flats / 3.1 across corners, so they pass the 4.7 mm PCB holes) sit in hex
+  pockets in the tray bosses (z 3.1–9.1, 0.1 mm below the PCB top). An M2x4 from below holds each
+  standoff, an M2x4 from the top pulls the plate onto the PCB and the PCB onto the boss; both heads
+  (Ø 3.2 × 1 mm) sit flush in 1.1 mm recesses. Metal threads both ways instead of the first draft's
+  M3x6 tapping 1.3 mm into the plate (owner's idea). Same PCB outline, holes,
   ports and clearance below the PCB assumed as on the MX board – not measured on the Choc board.
 - **1:1 paper template** (`template.pdf`/`.svg`, 100 mm scale bar) to lay the real PCB on.
 - Work happens on the branch `lily58-case` until the case is verified.
