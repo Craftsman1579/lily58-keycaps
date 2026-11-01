@@ -45,8 +45,9 @@ template matches the owner's PCB exactly.
 - **Assembly:** standoffs into the pockets, M2x4 from below; PCB onto the tray bosses; plate with
   the switches on top (it snaps into the groove, the switches go into the hotswap sockets); M2x4 from
   the top through the plate into the standoffs.
-- **No OLED** (owner's choice, v4): the plate leaves the controller zone open and ends 1 mm clear of
-  the neighbouring keycaps.
+- **No OLED** (owner's choice, v4): the plate leaves the controller zone open (x < 28.5, y > 55.5).
+  Its edge towards the bottom row is 1.0 mm clear of the nearest keycap, so the cover keeps 1.3 mm
+  between its edge and the screw head recesses.
 - **Controller cover** (`part="cover"`, owner: 7.7 mm above the PCB, clicks into the tray): a 1.5 mm
   top whose underside is 7.7 mm above the PCB top (Pro Micro: 7.4 mm), walls on the tray wall with
   the plate's tongue in the groove, 1.5 mm inner walls along the plate edge (0.2 mm gap) down to the
@@ -54,7 +55,10 @@ template matches the owner's PCB exactly.
   from the top (head flush) goes through the cover and the PCB into a heat-set insert (3.9 mm across
   flats, 1.5 mm long) in the tray ring below the PCB: Ø 3.6 × 1.8 mm melt-in hole, then 2 mm room
   for the screw tip (it ends 0.8 mm below the insert). The screw clamps the PCB between post and
-  ring. Printed top down. The ports are cut through its walls.
+  ring. Printed top down. 45° chamfers on the top edges (owner): 3 mm along the case outline like the
+  tray's bottom bevel, 0.8 mm along the plate like the plate's edge (the inner walls are 1.5 mm),
+  1 mm on the vertical corner towards the keys. The USB plug reaches 9.15 mm above the PCB, the
+  cover top 9.2 mm, so both port slots are open to the top of the cover (U-notches).
 - **USB and TRRS** get rounded slots through the top wall, 2 mm closer to the
   inner edge than the KiCad positions (owner's test print).
 - **Rubber feet:** Ø 8 × 4 mm, recessed 1.4 mm (pockets Ø 8.4 mm, 0.6 mm floor above), sticking

@@ -112,11 +112,15 @@ trrs_h   = 8.5;
 cover_holes  = [[2.2, 59.08], [25.05, 59.08]];
 cover_hole_d = 2.1;
 ctrl_x = 28.5;        // plate starts right of this
-ctrl_y = 56.6;        // ... or below this
+ctrl_y = 55.5;        // ... or below this: 1.0 mm clear of the nearest keycap, so the cover
+                      // keeps 1.3 mm between its plate-side edge and the screw head recesses
 cov_gap  = 7.7;       // cover underside above the PCB top (owner; Pro Micro top 7.4 mm)
 cov_t    = 1.5;
 cov_wall = 1.5;       // inner walls along the plate edge, down to the plate top
 cov_clr  = 0.2;       // gap to the plate edge
+cov_ch_out = 3.0;     // 45° chamfers on the top edges: along the case outline like the tray's bottom
+cov_ch_in  = 0.8;     // bevel; along the plate edge like the plate (the inner walls are only 1.5 mm)
+cov_ch_v   = 1.0;     // vertical corner towards the keys
 cov_post = 4.5;       // posts on the PCB round the cover holes (4 mm pad)
 ins_d    = 3.6;       // heat-set M2 insert 3.9 mm across flats, 1.5 mm long (owner): melt-in hole
 ins_h    = 1.8;       // insert + 0.3 mm for the displaced plastic
@@ -152,14 +156,14 @@ module snap_ring(segs) for (g = segs) for (d = [g[0] : 0.1 : g[1] - 0.05])
   translate([0, 0, -d - 0.1]) linear_extrude(0.1 + eps)
     ring(snap_c, g[2] + (g[3] - g[2]) * (d + 0.05 - g[0]) / (g[1] - g[0]));
 
-// Slot through the top wall.
-module port(x, z, w, h) {
+// Slot through the top wall; open = also open upwards (cover: the USB plug reaches its top).
+module port(x, z, w, h, open = false) {
   translate([x, y_top + 0.5, z]) rotate([-90, 0, 0]) linear_extrude(outer + 1)
-    hull() for (s = [-1, 1]) translate([s * (w - h) / 2, 0]) circle(d = h);
+    hull() for (s = [-1, 1], u = open ? [0, 30] : [0]) translate([s * (w - h) / 2, -u]) circle(d = h);
 }
-module ports() {
-  port(usb_x, z_pcb + pcb_t + usb_z, usb_w, usb_h);
-  port(trrs_x, z_pcb + pcb_t + trrs_z, trrs_w, trrs_h);
+module ports(open = false) {
+  port(usb_x, z_pcb + pcb_t + usb_z, usb_w, usb_h, open);
+  port(trrs_x, z_pcb + pcb_t + trrs_z, trrs_w, trrs_h, open);
 }
 
 module tray() {
@@ -198,7 +202,21 @@ module plate_shape(inset = 0) difference() { outline(outer - inset); zone(ctrl_x
 // Controller cover in tray coordinates: top plate, walls on the tray wall (tongue in the groove),
 // inner walls along the plate edge down to the plate top, posts on the PCB, ports cut through.
 module cover_shape() intersection() { outline(outer); offset(delta = -cov_clr) zone(ctrl_x, ctrl_y); }
-module cover() {
+// Outline inset by a, plate-side edges inset by b; the corner towards the keys chamfered.
+module cover_layer(a, b) intersection() {
+  outline(outer - a);
+  x = ctrl_x - cov_clr - b; y = ctrl_y + cov_clr + b; k = cov_ch_v;
+  polygon([[-50, y], [x - k, y], [x, y + k], [x, 200], [-50, 200]]);
+}
+// Envelope that cuts the chamfers: 0.1 mm slices over the top cov_ch_out.
+module cover_env() {
+  z0 = z_cov + cov_t - cov_ch_out;
+  translate([0, 0, -1]) linear_extrude(z0 + 1) cover_layer(0, 0);
+  for (z = [0 : 0.1 : cov_ch_out - 0.05]) translate([0, 0, z0 + z]) linear_extrude(0.1 + eps)
+    cover_layer(z + 0.1, max(0, z + 0.1 - (cov_ch_out - cov_ch_in)));
+}
+module cover() intersection() { cover_raw(); cover_env(); }
+module cover_raw() {
   difference() {
     union() {
       translate([0, 0, z_cov]) linear_extrude(cov_t) cover_shape();
@@ -218,7 +236,7 @@ module cover() {
       cylinder(d = m2_d, h = 100);
       translate([0, 0, z_cov + cov_t - m2_head_h]) cylinder(d = m2_head_d, h = 10);
     }
-    ports();
+    ports(open = true);
   }
 }
 
