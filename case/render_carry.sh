@@ -15,7 +15,7 @@ backend=()
 openscad --help 2>&1 | grep -q -- "--backend" && backend=(--backend=manifold)
 base=(-D 'part="none"' -D 'switch_type="choc"')
 
-for p in 1 2 3 4 5; do
+for p in 1 2 3 4 5 6; do
   echo ">> part $p"
   openscad "${backend[@]}" "${base[@]}" -D P=$p "$@" -o "$parts/p$p.stl" "$scad" 2>&1 | grep -i error || true
 done

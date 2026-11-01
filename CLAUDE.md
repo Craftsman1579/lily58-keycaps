@@ -30,7 +30,8 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 6. **Case** (branch `lily58-case`, ADR 0012): draft v6 tray + plate for the owner's PandaKB
    Lily58 RGB MX (no OLED), as flat as possible. M2 hex standoffs in the tray bosses (MX 10 mm,
    Choc 6 mm), M2x4 from below and from the top; the plate covers the wall and snaps into a
-   groove (tune with `part="snap_test"`). Controller zone open, separate cover later.
+   groove (tune with `part="snap_test"`). Controller cover clicks into the same groove, M2x12 into
+   heat-set inserts in the tray rings (cover holes measured, MEASURE 19).
    Two folding tenting feet per half in pockets in the bottom, flush with the rubber feet.
    Switch cutout 13.8 mm, confirmed by the plate fit test.
 7. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
@@ -59,7 +60,7 @@ python3 tools/kicad2scad.py <Lily58_Pro.kicad_pcb> common/lily58_layout.scad   #
 ```
 
 The KiCad file comes from `github.com/kata0510/Lily58` (`Pro/PCB/`, MIT); it is not cloned by any
-script. `case/lily58_case.scad` takes `part=tray|plate|sleeve|frame|mid|snap_test|plate_test|template|assembly|travel|carry`, `side=right|left`.
+script. `case/lily58_case.scad` takes `part=tray|plate|cover|sleeve|frame|mid|snap_test|plate_test|template|assembly|travel|carry`, `side=right|left`.
 
 `test` and `all` are legacy DSA modes (no flat sides, old support) – not maintained.
 Output: `~/Documents/lily58_keycaps/stl/<mode folder>/` = `<Group>_body.stl` + `<Group>_legends.stl`,

@@ -12,7 +12,7 @@
 // Coordinates: right half seen from the top (see common/lily58_layout.scad), z = 0 is the bed.
 include <../common/lily58_layout.scad>
 
-part = "assembly";   // tray | plate | sleeve | frame | mid | snap_test | plate_test | template | assembly
+part = "assembly";   // tray | plate | cover | sleeve | frame | mid | snap_test | plate_test | template | assembly
                      // | travel | carry
 side = "right";      // right | left (left = mirrored right half)
 switch_type = "mx";  // mx (PandaKB board) | choc (owner's second Lily58, Choc v1 at MX spacing)
@@ -28,7 +28,6 @@ cutout      = 13.8;   // switch cutout: confirmed by the plate_test print (2 not
 /* [Mounting: M2 hex standoffs] */
 under_clear = 4.0;    // tallest part below the PCB measured 3.5 mm, + 0.5 mm
 boss_d      = 6.5;    // tray bosses the PCB rests on (bottom side is free within Ø 6.6 around the holes)
-pilot_d     = 1.7;    // M2 pilot in the cover rings for the later cover
 so_len    = choc ? 6 : 10;  // owner has 6, 8 and 10 mm; MX: reaches from the floor to the plate
 so_flat   = 2.7;      // measured: 2.7 across flats, 3.1 across corners – passes the 4.7 mm PCB hole
 so_clear  = 0.3;      // hex pocket = so_flat + so_clear (printed holes come out smaller)
@@ -45,7 +44,7 @@ pcb_gap   = 0.6;      // PCB edge to inner wall
 plate_ch  = 0.8;      // 45° chamfer on the top edge: the plate prints top down, so it lies on the bed
                       // side and grows outward at 45° – a radius there would overhang too flat
 bevel     = 3.0;      // 45° chamfer round the bottom edge: looks thinner, no elephant foot
-ring_d    = 6.5;      // support rings under the PCB at the two cover holes
+ring_d    = 6.5;      // support rings under the PCB at the two cover holes, insert on top
 
 /* [Snap: a tongue under the plate edge clicks into a groove in the wall top] */
 snap_c  = pcb_gap + wall_t / 2;   // centre line, offset from the PCB outline
@@ -82,8 +81,6 @@ grip_d     = 20;
 /* [Carry case (ADR 0015): halves keys facing each other, a frame on each, a middle plate between,
    held by rubber bands; the trays are the outside] */
 cc_caps   = 23.5;     // tallest keycap top above the plate top, for both boards (owner)
-cc_step   = 1.5;      // controller zone step = the thinner plate (MX); on the Choc board (1.9) it
-                      // stays 0.4 mm clear, so one frame fits both boards
 cc_air    = 1.0;      // above the tallest keycap, to the middle plate
 cc_mid    = 2.0;      // middle plate
 cc_rest   = 3.0;      // the frame rests this wide on the plate rim (keycaps stay inside the PCB outline)
@@ -107,7 +104,8 @@ trrs_w   = 9.5;
 trrs_z   = 3.7 - pcb_t / 2;     // measured: jack axis 3.7 mm above the PCB centre
 trrs_h   = 8.5;
 
-/* [Controller zone: open; a separate cover follows later (no OLED)] */
+/* [Controller zone and cover: the cover clicks into the wall groove like the plate; two posts press
+   on the PCB, M2x12 from the top through cover and PCB into heat-set inserts in the tray rings] */
 // Cover holes (the OLED holes): measured on the owner's PCB (MEASURE 19), Ø 2.1 mm. Hole 1 sits
 // 0.9 mm closer to the inner edge than in the Lily58 Pro data (lily58_oled_holes), both 0.65 mm
 // further up; x of hole 1 is the mean of the edge measurement and the hole spacing (2.05 / 2.35).
@@ -115,6 +113,15 @@ cover_holes  = [[2.2, 59.08], [25.05, 59.08]];
 cover_hole_d = 2.1;
 ctrl_x = 28.5;        // plate starts right of this
 ctrl_y = 56.6;        // ... or below this
+cov_gap  = 7.7;       // cover underside above the PCB top (owner; Pro Micro top 7.4 mm)
+cov_t    = 1.5;
+cov_wall = 1.5;       // inner walls along the plate edge, down to the plate top
+cov_clr  = 0.2;       // gap to the plate edge
+cov_post = 4.5;       // posts on the PCB round the cover holes (4 mm pad)
+ins_d    = 3.6;       // heat-set M2 insert 3.9 mm across flats, 1.5 mm long (owner): melt-in hole
+ins_h    = 1.8;       // insert + 0.3 mm for the displaced plastic
+ins_tip  = 2.0;       // below the insert: room for the screw tip (d m2_d)
+cov_screw = 12;       // owner has M2 x 10/12/16/20
 
 eps = 0.01;
 $fn = 48;
@@ -123,6 +130,11 @@ z_pcb   = floor_t + under_clear;                  // PCB bottom
 z_plate = z_pcb + pcb_t + plate_above - plate_t;  // plate bottom
 z_top   = z_plate + plate_t;                      // plate top
 y_top   = lily58_pcb_size[1];
+z_cov   = z_pcb + pcb_t + cov_gap;                // cover underside
+// M2x12: head flush in the cover top; the tip must pass the 1.5 mm insert and stay in the tip room
+cov_tip = z_cov + cov_t - m2_head_h - cov_screw;
+echo(str("cover screw tip ", (z_pcb - 1.5) - cov_tip, " mm below the insert (room ", ins_h + ins_tip - 1.5, ")"));
+assert(cov_tip < z_pcb - 1.5 && cov_tip > z_pcb - ins_h - ins_tip, "cover screw length");
 outer   = pcb_gap + wall_t;
 
 // Choc: standoff z 3.1 … 9.1; below it 3.1 - 1.1 = 2.0 mm of floor, so an M2x4 has 2.0 mm of thread;
@@ -174,13 +186,41 @@ module tray() {
     ports();
     translate([0, 0, z_plate + eps]) snap_ring(groove);
   }
-  for (h = cover_holes) translate(h) difference() {   // pilot holes for the later cover
+  for (h = cover_holes) translate(h) difference() {   // heat-set inserts for the cover screws
     translate([0, 0, floor_t - eps]) cylinder(d = ring_d, h = z_pcb - floor_t + eps);
-    translate([0, 0, floor_t]) cylinder(d = pilot_d, h = 20);
+    translate([0, 0, z_pcb - ins_h]) cylinder(d = ins_d, h = ins_h + eps);
+    translate([0, 0, z_pcb - ins_h - ins_tip]) cylinder(d = m2_d, h = ins_tip + eps);
   }
 }
 
 module plate_shape(inset = 0) difference() { outline(outer - inset); zone(ctrl_x, ctrl_y); }
+
+// Controller cover in tray coordinates: top plate, walls on the tray wall (tongue in the groove),
+// inner walls along the plate edge down to the plate top, posts on the PCB, ports cut through.
+module cover_shape() intersection() { outline(outer); offset(delta = -cov_clr) zone(ctrl_x, ctrl_y); }
+module cover() {
+  difference() {
+    union() {
+      translate([0, 0, z_cov]) linear_extrude(cov_t) cover_shape();
+      translate([0, 0, z_plate]) linear_extrude(z_cov - z_plate + eps)
+        intersection() { difference() { outline(outer); outline(pcb_gap); } cover_shape(); }
+      translate([0, 0, z_top]) linear_extrude(z_cov - z_top + eps) difference() {
+        cover_shape();
+        translate([-50, ctrl_y + cov_clr + cov_wall]) square([50 + ctrl_x - cov_clr - cov_wall, 100]);
+      }
+      for (h = cover_holes) translate([h[0], h[1], z_pcb + pcb_t]) cylinder(d = cov_post, h = cov_gap + eps);
+      translate([0, 0, z_plate]) intersection() {
+        snap_ring(tongue);
+        translate([0, 0, -5]) linear_extrude(5 + eps) cover_shape();
+      }
+    }
+    for (h = cover_holes) translate(h) {
+      cylinder(d = m2_d, h = 100);
+      translate([0, 0, z_cov + cov_t - m2_head_h]) cylinder(d = m2_head_d, h = 10);
+    }
+    ports();
+  }
+}
 
 // Plate in its own coordinates: z = 0 is its bottom, the tongue hangs below.
 module plate() {
@@ -243,8 +283,10 @@ module in_chamber(i, left) {
 }
 
 // Carry case: frame in its own coordinates, z = 0 lies on the middle plate, the half rests on z = cc_h
-// (plate top; in the open controller zone cc_step lower, on the wall top).
-cc_h   = cc_caps + cc_air;
+// (plate top). Over the controller cover the frame is open inside the skirt, cc_cover deep: the cover
+// stands highest above the plate on the Choc board (plate 1.9 mm above the PCB, MX 5.0).
+cc_h     = cc_caps + cc_air;
+cc_cover = cov_gap + cov_t - 1.9 + 0.5;
 cc_out = outer + cc_gap + cc_skirt[0];
 echo(str("carry case height: ", 2 * (foot_out + z_top + cc_h) + cc_mid, " (", 2 * cc_h + cc_mid, " without the halves)"));
 
@@ -258,11 +300,9 @@ module frame() difference() {
   union() {
     linear_extrude(cc_h) difference() { outline(cc_out); outline(outer - cc_rest); }
     translate([0, 0, cc_h - eps]) linear_extrude(cc_skirt[1] + eps) difference() { outline(cc_out); outline(outer + cc_gap); }
-    translate([0, 0, cc_h - eps]) linear_extrude(cc_step + eps) intersection() {
-      difference() { outline(outer + cc_gap); outline(outer - cc_rest); }
-      offset(delta = -cc_gap) zone(ctrl_x, ctrl_y);
-    }
   }
+  translate([0, 0, cc_h - cc_cover]) linear_extrude(cc_cover + 1)
+    intersection() { outline(outer + cc_gap); offset(delta = cc_gap) zone(ctrl_x, ctrl_y); }
   translate([0, 0, -1]) linear_extrude(cc_h + cc_skirt[1] + 2) cc_band_cut();
   cc_dowels(cc_dowel_h);
 }
@@ -324,12 +364,14 @@ module assembly() {
   color("#3a3a3a") tray();
   color("#2e7d32") translate([0, 0, z_pcb]) linear_extrude(pcb_t) lily58_pcb_2d();
   color("#b0b0b0") translate([0, 0, z_plate]) plate();
+  color("#b0b0b0") cover();
 }
 
 module sided() { if (side == "left") mirror([1, 0, 0]) children(); else children(); }
 
 if (part == "tray")       sided() tray();
 if (part == "plate")      sided() translate([0, 0, plate_t]) rotate([180, 0, 0]) plate();   // top on the bed
+if (part == "cover")      sided() translate([0, 0, z_cov + cov_t]) rotate([180, 0, 0]) cover();   // top on the bed
 if (part == "sleeve")     translate([0, 0, sl_size[1]]) rotate([-90, 0, 0]) sleeve();  // back wall on the bed
 if (part == "travel") {   // both halves in the sleeve
   color("#6d6d6d", 0.35) sleeve();

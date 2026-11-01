@@ -14,9 +14,10 @@ themselves are the outer shell. The tray stays unchanged (ADR 0012).
 - **Stack:** right half keys up – frame – middle plate – frame – left half keys down. Turned over,
   the left half's outline covers the right one exactly, so every part follows the right outline.
 - **Frame** (`part="frame"`, `side=right|left`): a ring that rests on the outer 3 mm of the switch
-  plate (`cc_rest`; all keycaps lie inside the PCB outline, checked) and in the open controller zone
-  on the wall top, `cc_step` = 1.5 mm lower (the MX plate). On the Choc board (1.9 mm plate) that
-  step stays 0.4 mm clear, so the same frame rests on the plate of either board. A 1.6 mm skirt reaches 3 mm down round the plate edge
+  plate (`cc_rest`; all keycaps lie inside the PCB outline, checked). Over the controller cover
+  (ADR 0012) it is open inside the skirt, `cc_cover` = 7.8 mm deep: the cover stands 7.3 mm above
+  the plate on the Choc board (4.2 on MX), + 0.5 mm. So one frame fits both boards, with or without
+  the cover. A 1.6 mm skirt reaches 3 mm down round the plate edge
   (0.3 mm gap) and keeps the half from sliding. Height `cc_caps + cc_air` = 23.5 + 1 mm. Printed with
   the middle-plate face on the bed; no overhangs. Right frame on the right half, left on the left.
 - **Middle plate** (`part="mid"`): 2 mm, an engraved "L" faces the left half.
@@ -37,7 +38,7 @@ themselves are the outer shell. The tray stays unchanged (ADR 0012).
 ## Consequences
 
 - Changes to the tray outline or the plate (ADR 0012) change the frames.
-- The controller cover (not designed yet) must stay below the frame or get a recess.
+- A taller controller cover needs a deeper `cc_cover`.
 
 ## Images
 

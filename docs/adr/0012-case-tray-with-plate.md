@@ -45,9 +45,16 @@ template matches the owner's PCB exactly.
 - **Assembly:** standoffs into the pockets, M2x4 from below; PCB onto the tray bosses; plate with
   the switches on top (it snaps into the groove, the switches go into the hotswap sockets); M2x4 from
   the top through the plate into the standoffs.
-- **No OLED, no cover yet** (owner's choice, v4): the controller zone stays open; the plate ends
-  1 mm clear of the neighbouring keycaps. A separate cover follows later; the support rings under
-  the two OLED holes already have M2 pilot holes for it.
+- **No OLED** (owner's choice, v4): the plate leaves the controller zone open and ends 1 mm clear of
+  the neighbouring keycaps.
+- **Controller cover** (`part="cover"`, owner: 7.7 mm above the PCB, clicks into the tray): a 1.5 mm
+  top whose underside is 7.7 mm above the PCB top (Pro Micro: 7.4 mm), walls on the tray wall with
+  the plate's tongue in the groove, 1.5 mm inner walls along the plate edge (0.2 mm gap) down to the
+  plate top, and two Ø 4.5 mm posts that press on the PCB round the two cover (OLED) holes. An M2x12
+  from the top (head flush) goes through the cover and the PCB into a heat-set insert (3.9 mm across
+  flats, 1.5 mm long) in the tray ring below the PCB: Ø 3.6 × 1.8 mm melt-in hole, then 2 mm room
+  for the screw tip (it ends 0.8 mm below the insert). The screw clamps the PCB between post and
+  ring. Printed top down. The ports are cut through its walls.
 - **USB and TRRS** get rounded slots through the top wall, 2 mm closer to the
   inner edge than the KiCad positions (owner's test print).
 - **Rubber feet:** Ø 8 × 4 mm, recessed 1.4 mm (pockets Ø 8.4 mm, 0.6 mm floor above), sticking
@@ -96,6 +103,7 @@ template matches the owner's PCB exactly.
 19. Cover (OLED) holes on the owner's PCB: Ø 2.1 mm, centres at x 2.2 / 25.05 mm from the inner
     edge, 47.25 mm below the top edge (Lily58 Pro data: 3.06 / 25.06, 47.91, Ø 2.4). Measured edge
     to edge from the PCB and from the case outside; both agree. Choc board not measured.
+20. Heat-set inserts M2: 3.9 mm across flats, 1.5 mm long; screws M2 x 10/12/16/20.
 
 ## Consequences
 

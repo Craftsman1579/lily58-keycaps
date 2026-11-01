@@ -1,10 +1,10 @@
 // Render scene for the carry case (ADR 0015): Choc halves with the DES-Choc caps, frames, middle
-// plate, rubber bands. Driven by case/render_carry.sh, which first exports the parts (P = 1…5) to
+// plate, rubber bands. Driven by case/render_carry.sh, which first exports the parts (P = 1…6) to
 // stl/case/render/ – imported meshes render without the z-fighting of the live modules.
 // Paths are relative to this file.
 include <lily58_case.scad>   // run with -D 'part="none"' -D 'switch_type="choc"'
 
-P    = 0;     // 1 tray, 2 plate in place, 3 PCB, 4 frame, 5 middle plate; 0 = scene
+P    = 0;     // 1 tray, 2 plate in place, 3 PCB, 4 frame, 5 middle plate, 6 cover; 0 = scene
 EXPL = 0;     // explode distance
 CUT  = -1;    // y of the section plane, -1 = none
 BAND = 1;     // rubber bands (closed scene only)
@@ -33,10 +33,11 @@ module half_part(i) {
   if (i == 2) translate([0, 0, foot_out]) import(str(D, "p2.stl"));
   if (i == 3) for (f = feet) translate([f[0], f[1], 0]) cylinder(d = foot_d - 0.4, h = foot_out + foot_depth, $fn = 32);
   if (i == 4) translate([0, 0, z_half]) caps();
+  if (i == 5) translate([0, 0, foot_out]) import(str(D, "p6.stl"));
 }
-half_cols = [c_tray, c_pcb, c_plate, c_foot, c_cap];
+half_cols = [c_tray, c_pcb, c_plate, c_foot, c_cap, c_plate];
 
-// Stack components: 0…4 bottom half, 10 bottom frame, 11 middle plate, 12 top frame, 20…24 top half,
+// Stack components: 0…5 bottom half, 10 bottom frame, 11 middle plate, 12 top frame, 20…25 top half,
 // 30 rubber bands.
 module comp(w) {
   E = EXPL;
@@ -54,13 +55,14 @@ module comp(w) {
 }
 function col(w) = w < 10 ? half_cols[w] : w >= 20 && w < 30 ? half_cols[w - 20]
                 : w == 11 ? c_mid : w == 30 ? c_band : c_frame;
-comps = concat([0, 1, 2, 3, 4, 10, 11, 12, 20, 21, 22, 23, 24], BAND == 1 && EXPL == 0 ? [30] : []);
+comps = concat([0, 1, 2, 3, 4, 5, 10, 11, 12, 20, 21, 22, 23, 24, 25], BAND == 1 && EXPL == 0 ? [30] : []);
 
 if (P == 1) tray();
 if (P == 2) translate([0, 0, z_plate]) plate();
 if (P == 3) translate([0, 0, z_pcb]) linear_extrude(pcb_t) lily58_pcb_2d();
 if (P == 4) frame();
 if (P == 5) mid();
+if (P == 6) cover();
 if (P == 0) {
   if (CUT < 0) for (w = comps) color(col(w)) comp(w);
   // section: each component cut on its own, so the colours stay; stacked thinly to avoid z-fighting
