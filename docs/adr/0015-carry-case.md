@@ -38,3 +38,9 @@ themselves are the outer shell. The tray stays unchanged (ADR 0012).
 
 - Changes to the tray outline or the plate (ADR 0012) change the frames.
 - The controller cover (not designed yet) must stay below the frame or get a recess.
+
+## Images
+
+Choc halves with the DES-Choc caps (cap height above the plate estimated):
+[closed](../case_carry_view.png), [exploded](../case_carry_explode.png),
+[section through the number row](../case_carry_section.png).
