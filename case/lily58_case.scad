@@ -69,8 +69,7 @@ tent      = [[25.5, 87.3], [25.5, 12]];   // rear one against the long back edge
 tent_skin = 0.7;            // floor above the pockets
 floor_t   = tent_h - foot_out + tent_skin;   // pockets are tent_h - foot_out = 2.9 mm deep
 
-caps_above = choc ? 18.0 : 24.0;  // MEASURE 15: tallest keycap top above the plate top. Choc
-                      // estimate: DES-Choc R1 cap is 12.8 mm tall from the skirt, skirt ~4.6 mm above the plate
+caps_above = 24.0;    // MEASURE 15: tallest keycap top above the plate top
 
 /* [Travel sleeve (ADR 0013): two chambers, the halves slide in keys up, the tray stays as it is] */
 sl_gap     = 0.5;     // around the half in x and y
@@ -82,6 +81,9 @@ grip_d     = 20;
 
 /* [Carry case (ADR 0015): halves keys facing each other, a frame on each, a middle plate between,
    held by rubber bands; the trays are the outside] */
+cc_caps   = 23.5;     // tallest keycap top above the plate top, for both boards (owner)
+cc_step   = 1.5;      // controller zone step = the thinner plate (MX); on the Choc board (1.9) it
+                      // stays 0.4 mm clear, so one frame fits both boards
 cc_air    = 1.0;      // above the tallest keycap, to the middle plate
 cc_mid    = 2.0;      // middle plate
 cc_rest   = 3.0;      // the frame rests this wide on the plate rim (keycaps stay inside the PCB outline)
@@ -236,8 +238,8 @@ module in_chamber(i, left) {
 }
 
 // Carry case: frame in its own coordinates, z = 0 lies on the middle plate, the half rests on z = cc_h
-// (plate top; in the open controller zone one plate_t lower, on the wall top).
-cc_h   = caps_above + cc_air;
+// (plate top; in the open controller zone cc_step lower, on the wall top).
+cc_h   = cc_caps + cc_air;
 cc_out = outer + cc_gap + cc_skirt[0];
 echo(str("carry case height: ", 2 * (foot_out + z_top + cc_h) + cc_mid, " (", 2 * cc_h + cc_mid, " without the halves)"));
 
@@ -251,7 +253,7 @@ module frame() difference() {
   union() {
     linear_extrude(cc_h) difference() { outline(cc_out); outline(outer - cc_rest); }
     translate([0, 0, cc_h - eps]) linear_extrude(cc_skirt[1] + eps) difference() { outline(cc_out); outline(outer + cc_gap); }
-    translate([0, 0, cc_h - eps]) linear_extrude(plate_t + eps) intersection() {
+    translate([0, 0, cc_h - eps]) linear_extrude(cc_step + eps) intersection() {
       difference() { outline(outer + cc_gap); outline(outer - cc_rest); }
       offset(delta = -cc_gap) zone(ctrl_x, ctrl_y);
     }

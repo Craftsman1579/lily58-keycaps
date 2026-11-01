@@ -35,9 +35,9 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
    Switch cutout 13.8 mm, confirmed by the plate fit test.
 7. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
    Waiting for the keycap height above the plate (`MEASURE 15`).
-8. **Carry case** (ADR 0015, Choc board): halves keys facing each other, a frame on each, a middle
-   plate between, rubber bands round it. `caps_above` for Choc is an estimate (18 mm) – wall height
-   still to be confirmed by the owner. Not printed.
+8. **Carry case** (ADR 0015, both boards): halves keys facing each other, a frame on each, a middle
+   plate between, rubber bands round it. Keycaps up to `cc_caps` = 23.5 mm above the plate (owner).
+   Not printed.
 
 ## Commands
 
