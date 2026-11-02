@@ -56,7 +56,9 @@ groove  = [[0, 0.9, 1.4, 1.4], [0.9, 1.1, 1.4, 1.7], [1.1, 2.0, 1.7, 1.7]];
 /* [Rubber feet] */
 foot_d     = 8.4;     // 8 mm feet
 foot_depth = 1.4;     // 4 mm high feet stick out 2.6 mm; 0.6 mm floor stays above them
-feet = [[10, 96], [132, 88], [132, 29], [12, 42]];
+// Outer pair close to the outer edge: tented, the half pivots on them; at x 132 it tipped onto its
+// bottom edge from 18° on (fully unfolded tenting feet give 27°), now only from 49° on.
+feet = [[10, 96], [138, 88], [138, 29], [12, 42]];
 foot_out   = 4 - foot_depth;
 
 /* [Tenting: two folding feet per half, recessed so their housings sit flush with the rubber feet] */
