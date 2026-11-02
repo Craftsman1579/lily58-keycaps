@@ -19,4 +19,5 @@ development (usually after measuring or testing), with the owner's approval.
 | [0011](0011-toolchain.md) | Toolchain: OpenSCAD snapshot via Nix, single bash script | accepted |
 | [0012](0012-case-tray-with-plate.md) | Case: printed tray with a switch plate | proposed |
 | [0013](0013-travel-sleeve.md) | Travel case: a sleeve with two chambers | proposed |
+| [0014](0014-des-for-choc-v1.md) | DES caps for Choc v1 switches | accepted |
 | [0015](0015-carry-case.md) | Carry case: frames and a middle plate, held by rubber bands | proposed |

@@ -123,6 +123,8 @@ template matches the owner's PCB exactly.
 
 ## Images
 
-[Controller cover, exploded](../case_cover_explode.png) (Choc half with the DES-Choc caps, two
-M2x12 above the cover), [bottom of the right tray](../case_tray_bottom.png) (rubber feet grey,
-tenting feet orange, M2 screws white; inner edge on the right).
+Both boards, rendered by `render/case.sh` (scene `render/case_scene.scad`): assembled, exploded,
+section and controller cover for [MX](../img/case/mx_exploded.png) and
+[Choc](../img/case/choc_exploded.png) (`docs/img/case/<board>_*.png`), and the
+[bottom of the right tray](../img/case/bottom.png) (rubber feet black, tenting feet orange, M2 screws
+grey; inner edge on the right).

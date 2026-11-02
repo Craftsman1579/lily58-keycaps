@@ -42,7 +42,7 @@ themselves are the outer shell. The tray stays unchanged (ADR 0012).
 
 ## Images
 
-Choc halves with the DES-Choc caps (cap height above the plate estimated):
-[closed](../case_carry_view.png), [exploded](../case_carry_explode.png),
-[section through the number row](../case_carry_section.png).
-Rendered by `case/render_carry.sh` (scene: `case/carry_scene.scad`).
+Both boards, with blank DES / DES-Choc caps (cap height above the plate estimated):
+[Choc closed](../img/case/choc_carry.png), [Choc exploded](../img/case/choc_carry_exploded.png),
+[Choc section through the number row](../img/case/choc_carry_section.png), and the same for MX
+(`docs/img/case/mx_carry*.png`). Rendered by `render/case.sh` (scene: `render/case_scene.scad`).
