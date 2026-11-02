@@ -120,3 +120,9 @@ template matches the owner's PCB exactly.
 
 - All parts are ready for a first test print; the switch cutout is confirmed.
 - `case/build.sh` exports to `stl/case/`; check every part with `tools/f32.py` and `tools/shells.py`.
+
+## Images
+
+[Controller cover, exploded](../case_cover_explode.png) (Choc half with the DES-Choc caps, two
+M2x12 above the cover), [bottom of the right tray](../case_tray_bottom.png) (rubber feet grey,
+tenting feet orange, M2 screws white; inner edge on the right).
