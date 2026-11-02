@@ -38,6 +38,13 @@ that lay on the print bed:
 |---|---|---|
 | ![Printed GUI key](docs/photo_gui_key.jpg) | ![Printed blank key](docs/photo_blank_key.jpg) | ![Printed G key](docs/photo_g_key.jpg) |
 
+### DES for Choc v1
+
+`des-choc-all` builds the same DES set for Kailh Choc v1 switches at MX spacing (19.05 mm): every row
+4 mm lower, two Choc legs instead of the cross stem (1.15 mm wide with the default tolerance 0.025).
+These caps are printed on their front face instead of a side, so the legs stand side by side
+(ADR 0014). The fit test is printed; the full set is not yet.
+
 ## KAT
 
 ![KAT set with legends in Lily58 arrangement](docs/kat_set_labeled.png)
@@ -120,6 +127,8 @@ File names are German: `links`/`rechts` = left/right half, `Daumen` = thumbs, `E
 LAYOUT=us ./lily58_keycaps.sh des-all  # DES set with US layout
 ./lily58_keycaps.sh des-all 0.05       # different tolerance
 ./lily58_keycaps.sh des-test           # DES fit test: blank caps with 0.00 0.025 0.05 0.075
+./lily58_keycaps.sh des-choc-all       # DES for Choc v1 switches (MX spacing), leg tolerance 0.025
+./lily58_keycaps.sh des-choc-test      # Choc fit test: blank caps with 0.00 0.025 0.05 0.075
 ./lily58_keycaps.sh kat-all            # KAT set (German), default tolerance 0.20
 LAYOUT=us ./lily58_keycaps.sh kat-all  # KAT set with US layout
 ./lily58_keycaps.sh kat-test           # KAT fit test: blank caps with 0.025 0.05 0.075 0.10
@@ -158,6 +167,9 @@ parameters, with these changes:
   legends stay readable.
 - **Printing:** sides cut flat, laid on the side, removable support.
 - **Resolution:** `fn = 60`, `layers = 50`, the values the author gives for output.
+- **Choc v1 (`des-choc-*`):** key heights 4 mm lower; legs from `choc_stem()` of
+  `Choc_Chicago_Steno.scad`, narrowed per side by the tolerance, with a round bridge to the top;
+  printed on the front face with its own removable support.
 
 ### keycap_playground (KAT, modes `kat-all` and `kat-test`)
 

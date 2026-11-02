@@ -21,6 +21,10 @@
 #    ./lily58_keycaps.sh des-test      -> DES-Passtest: leere Home-Kappen, je Toleranz eine
 #                                         Datei (Standard 0.00 0.025 0.05 0.075,
 #                                         eigene Werte: des-test "0.03 0.06")
+#    ./lily58_keycaps.sh des-choc-all  -> DES-Satz fuer Choc-v1-Switches (MX-Raster): 4 mm
+#                                         flacher, Choc-Beinchen, Druck auf der Front
+#                                         (Standard-Toleranz 0.025 je Beinchen-Seite)
+#    ./lily58_keycaps.sh des-choc-test -> Choc-Passtest wie des-test
 #
 #  Optional:
 #    INNER=1 ./lily58_keycaps.sh all 0.20   -> zusaetzlich [ und ] fuer die
@@ -35,6 +39,8 @@ MODE="${1:-test}"
 TOL="${2:-0.20}"   # 0.20 fuer 0.4-mm-Duese
 # DES rechnet die Toleranz auf jede Seite des Kreuzes; 0.025 hat im Passtest gepasst
 if [ "$MODE" = "des-all" ] && [ -z "${2:-}" ]; then TOL=0.025; fi
+# Choc: Beinchen je Seite um TOL schmaler (1.15 statt 1.2 mm); 0.00 und 0.05 passten im Passtest
+if [ "$MODE" = "des-choc-all" ] && [ -z "${2:-}" ]; then TOL=0.025; fi
 
 # --- 1. Dokumente-Ordner finden ---------------------------------------------
 find_docs () {
@@ -417,7 +423,10 @@ fi
 # Stem, Legende als eigenes Teil, Homing-Steg, Spiegelung mit
 # lesbarer Schrift, und ohne die deckungsgleichen Flaechen des Originals (Kreuzloch,
 # Mulden-Naht), die beim Slicer-Import offene Kanten ergeben.
-if [ "$MODE" = "des-all" ] || [ "$MODE" = "des-test" ]; then
+# Choc-Variante (des-choc-*): Profil 4 mm flacher, Choc-v1-Beinchen statt Kreuz-Stem, Kappe um
+# 90 Grad gedreht und auf der Front gedruckt (auf der Seite laegen die Beinchen uebereinander).
+if [ "$MODE" = "des-all" ] || [ "$MODE" = "des-test" ] || [ "$MODE" = "des-choc-all" ] || [ "$MODE" = "des-choc-test" ]; then
+  CHOC=0; case "$MODE" in des-choc-*) CHOC=1;; esac
   DESREPO="$WORK/PseudoMakeMeKeyCapProfiles"; DESLIB="$WORK/des_libs"
   if [ -d "$DESREPO/.git" ]; then
     git -C "$DESREPO" pull --ff-only || echo ">> (DES-Update uebersprungen)"
@@ -428,9 +437,10 @@ if [ "$MODE" = "des-all" ] || [ "$MODE" = "des-test" ]; then
   export OPENSCADPATH="$DESLIB/libraries"
 
   DESLAYOUT="${LAYOUT:-de}"   # de = QWERTZ ohne Sonderzeichen, us = US-QWERTY wie im Lily58-Standard
-  if [ "$MODE" = "des-test" ]; then OUT="$WORK/stl/des_passtest"
-  elif [ "$DESLAYOUT" = us ]; then OUT="$WORK/stl/des_set_us_tol_${TOL}"
-  else OUT="$WORK/stl/des_set_tol_${TOL}"; fi
+  PRE="des"; [ "$CHOC" = 1 ] && PRE="des_choc"
+  if [ "${MODE%-test}" != "$MODE" ]; then OUT="$WORK/stl/${PRE}_passtest"
+  elif [ "$DESLAYOUT" = us ]; then OUT="$WORK/stl/${PRE}_set_us_tol_${TOL}"
+  else OUT="$WORK/stl/${PRE}_set_tol_${TOL}"; fi
   RAW="$OUT/raw"; mkdir -p "$RAW"
   for lst in "$RAW"/*.lst; do [ -e "$lst" ] && : > "$lst"; done   # Gruppenlisten neu beginnen
   REL="../stl/$(basename "$OUT")/raw"   # Pfad aus Sicht von $JOBS
@@ -441,12 +451,16 @@ if [ "$MODE" = "des-all" ] || [ "$MODE" = "des-test" ]; then
   # Profile ohne ihren eigenen keycap()-Aufruf, damit sie per include nutzbar sind
   for p in Standard Thumb; do
     sed '/^ *mirror(\[0,0,0\]) *keycap(/,/^ *);/d' "$DESREPO/MX_DES_$p.scad" > "$JOBS/des_$p.scad"
+    # Choc: jede Kappenhoehe (keyh, 5. Spalte von keyParameters) 4 mm niedriger
+    awk '/^keyParameters/{k=1} k && /^\];/{k=0}
+         k && /^ *\[/ { n=split($0,a,","); a[5]=sprintf(" %.2f", a[5]-4); s=a[1]; for(i=2;i<=n;i++) s=s","a[i]; $0=s }
+         {print}' "$JOBS/des_$p.scad" > "$JOBS/des_choc_$p.scad"
   done
 
   cat > "$JOBS/deslib.scad" <<'EOF'
 // DES-Kappe mit den Lily58-Einstellungen; Profil wird von der aufrufenden Datei per include geladen
 module des_cap(keyID, part="body", legend="", font="Liberation Sans:style=Bold", size=5,
-               dot=false, dotz=0, mir=0, legrot=0, stemD=5.7) {
+               dot=false, dotz=0, mir=0, legrot=0, stemD=5.7, choc=false, legTol=0) {
   FrontPath = quantize_trajectories(FrontTrajectory(keyID), steps = stepsize, loop=false, start_position= $t*4);
   BackPath  = quantize_trajectories(BackTrajectory(keyID),  steps = stepsize, loop=false, start_position= $t*4);
   function FrontDishArc(t) =  pow((t)/(len(FrontPath)),FrontArcExpo(keyID))*FrontFinArc(keyID) + (1-pow(t/(len(FrontPath)),FrontArcExpo(keyID)))*FrontInitArc(keyID);
@@ -466,7 +480,7 @@ module des_cap(keyID, part="body", legend="", font="Liberation Sans:style=Bold",
   }
   // Kreuzloch wie im Original (stem_internal, 5.25 tief, Einfuehrschraege 1.1 -> 1.0); das Kreuz
   // beginnt unter dem Stem-Boden, damit es keine gemeinsame Flaeche mit ihm hat
-  module stem() translate([0,0,StemBrimDep]) difference() {
+  module mx_stem() translate([0,0,StemBrimDep]) difference() {
     cylinder(d=stemD, h=H-StemBrimDep, $fn=64);
     translate([0,0,-0.5]) linear_extrude(5.75) polygon(stem_internal());
     flare_arm(MXWid, MXWidT);   // waagerechter Arm
@@ -478,10 +492,21 @@ module des_cap(keyID, part="body", legend="", font="Liberation Sans:style=Bold",
     translate([0,0,-0.3]) linear_extrude(0.01) square([2*hx*1.16, 2*hy*1.18], center=true);
     translate([0,0, 0.75]) linear_extrude(0.01) square([2*hx*0.95, 2*hy*0.90], center=true);
   }
+  // Choc-v1-Beinchen (choc_stem aus Choc_Chicago_Steno.scad: Abstand 5.7, 1.2 x 3.0, z -1.1 .. 2.0,
+  // tailliert), je Seite um legTol schmaler; darueber ein runder Steg (d 8, umschliesst die
+  // Beinchen) bis unter die Oberseite, auf die Aussenhaut begrenzt
+  module choc_stem() {
+    for (sx=[-1,1]) translate([sx*5.7/2,0,-1.1]) linear_extrude(3.1) offset(delta=-legTol) difference() {
+      hull() for (x=[-0.45,0.45], y=[-1.5,1.5]) translate([x,y]) circle(d=0.15, $fn=16);
+      for (cx=[-3.9,3.9]) translate([cx,0]) circle(d=7, $fn=96);
+    }
+    intersection() { translate([0,0,1.9]) cylinder(d=8, h=H, $fn=96); outer(); }
+  }
+  module stem() if (choc) choc_stem(); else mx_stem();
   // Textsaeule senkrecht zur Oberseite; Text vorgespiegelt, damit er nach mirror() lesbar bleibt,
   // und nach seiner sichtbaren Form zentriert (halign/valign zentrieren nur nach Schrittweite)
   tm = textmetrics(legend, size=size, font=font, halign="center", valign="center");
-  module column() translate([cx,cy,H]) rotate(topRot) translate([0,0,-6]) linear_extrude(12)
+  module column() translate([cx,cy,H]) rotate(topRot) translate([0,0,choc ? -3 : -6]) linear_extrude(choc ? 9 : 12)
     mirror([mir,0,0]) rotate(legrot) translate([-(tm.position[0]+tm.size[0]/2), -(tm.position[1]+tm.size[1]/2)])
       text(legend, size=size, font=font, halign="center", valign="center");
   // Legende endet 0.3 mm ueber der Innendecke (sonst deckungsgleich mit der Innenflaeche)
@@ -520,6 +545,65 @@ module print_pose(R) {
 }
 EOF
 
+  # Choc: Stuetze fuer beide Beinchen, Flat-Cut ohne die Beinchen unter der Kappenkante
+  cat > "$JOBS/chocsupport.scad" <<'EOF'
+// Herausziehbare Stuetze fuer die Choc-DES-Kappe (wie stem_support, aufrechtes System, +x =
+// Druckseite = Front der Kappe). Statt eines Stegs unter dem Stem eine 7.2 mm breite Platte, die
+// beide Beinchen (Enden mit Eckenrundung bei x = 1.575) und den runden Steg (r 4) mit ~0.2 mm
+// Abstand traegt.
+// file = aufrechte Kappe, R = Sehne der Druckseite, H = Kappenhoehe
+module choc_support(file, R, H, w=7.2, leg_x=1.6, bridge_r=4, gap=0.2) {
+  x0 = leg_x + gap;
+  module cap() intersection() { import(file); translate([-50,-50,0]) cube(100); }   // ohne Beinchen
+  module hollow() scale([0.955,0.955,1]) intersection() {
+    difference() { hull() cap(); cap(); }
+    scale([0.9,0.9,1]) hull() cap();
+  }
+  module cavity() intersection() {
+    hollow();
+    translate([0,0,-0.3]) scale([0.99,0.99,1]) hollow();
+  }
+  module fin_region() union() {
+    cavity();
+    translate([0,0,-0.55]) scale([0.98,0.98,1]) intersection() { cavity(); translate([-20,-20,0]) cube([40,40,0.6]); }
+  }
+  difference() {
+    intersection() {
+      fin_region();
+      translate([x0, -w/2, -0.35]) cube([20, w, H - 3.2 + 0.35]);   // darueber liegt die Mulde
+    }
+    translate([0,0,1.9-gap]) cylinder(r=bridge_r+gap, h=H, $fn=96);
+  }
+  // Fuss vor der Oeffnung, traegt auch die Beinchen-Enden unter der Kappenkante (z -1.1 .. 0)
+  hull() {
+    translate([x0, -w/2, -3]) cube([0.05, w, 2.7]);
+    rotate([90,0,0]) linear_extrude(w + 1, center=true)
+      polygon([[sup_chord_x(R,-0.3)-0.6,-0.3], [sup_chord_x(R,-0.3),-0.3],
+               [sup_chord_x(R,-3),-3], [sup_chord_x(R,-3)-0.6,-3]]);
+  }
+}
+// flat_cut ohne die Beinchen abzuschneiden (Quader ueberlappt den Schnitt, keine gemeinsame Flaeche)
+module flat_cut_legs(R, L) union() { flat_cut(R, L); translate([-5,-4,-2]) cube([10,8,2.3]); }
+EOF
+
+  # Choc-Kappenformen wie des_shape; Kappe um 90 Grad gedreht (Front = Druckseite), daher Sehnen
+  # der Front (R) und Rueckseite (L), Laenge = Kappenbreite. Gespiegelte Daumen haben dieselben
+  # Sehnen (Spiegelung quer zur Druckseite). Hoehen 4 mm niedriger.
+  des_choc_shape () {
+    case "$1" in
+      S_R1) echo "Standard 5 0 [9.044,0,5.955,12.755] [9.026,0.063,7.275,7.248] 17.16 180 11";;
+      S_R2) echo "Standard 2 0 [9.036,0.041,8.474,2.070] [9.036,0,7.030,6.598] 17.16 0 5.75";;
+      S_R3) echo "Standard 1 0 [9.036,0.095,8.275,3.495] [9.046,0.013,8.305,2.167] 17.16 0 4.75";;
+      S_R4) echo "Standard 0 0 [9.036,0,7.029,6.966] [9.036,0.028,7.572,3.713] 17.16 0 6.55";;
+      T15L) echo "Thumb 0 0 [13.792,0,12.676,5.412] [13.792,0.002,11.741,7.640] 17.16 0 8";;
+      T15R) echo "Thumb 0 1 [13.792,0,12.676,5.412] [13.792,0.002,11.741,7.640] 17.16 0 8";;
+      T1L)  echo "Thumb 1 1 [9.036,0,7.438,5.942] [9.036,0,7.928,6.198] 17.16 0 7";;
+      T1R)  echo "Thumb 1 0 [9.036,0,7.438,5.942] [9.036,0,7.928,6.198] 17.16 0 7";;
+      T2L)  echo "Thumb 2 1 [9.038,0.003,7.880,8.541] [9.038,0,7.587,8.035] 17.16 0 9";;
+      T2R)  echo "Thumb 2 0 [9.038,0.003,7.880,8.541] [9.038,0,7.587,8.035] 17.16 0 9";;
+    esac
+  }
+
   # Kappenformen: Profil, keyID, gespiegelt, Sehne rechts, Sehne links, Laenge (y), Legendendrehung,
   # Kappenhoehe (KeyHeight, fuer die Stuetze)
   # (Sehnen bei fn=60/layers=50 an der aufrechten Kappe gemessen, wie bei kat-all).
@@ -544,7 +628,13 @@ EOF
   des_key () {
     local name="$1" shape="$2" kind="$3" val="$4" f="$JOBS/$1.scad"
     local prof id mir R L len legrot hgt leg font='"Liberation Sans:style=Bold"' size=5 dot=false
-    read -r prof id mir R L len legrot hgt <<< "$(des_shape "$shape")"
+    local pre="" post="" dotz=7.593
+    if [ "$CHOC" = 1 ]; then
+      read -r prof id mir R L len legrot hgt <<< "$(des_choc_shape "$shape")"
+      prof="choc_$prof"; pre="rotate(90) "; post=", choc=true, legTol=$TOL"; dotz=3.593
+    else
+      read -r prof id mir R L len legrot hgt <<< "$(des_shape "$shape")"
+    fi
     case "$kind" in
       t) leg="\"$val\"";;
       h) leg="\"$val\""; dot=true;;
@@ -559,7 +649,7 @@ include <deslib.scad>
 Tol    = $TOL;
 fn     = 60;   // Ausgabequalitaet laut Profil
 layers = 50;
-des_cap($id, part=PART, legend=$leg, font=$font, size=$size, mir=$mir, legrot=$legrot, dot=$dot, dotz=7.593);
+${pre}des_cap($id, part=PART, legend=$leg, font=$font, size=$size, mir=$mir, legrot=$legrot, dot=$dot, dotz=$dotz$post);
 EOF
     echo ">> [$name] $shape ${kind}:${val}"
     "$OPENSCAD" "${BACKEND[@]}" "${TEXTM[@]}" -o "$RAW/${name}_body.3mf" -D 'PART="body"' "$f" >/dev/null 2>&1
@@ -573,7 +663,7 @@ EOF
     echo "$name $R $L $len $kind $hgt" >> "$RAW/${name%_*}.lst"
   }
 
-  if [ "$MODE" = "des-test" ]; then
+  if [ "${MODE%-test}" != "$MODE" ]; then
   # Passtest: leere Home-Kappe (das Kreuzloch ist in allen Reihen gleich), je Toleranz eine Datei
   for TOL in ${2:-0.00 0.025 0.05 0.075}; do
     des_key "Passtest_tol_${TOL}_00" S_R3 b -
@@ -635,12 +725,13 @@ KEYS
   for lst in "$RAW"/*.lst; do
     [ -s "$lst" ] || continue
     grp="$(basename "$lst" .lst)"; g="$JOBS/desgroup_${grp}.scad"; gl="$JOBS/desgroup_${grp}_legends.scad"
-    printf 'include <desflat.scad>\ninclude <stemsupport.scad>\n' > "$g"; echo "include <desflat.scad>" > "$gl"
+    printf 'include <desflat.scad>\ninclude <stemsupport.scad>\ninclude <chocsupport.scad>\n' > "$g"; echo "include <desflat.scad>" > "$gl"
+    CUT=flat_cut; SUP=stem_support; [ "$CHOC" = 1 ] && { CUT=flat_cut_legs; SUP=choc_support; }
     pos=0; prev=0; haslegs=0
     while read -r name R L len kind hgt; do
       pos=$(awk -v p="$pos" -v a="$prev" -v b="$len" 'BEGIN{print (a==0 ? 0 : p + a/2 + 5 + b/2)}'); prev=$len
-      echo "translate([$pos,0,0]) print_pose($R) intersection() { import(\"$REL/${name}_body.3mf\"); flat_cut($R, $L); }" >> "$g"
-      echo "translate([$pos,0,0]) print_pose($R) stem_support(\"$REL/${name}_body.3mf\", $R, $hgt);" >> "$g"
+      echo "translate([$pos,0,0]) print_pose($R) intersection() { import(\"$REL/${name}_body.3mf\"); $CUT($R, $L); }" >> "$g"
+      echo "translate([$pos,0,0]) print_pose($R) $SUP(\"$REL/${name}_body.3mf\", $R, $hgt);" >> "$g"
       if [ "$kind" != b ] && [ "$kind" != d ]; then
         echo "translate([$pos,0,0]) print_pose($R) import(\"$REL/${name}_legends.3mf\");" >> "$gl"; haslegs=1
       fi
@@ -659,7 +750,7 @@ KEYS
   exit 0
 fi
 
-[ "$MODE" = "all" ] || { echo "Unbekannter Modus: $MODE (test | kat-test | kat-all | des-all | des-test | all)"; exit 1; }
+[ "$MODE" = "all" ] || { echo "Unbekannter Modus: $MODE (test | kat-test | kat-all | des-all | des-test | des-choc-all | des-choc-test | all)"; exit 1; }
 
 # --- 6b. Kompletter Satz ------------------------------------------------------
 OUT="$WORK/stl/set_tol_${TOL}"; mkdir -p "$OUT"
