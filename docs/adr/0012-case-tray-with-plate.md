@@ -63,9 +63,9 @@ template matches the owner's PCB exactly.
   inner edge than the KiCad positions (owner's test print).
 - **Rubber feet:** Ø 8 × 4 mm, recessed 1.4 mm (pockets Ø 8.4 mm, 0.6 mm floor above), sticking
   out 2.6 mm; four per half. Thinner feet (e.g. 8 × 2 mm) would save another 1.6 mm.
-  The outer pair sits at x 138 (pocket edge 1.9 mm inside the bottom edge): tented, the half pivots
+  The outer pair sits at x 139.9 (pockets reach the start of the bottom chamfer): tented, the half pivots
   on them. At x 132 the fully unfolded tenting feet (27°, inner edge 82.5 mm up, owner) tipped it
-  onto its bottom edge and the rubber feet lost contact (from 18° on, now from 49° on). Moving the
+  onto its bottom edge and the rubber feet lost contact (from 18° on, now from 62° on). Moving the
   tenting pockets inwards would not have helped: even at x 0 the tilt stays at 23°, and the thumb
   screw blocks the front pocket.
 - **Tenting** (v7): two folding feet per half (owner's, housing 66 × 20 × 5.5 mm, hinge on a short
