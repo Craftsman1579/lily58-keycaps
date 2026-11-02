@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Decisions behind the keycap generator, in the order they were made (October 2026). Each record
+Decisions behind the keycap generator and the case, in the order they were made (October 2026). Each record
 states who decided: **owner** = the repository owner's choice, **derived** = worked out during
 development (usually after measuring or testing), with the owner's approval.
 
@@ -17,3 +17,7 @@ development (usually after measuring or testing), with the owner's approval.
 | [0009](0009-slicer-clean-meshes.md) | Meshes must survive slicer import without errors | accepted |
 | [0010](0010-publishing-and-licensing.md) | Publishing: public GitHub repo, GPL-3.0, release ZIPs | accepted |
 | [0011](0011-toolchain.md) | Toolchain: OpenSCAD snapshot via Nix, single bash script | accepted |
+| [0012](0012-case-tray-with-plate.md) | Case: printed tray with a switch plate | proposed |
+| [0013](0013-travel-sleeve.md) | Travel case: a sleeve with two chambers | proposed |
+| [0014](0014-des-for-choc-v1.md) | DES caps for Choc v1 switches | accepted |
+| [0015](0015-carry-case.md) | Carry case: frames and a middle plate, held by rubber bands | proposed |

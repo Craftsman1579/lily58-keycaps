@@ -1,4 +1,4 @@
-# CLAUDE.md – Lily58 keycap generator
+# CLAUDE.md – Lily58 keycap generator and case
 
 Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the *why*.
 
@@ -12,11 +12,18 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 - Repo: `github.com/Craftsman1579/lily58-keycaps` (public, GPL-3.0). Push/release with `gh`
   (needs the keychain → run outside the sandbox).
 
-## Current state (2026-10-30)
+## Current state (2026-11-02)
+
+- Everything is on `main` (keycaps, DES-Choc, case). Docs: `README.md` in parts marked
+  `<!-- part: docs/<name>.md -->` (keycaps, case, travel, rendering, templates, credits), meant to be
+  split into separate documents later; images in `docs/img/{keycaps,case,photos}/`.
 
 - DES sets German + US, tolerance 0.025 – tested, released as **v1.1** (binary STL ZIPs).
 - KAT sets German + US rendered at the old default 0.20 (images only). **KAT fit test**
   (`stl/kat_passtest`, tolerances 0.025/0.05/0.075/0.10) is waiting for the owner's print result.
+
+- **DES for Choc v1** (`des-choc-*`, ADR 0014): fit test printed, leg tol 0.025 chosen; German and
+  US sets rendered, not yet printed.
 
 ### Open items
 
@@ -27,6 +34,18 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 3. DES thumb mirroring is not yet verified on real hands (ADR 0008).
 4. Optional: a full blank set as ready-made plates (currently 1 spare cap per row + thumbs + homing).
 5. Script comments are still German.
+6. **Case** (ADR 0012): draft v6 tray + plate for the owner's PandaKB
+   Lily58 RGB MX (no OLED), as flat as possible. M2 hex standoffs in the tray bosses (MX 10 mm,
+   Choc 6 mm), M2x4 from below and from the top; the plate covers the wall and snaps into a
+   groove (tune with `part="snap_test"`). Controller cover clicks into the same groove, M2x12 into
+   heat-set inserts in the tray rings (cover holes measured, MEASURE 19).
+   Two folding tenting feet per half in pockets in the bottom, flush with the rubber feet.
+   Switch cutout 13.8 mm, confirmed by the plate fit test.
+7. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
+   Waiting for the keycap height above the plate (`MEASURE 15`).
+8. **Carry case** (ADR 0015, both boards): halves keys facing each other, a frame on each, a middle
+   plate between, rubber bands round it. Keycaps up to `cc_caps` = 23.5 mm above the plate (owner).
+   Not printed.
 
 ## Commands
 
@@ -34,10 +53,22 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 ./lily58_keycaps.sh des-all [tol]          # DES German (default tol 0.025)
 LAYOUT=us ./lily58_keycaps.sh des-all      # DES US
 ./lily58_keycaps.sh des-test ["t1 t2 …"]   # DES fit test (default 0.00 0.025 0.05 0.075)
+./lily58_keycaps.sh des-choc-all [tol]     # DES for Choc v1, MX spacing (default leg tol 0.025)
+./lily58_keycaps.sh des-choc-test ["t1 …"] # Choc fit test
 ./lily58_keycaps.sh kat-all [tol]          # KAT German (default tol 0.20, to be replaced)
 LAYOUT=us ./lily58_keycaps.sh kat-all      # KAT US
 ./lily58_keycaps.sh kat-test ["t1 t2 …"]   # KAT fit test (default 0.025 0.05 0.075 0.10)
 ```
+
+Case (ADR 0012):
+
+```bash
+case/build.sh [-D name=value …]             # trays + plates L/R, sleeve, snap/plate tests, template → stl/case/
+python3 tools/kicad2scad.py <Lily58_Pro.kicad_pcb> common/lily58_layout.scad   # regenerate layout
+```
+
+The KiCad file comes from `github.com/kata0510/Lily58` (`Pro/PCB/`, MIT); it is not cloned by any
+script. `case/lily58_case.scad` takes `part=tray|plate|cover|sleeve|frame|mid|snap_test|plate_test|template|assembly|travel|carry`, `side=right|left`.
 
 `test` and `all` are legacy DSA modes (no flat sides, old support) – not maintained.
 Output: `~/Documents/lily58_keycaps/stl/<mode folder>/` = `<Group>_body.stl` + `<Group>_legends.stl`,
@@ -80,24 +111,32 @@ Tools are in `tools/` (Python 3, no extra packages):
 `legcenter3.py`. To convert OpenSCAD's STL output to `.stl` files for an upright check, wrap the
 3MF: `import("raw/<key>_body.3mf");` and export with OpenSCAD.
 
-## Images (`docs/`)
+## Images (`docs/img/`)
 
-- Flattened upright caps per key: `intersection() { import(raw/<key>_body.3mf); flat_cut(...); }`
-  (KAT: `flat_cut(xb, xt, zt)` from `flatlib.scad`; DES: `flat_cut(R, L)` from `desflat.scad`,
-  values from the `.lst` files) → STL folder.
-- `python3 tools/scene.py des|kat <caps dir> <raw dir> <out dir>` writes `set_labels.scad`,
-  `set_blank.scad`, `closeup.scad` (Lily58 arrangement, DES R1 rotated 180°, KAT 1.5u rotated 90°).
-- Render (preview mode keeps colors):
-  sets `openscad -o x.png --imgsize=2000,1000 --camera=150,-235,447,150,30,0 --colorscheme=Tomorrow`,
-  close-up `--imgsize=2000,800 --camera=46,-80,113,46,2,4` (KAT centre x=50),
-  side profile orthographic `--camera=-160,-27,10,0,-27,10 --projection=o`.
+All renders come from `render/` (output names and sources: README part "Images and rendering"):
+
+```bash
+render/render_all.sh                    # everything, ~10 min
+render/keycaps.sh [des des-us des-choc des-choc-us kat kat-us]   # docs/img/keycaps/
+render/case.sh [mx|choc] [-- -D …]      # docs/img/case/ (exports parts to stl/render/case/<board>/)
+```
+
+- Keycaps: `render/flat.scad` cuts each raw upright cap flat (same cuts as the group pass) into
+  `stl/render/keycaps/<variant>/caps/` (cached, parallel); `tools/scene.py des|des-choc|kat` writes the
+  scenes (Lily58 arrangement, DES R1 rotated 180°, KAT 1.5u rotated 90°, DES-Choc raw caps turned
+  back by −90°); `render/side_profiles.scad` shows one column per profile. Needs the six sets in
+  `stl/` (KAT: `KAT_TOL`, default 0.20).
+- Case: `render/case_scene.scad` (`VIEW=assembled|exploded|section|cover|bottom|carry|carry_exploded|
+  carry_section|travel`, `switch_type=mx|choc`) with the blank caps of the DES / DES-Choc set. Cap
+  skirt above the plate is estimated (MX 7.0, Choc 4.6 mm).
+- After a geometry change of the case or a keycap set, rerun the matching script and check the images.
 - Photos: `python3 tools/jpegmeta.py strip in.jpg out.jpg` (removes EXIF/GPS and motion-photo video),
-  resize with `sips -Z 1600`, then `jpegmeta.py check`.
+  resize with `sips -Z 1600`, then `jpegmeta.py check`; put them in `docs/img/photos/`.
 
 ## Release
 
 1. `python3 tools/stl2bin.py in.stl out.stl` for every group STL (binary, ~5× smaller).
-2. Folder `lily58-keycaps-<PROFILE>[-US]-tol<t>/` with the STLs, README.md, LICENSE, `docs/`; zip it.
+2. Folder `lily58-keycaps-<PROFILE>[-US]-tol<t>/` with the STLs, README.md, LICENSE, `docs/img/`; zip it.
 3. `gh release create vX.Y <zips> --title … --notes-file …` (outside the sandbox).
 
 ## Gotchas

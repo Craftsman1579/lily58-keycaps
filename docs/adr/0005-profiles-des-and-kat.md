@@ -21,7 +21,8 @@ polished" as DES.
 - **DES R1 is mounted rotated by 180°:** in the profile the R1 cap tilts backwards (like R4); as the
   number row it must face the user. Only its legends are rotated (ADR 0007).
 - DSA modes (`test`, `all`) remain as legacy and are not maintained.
-- A side profile of one column of both profiles is in `docs/side_profiles.png`.
+- A side profile of one column of each profile (DES, DES-Choc, KAT) is in
+  `docs/img/keycaps/side_profiles.png` (`render/keycaps.sh`).
 
 ## Consequences
 
