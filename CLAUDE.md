@@ -22,8 +22,9 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 - KAT sets German + US rendered at the old default 0.20 (images only). **KAT fit test**
   (`stl/kat_passtest`, tolerances 0.025/0.05/0.075/0.10) is waiting for the owner's print result.
 
-- **DES for Choc v1** (`des-choc-*`, ADR 0014): fit test printed, leg tol 0.025 chosen; German and
-  US sets rendered, not yet printed.
+- **DES for Choc v1** (`des-choc-*`, ADR 0014): fit test printed, leg tol 0.025 chosen; first full
+  set printed: legs shortened to 2.9 mm, thumb legs rotated 90° (thumbs printed on the side).
+  Re-rendered (2026-11-02), not yet reprinted.
 
 ### Open items
 

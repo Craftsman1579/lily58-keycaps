@@ -100,9 +100,9 @@ cc_band_d = 0.8;
 
 port_dx  = -2;        // test print: both connectors sit 2 mm closer to the inner edge
 usb_x    = lily58_promicro[0] + port_dx;
-usb_w    = 13;
+usb_w    = 16;       // 13 x 7.5 was too tight for the owner's cables (+3 mm)
 usb_z    = 5.4;       // USB-C centre above the PCB top (measured, no overhang)
-usb_h    = 7.5;      // USB-C overmolds are about 6.5 mm high
+usb_h    = 10.5;      // bottom 0.15 mm above the PCB top
 trrs_x   = lily58_trrs[0] + port_dx;
 trrs_w   = 9.5;
 trrs_z   = 3.7 - pcb_t / 2;     // measured: jack axis 3.7 mm above the PCB centre
@@ -165,9 +165,14 @@ module port(x, z, w, h, open = false) {
   translate([x, y_top + 0.5, z]) rotate([-90, 0, 0]) linear_extrude(outer + 1)
     hull() for (s = [-1, 1], u = open ? [0, 30] : [0]) translate([s * (w - h) / 2, -u]) circle(d = h);
 }
-module ports(open = false) {
-  port(usb_x, z_pcb + pcb_t + usb_z, usb_w, usb_h, open);
-  port(trrs_x, z_pcb + pcb_t + trrs_z, trrs_w, trrs_h, open);
+// USB and TRRS share one opening (the bridge between them would be 0.35 mm). The Choc tray wall ends
+// below the USB slot, so it keeps the separate TRRS slot and stays as printed.
+module ports(open = false, merge = true) {
+  module both() {
+    port(usb_x, z_pcb + pcb_t + usb_z, usb_w, usb_h, open);
+    port(trrs_x, z_pcb + pcb_t + trrs_z, trrs_w, trrs_h, open);
+  }
+  if (merge) hull() both(); else both();
 }
 
 module tray() {
@@ -191,7 +196,7 @@ module tray() {
       cylinder(d = m2_d, h = 20, center = true);
       translate([0, 0, so_bot]) cylinder(d = (so_flat + so_clear) / cos(30), h = 20, $fn = 6);
     }
-    ports();
+    ports(merge = !choc);
     translate([0, 0, z_plate + eps]) snap_ring(groove);
   }
   for (h = cover_holes) translate(h) difference() {   // heat-set inserts for the cover screws

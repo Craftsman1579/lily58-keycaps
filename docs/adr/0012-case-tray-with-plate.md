@@ -60,7 +60,10 @@ template matches the owner's PCB exactly.
   1 mm on the vertical corner towards the keys. The USB plug reaches 9.15 mm above the PCB, the
   cover top 9.2 mm, so both port slots are open to the top of the cover (U-notches).
 - **USB and TRRS** get rounded slots through the top wall, 2 mm closer to the
-  inner edge than the KiCad positions (owner's test print).
+  inner edge than the KiCad positions (owner's test print). USB-C 16 × 10.5 mm (13 × 7.5 was too
+  tight for the owner's cables), TRRS 9.5 × 8.5 mm; the two merge into one opening (hull), since
+  the bridge between them would only be 0.35 mm. The Choc tray wall ends below the USB
+  slot, so the Choc tray keeps separate slots and is unchanged; only its cover is new.
 - **Rubber feet:** Ø 8 × 4 mm, recessed 1.4 mm (pockets Ø 8.4 mm, 0.6 mm floor above), sticking
   out 2.6 mm; five per half (the fifth in the thumb cluster tip, out to the chamfer, so the tip
   is supported; it is the front foot that clicks in behind the travel sleeve detent). Thinner feet

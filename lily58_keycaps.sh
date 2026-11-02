@@ -39,7 +39,7 @@ MODE="${1:-test}"
 TOL="${2:-0.20}"   # 0.20 fuer 0.4-mm-Duese
 # DES rechnet die Toleranz auf jede Seite des Kreuzes; 0.025 hat im Passtest gepasst
 if [ "$MODE" = "des-all" ] && [ -z "${2:-}" ]; then TOL=0.025; fi
-# Choc: Beinchen je Seite um TOL schmaler (1.15 statt 1.2 mm); 0.00 und 0.05 passten im Passtest
+# Choc: Beinchen je Seite um TOL schmaler (1.0 statt 1.05 mm); 0.00 und 0.05 passten im Passtest
 if [ "$MODE" = "des-choc-all" ] && [ -z "${2:-}" ]; then TOL=0.025; fi
 
 # --- 1. Dokumente-Ordner finden ---------------------------------------------
@@ -425,6 +425,7 @@ fi
 # Mulden-Naht), die beim Slicer-Import offene Kanten ergeben.
 # Choc-Variante (des-choc-*): Profil 4 mm flacher, Choc-v1-Beinchen statt Kreuz-Stem, Kappe um
 # 90 Grad gedreht und auf der Front gedruckt (auf der Seite laegen die Beinchen uebereinander).
+# Daumen: Beinchen um 90 Grad zur Kappe gedreht (Switches dort quer), Druck daher auf der Seite.
 if [ "$MODE" = "des-all" ] || [ "$MODE" = "des-test" ] || [ "$MODE" = "des-choc-all" ] || [ "$MODE" = "des-choc-test" ]; then
   CHOC=0; case "$MODE" in des-choc-*) CHOC=1;; esac
   DESREPO="$WORK/PseudoMakeMeKeyCapProfiles"; DESLIB="$WORK/des_libs"
@@ -460,7 +461,7 @@ if [ "$MODE" = "des-all" ] || [ "$MODE" = "des-test" ] || [ "$MODE" = "des-choc-
   cat > "$JOBS/deslib.scad" <<'EOF'
 // DES-Kappe mit den Lily58-Einstellungen; Profil wird von der aufrufenden Datei per include geladen
 module des_cap(keyID, part="body", legend="", font="Liberation Sans:style=Bold", size=5,
-               dot=false, dotz=0, mir=0, legrot=0, stemD=5.7, choc=false, legTol=0) {
+               dot=false, dotz=0, mir=0, legrot=0, stemD=5.7, choc=false, legTol=0, legRot=0) {
   FrontPath = quantize_trajectories(FrontTrajectory(keyID), steps = stepsize, loop=false, start_position= $t*4);
   BackPath  = quantize_trajectories(BackTrajectory(keyID),  steps = stepsize, loop=false, start_position= $t*4);
   function FrontDishArc(t) =  pow((t)/(len(FrontPath)),FrontArcExpo(keyID))*FrontFinArc(keyID) + (1-pow(t/(len(FrontPath)),FrontArcExpo(keyID)))*FrontInitArc(keyID);
@@ -492,12 +493,13 @@ module des_cap(keyID, part="body", legend="", font="Liberation Sans:style=Bold",
     translate([0,0,-0.3]) linear_extrude(0.01) square([2*hx*1.16, 2*hy*1.18], center=true);
     translate([0,0, 0.75]) linear_extrude(0.01) square([2*hx*0.95, 2*hy*0.90], center=true);
   }
-  // Choc-v1-Beinchen (choc_stem aus Choc_Chicago_Steno.scad: Abstand 5.7, 1.2 x 3.0, z -1.1 .. 2.0,
-  // tailliert), je Seite um legTol schmaler; darueber ein runder Steg (d 8, umschliesst die
-  // Beinchen) bis unter die Oberseite, auf die Aussenhaut begrenzt
+  // Choc-v1-Beinchen (choc_stem aus Choc_Chicago_Steno.scad: Abstand 5.7, 1.05 breit, z -1.1 .. 2.0,
+  // tailliert), je Seite um legTol schmaler, Laenge fest 2.9 (3.1 war zu lang); um legRot zur
+  // Kappe gedreht; darueber ein runder Steg (d 8, umschliesst die Beinchen) bis unter die
+  // Oberseite, auf die Aussenhaut begrenzt
   module choc_stem() {
-    for (sx=[-1,1]) translate([sx*5.7/2,0,-1.1]) linear_extrude(3.1) offset(delta=-legTol) difference() {
-      hull() for (x=[-0.45,0.45], y=[-1.5,1.5]) translate([x,y]) circle(d=0.15, $fn=16);
+    rotate(legRot) for (sx=[-1,1]) translate([sx*5.7/2,0,-1.1]) linear_extrude(3.1) offset(delta=-legTol) difference() {
+      hull() for (x=[-0.45,0.45], y=[-1,1]*(1.375+legTol)) translate([x,y]) circle(d=0.15, $fn=16);
       for (cx=[-3.9,3.9]) translate([cx,0]) circle(d=7, $fn=96);
     }
     intersection() { translate([0,0,1.9]) cylinder(d=8, h=H, $fn=96); outer(); }
@@ -548,11 +550,10 @@ EOF
   # Choc: Stuetze fuer beide Beinchen, Flat-Cut ohne die Beinchen unter der Kappenkante
   cat > "$JOBS/chocsupport.scad" <<'EOF'
 // Herausziehbare Stuetze fuer die Choc-DES-Kappe (wie stem_support, aufrechtes System, +x =
-// Druckseite = Front der Kappe). Statt eines Stegs unter dem Stem eine 7.2 mm breite Platte, die
-// beide Beinchen (Enden mit Eckenrundung bei x = 1.575) und den runden Steg (r 4) mit ~0.2 mm
-// Abstand traegt.
+// Druckseite). Statt eines Stegs unter dem Stem eine 7.2 mm breite Platte, die beide Beinchen
+// (Enden bei x = 1.45) und den runden Steg (r 4) mit ~0.2 mm Abstand traegt.
 // file = aufrechte Kappe, R = Sehne der Druckseite, H = Kappenhoehe
-module choc_support(file, R, H, w=7.2, leg_x=1.6, bridge_r=4, gap=0.2) {
+module choc_support(file, R, H, w=7.2, leg_x=1.45, bridge_r=4, gap=0.2) {
   x0 = leg_x + gap;
   module cap() intersection() { import(file); translate([-50,-50,0]) cube(100); }   // ohne Beinchen
   module hollow() scale([0.955,0.955,1]) intersection() {
@@ -586,21 +587,22 @@ module choc_support(file, R, H, w=7.2, leg_x=1.6, bridge_r=4, gap=0.2) {
 module flat_cut_legs(R, L) union() { flat_cut(R, L); translate([-5,-4,-2]) cube([10,8,2.3]); }
 EOF
 
-  # Choc-Kappenformen wie des_shape; Kappe um 90 Grad gedreht (Front = Druckseite), daher Sehnen
-  # der Front (R) und Rueckseite (L), Laenge = Kappenbreite. Gespiegelte Daumen haben dieselben
-  # Sehnen (Spiegelung quer zur Druckseite). Hoehen 4 mm niedriger.
+  # Choc-Kappenformen wie des_shape, Hoehen 4 mm niedriger. Reihen: Kappe um 90 Grad gedreht
+  # (Front = Druckseite), daher Sehnen der Front (R) und Rueckseite (L), Laenge = Kappenbreite.
+  # Daumen: Beinchen statt der Kappe gedreht, Druck auf der Seite wie bei MX, daher Seitensehnen
+  # (gespiegelt vertauscht) und Laenge = Kappenlaenge; letzte Spalte = Kappe drehen (1) oder nicht.
   des_choc_shape () {
     case "$1" in
-      S_R1) echo "Standard 5 0 [9.044,0,5.955,12.755] [9.026,0.063,7.275,7.248] 17.16 180 11";;
-      S_R2) echo "Standard 2 0 [9.036,0.041,8.474,2.070] [9.036,0,7.030,6.598] 17.16 0 5.75";;
-      S_R3) echo "Standard 1 0 [9.036,0.095,8.275,3.495] [9.046,0.013,8.305,2.167] 17.16 0 4.75";;
-      S_R4) echo "Standard 0 0 [9.036,0,7.029,6.966] [9.036,0.028,7.572,3.713] 17.16 0 6.55";;
-      T15L) echo "Thumb 0 0 [13.792,0,12.676,5.412] [13.792,0.002,11.741,7.640] 17.16 0 8";;
-      T15R) echo "Thumb 0 1 [13.792,0,12.676,5.412] [13.792,0.002,11.741,7.640] 17.16 0 8";;
-      T1L)  echo "Thumb 1 1 [9.036,0,7.438,5.942] [9.036,0,7.928,6.198] 17.16 0 7";;
-      T1R)  echo "Thumb 1 0 [9.036,0,7.438,5.942] [9.036,0,7.928,6.198] 17.16 0 7";;
-      T2L)  echo "Thumb 2 1 [9.038,0.003,7.880,8.541] [9.038,0,7.587,8.035] 17.16 0 9";;
-      T2R)  echo "Thumb 2 0 [9.038,0.003,7.880,8.541] [9.038,0,7.587,8.035] 17.16 0 9";;
+      S_R1) echo "Standard 5 0 [9.044,0,5.955,12.755] [9.026,0.063,7.275,7.248] 17.16 180 11 1";;
+      S_R2) echo "Standard 2 0 [9.036,0.041,8.474,2.070] [9.036,0,7.030,6.598] 17.16 0 5.75 1";;
+      S_R3) echo "Standard 1 0 [9.036,0.095,8.275,3.495] [9.046,0.013,8.305,2.167] 17.16 0 4.75 1";;
+      S_R4) echo "Standard 0 0 [9.036,0,7.029,6.966] [9.036,0.028,7.572,3.713] 17.16 0 6.55 1";;
+      T15L) echo "Thumb 0 0 [9.047,0,6.902,8.521] [9.047,0.032,7.239,5.974] 26.66 0 8 0";;
+      T15R) echo "Thumb 0 1 [9.047,0.032,7.239,5.974] [9.047,0,6.902,8.521] 26.66 0 8 0";;
+      T1L)  echo "Thumb 1 1 [9.036,0.016,7.605,5.851] [9.036,0,7.494,7.248] 17.16 0 7 0";;
+      T1R)  echo "Thumb 1 0 [9.036,0,7.494,7.248] [9.036,0.016,7.605,5.851] 17.16 0 7 0";;
+      T2L)  echo "Thumb 2 1 [9.038,0.032,8.197,6.447] [9.038,0,7.796,9.434] 17.16 0 9 0";;
+      T2R)  echo "Thumb 2 0 [9.038,0,7.796,9.434] [9.038,0.032,8.197,6.447] 17.16 0 9 0";;
     esac
   }
 
@@ -627,11 +629,12 @@ EOF
   # des_key <name> <form> <art> <wert>   (Arten wie bei kat_key: t, h, s, b, d)
   des_key () {
     local name="$1" shape="$2" kind="$3" val="$4" f="$JOBS/$1.scad"
-    local prof id mir R L len legrot hgt leg font='"Liberation Sans:style=Bold"' size=5 dot=false
+    local prof id mir R L len legrot hgt turn leg font='"Liberation Sans:style=Bold"' size=5 dot=false
     local pre="" post="" dotz=7.593
     if [ "$CHOC" = 1 ]; then
-      read -r prof id mir R L len legrot hgt <<< "$(des_choc_shape "$shape")"
-      prof="choc_$prof"; pre="rotate(90) "; post=", choc=true, legTol=$TOL"; dotz=3.593
+      read -r prof id mir R L len legrot hgt turn <<< "$(des_choc_shape "$shape")"
+      prof="choc_$prof"; post=", choc=true, legTol=$TOL"; dotz=3.593
+      if [ "$turn" = 1 ]; then pre="rotate(90) "; else post+=", legRot=90"; fi
     else
       read -r prof id mir R L len legrot hgt <<< "$(des_shape "$shape")"
     fi

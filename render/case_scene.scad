@@ -24,12 +24,13 @@ c_frame = "#d9822b"; c_mid = "#3d4148"; c_band = "#151515"; c_foot = "#111111"; 
 c_metal = "#b8bcc4"; c_sleeve = "#4a5a6a"; c_bottom = "#5b6470";
 
 // Spare/blank caps per row; thumbs: the 1.5u and the three 1u of the right half in x order.
-// DES-Choc raw caps lie rotated by 90° (printed on the front face, ADR 0014); R1 sits turned by 180°.
+// DES-Choc raw caps of the rows lie rotated by 90° (printed on the front face, ADR 0014; the thumbs
+// are not rotated); R1 sits turned by 180°.
 function capfile(k) =
   k[3] == 4 ? (k[5] > 1 ? "Daumen_leer_04" : str("Daumen_leer_0", 5 + round((k[0] - 47) / 19)))
             : str("Ersatz_R", k[3] + 1, "_00");
 module caps() for (k = lily58_keys) translate([k[0], k[1], skirt_z]) rotate(k[2])
-  rotate(k[3] == 0 ? 180 : k[5] > 1 ? 90 : 0) rotate(choc ? -90 : 0) import(str(R, capfile(k), "_body.3mf"));
+  rotate(k[3] == 0 ? 180 : k[5] > 1 ? 90 : 0) rotate(choc && k[3] != 4 ? -90 : 0) import(str(R, capfile(k), "_body.3mf"));
 
 // Hardware: M2 hex standoffs, M2 screws (head Ø 3.7 × 1.0), tenting foot housings
 module standoffs() for (h = lily58_mount_holes) translate([h[0], h[1], so_bot])

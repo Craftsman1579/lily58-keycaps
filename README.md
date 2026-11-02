@@ -84,9 +84,10 @@ that lay on the print bed:
 ![DES-Choc close-up: Esc, Q, F with homing bar, Space (1.5u) and GUI](docs/img/keycaps/des_choc_closeup.png)
 
 The DES set for Kailh Choc v1 switches at MX spacing (19.05 mm): every row 4 mm lower, two Choc legs
-instead of the cross stem (1.15 mm wide with the default tolerance 0.025). These caps are printed on
-their front face instead of a side, so the legs stand side by side (ADR 0014). The fit test is
-printed; the full set is not yet.
+instead of the cross stem (1.0 × 2.9 mm with the default tolerance 0.025). The row caps are printed on
+their front face instead of a side, so the legs stand side by side; the thumb caps have their legs
+turned by 90° (the thumb switches sit rotated) and are printed on their side (ADR 0014). The fit test
+and a first full set are printed; the corrected set (shorter legs, rotated thumb legs) is not yet.
 
 ### KAT
 
@@ -104,7 +105,7 @@ the profile: R4 = number row, R3 = top row, R2 = home row, R1 = bottom row and t
 
 ### Printed sideways – optimized for FDM
 
-The caps are printed **lying on their side** (DES-Choc: on their front), not upright:
+The caps are printed **lying on their side** (DES-Choc rows: on their front), not upright:
 
 - **Smooth top surface:** the curved dish is built from vertical layer contours instead of
   horizontal steps. Printed upright, every layer shows up as a ring in the dish.
@@ -350,8 +351,9 @@ parameters, with these changes:
 - **Printing:** sides cut flat, laid on the side, removable support.
 - **Resolution:** `fn = 60`, `layers = 50`, the values the author gives for output.
 - **Choc v1 (`des-choc-*`):** key heights 4 mm lower; legs from `choc_stem()` of
-  `Choc_Chicago_Steno.scad`, narrowed per side by the tolerance, with a round bridge to the top;
-  printed on the front face with its own removable support.
+  `Choc_Chicago_Steno.scad`, narrowed per side by the tolerance, 2.9 mm long, with a round bridge to
+  the top; rows printed on the front face, thumbs (legs rotated 90°) on the side, with their own
+  removable support.
 
 ### keycap_playground (KAT, modes `kat-all` and `kat-test`)
 
