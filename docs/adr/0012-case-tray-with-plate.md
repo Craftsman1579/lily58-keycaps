@@ -62,7 +62,9 @@ template matches the owner's PCB exactly.
 - **USB and TRRS** get rounded slots through the top wall, 2 mm closer to the
   inner edge than the KiCad positions (owner's test print).
 - **Rubber feet:** Ø 8 × 4 mm, recessed 1.4 mm (pockets Ø 8.4 mm, 0.6 mm floor above), sticking
-  out 2.6 mm; four per half. Thinner feet (e.g. 8 × 2 mm) would save another 1.6 mm.
+  out 2.6 mm; five per half (the fifth in the thumb cluster tip, out to the chamfer, so the tip
+  is supported; it is the front foot that clicks in behind the travel sleeve detent). Thinner feet
+  (e.g. 8 × 2 mm) would save another 1.6 mm.
   The outer pair sits at x 139.9 (pockets reach the start of the bottom chamfer): tented, the half pivots
   on them. At x 132 the fully unfolded tenting feet (27°, inner edge 82.5 mm up, owner) tipped it
   onto its bottom edge and the rubber feet lost contact (from 18° on, now from 62° on). Moving the

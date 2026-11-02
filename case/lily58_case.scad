@@ -58,8 +58,9 @@ foot_d     = 8.4;     // 8 mm feet
 foot_depth = 1.4;     // 4 mm high feet stick out 2.6 mm; 0.6 mm floor stays above them
 // Outer pair: pockets reach the start of the bottom chamfer (x 142.52 + outer - bevel). Tented, the
 // half pivots on them; at x 132 it tipped onto its bottom edge from 18° on (fully unfolded tenting
-// feet give 27°), now only from 62° on (chamfer top edge).
-feet = [[10, 96], [139.9, 88], [139.9, 29], [12, 42]];
+// feet give 27°), now only from 62° on (chamfer top edge). Fifth foot in the thumb cluster tip, also
+// out to the chamfer on both edges; as the front foot it clicks in behind the sleeve detent.
+feet = [[10, 96], [139.9, 88], [139.9, 29], [12, 42], [22, 3.5]];
 foot_out   = 4 - foot_depth;
 
 /* [Tenting: two folding feet per half, recessed so their housings sit flush with the rubber feet] */
