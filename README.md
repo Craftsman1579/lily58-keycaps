@@ -292,8 +292,9 @@ the MX board (tallest keycap 24 mm above the plate, still to be measured).
 
 The halves face each other keys inwards; the trays are the outside (ADR 0015). Between them: a frame
 on each half (resting on the plate rim), a 2 mm middle plate, filament pieces as dowels, two rubber
-bands round everything. The frames fit both boards (keycaps up to 23.5 mm above the plate); the case
-is about 85 mm high with the MX halves, 78 mm with the Choc halves.
+bands round everything. Each board has its own pair of frames, sized to the measured keycap height above the plate plus 1 mm
+(MX 23.2 mm → `carry_frame_right/left.stl`, Choc 18 mm → `carry_frame_right/left_choc.stl`); the middle
+plate is shared. The case is about 84 mm high with the MX halves, 67 mm with the Choc halves.
 
 <!-- part: docs/rendering.md -->
 ## Images and rendering

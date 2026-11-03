@@ -84,8 +84,8 @@ grip_d     = 20;
 
 /* [Carry case (ADR 0015): halves keys facing each other, a frame on each, a middle plate between,
    held by rubber bands; the trays are the outside] */
-cc_caps   = 23.5;     // tallest keycap top above the plate top, for both boards (owner)
-cc_air    = 1.0;      // above the tallest keycap, to the middle plate
+cc_caps   = choc ? 18.0 : 23.2;   // tallest keycap top above the plate top (owner, measured)
+cc_air    = 1.0;      // buffer above the tallest keycap, to the middle plate
 cc_mid    = 2.0;      // middle plate
 cc_rest   = 3.0;      // the frame rests this wide on the plate rim (keycaps stay inside the PCB outline)
 cc_gap    = 0.3;      // skirt to the half

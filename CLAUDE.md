@@ -45,7 +45,8 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 7. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
    Waiting for the keycap height above the plate (`MEASURE 15`).
 8. **Carry case** (ADR 0015, both boards): halves keys facing each other, a frame on each, a middle
-   plate between, rubber bands round it. Keycaps up to `cc_caps` = 23.5 mm above the plate (owner).
+   plate between, rubber bands round it. `cc_caps` per board (owner, measured): MX 23.2 mm,
+   Choc 18 mm, + 1 mm `cc_air`; own frames per board (`carry_frame_*_choc.stl`), shared middle plate.
    Not printed.
 
 ## Commands

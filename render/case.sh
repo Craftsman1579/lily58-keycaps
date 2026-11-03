@@ -49,7 +49,8 @@ for sw in "${boards[@]}"; do
   shot "${sw}_cover.png"          --imgsize=2000,1500 --camera=16,82,24,55,0,220,190 -D 'VIEW="cover"' -D EXPL=14
   shot "${sw}_carry.png"          --imgsize=2000,1300 --camera=71,53,39,62,0,35,460 -D 'VIEW="carry"'
   shot "${sw}_carry_exploded.png" --imgsize=2000,1500 --camera=71,53,39,62,0,35,600 -D 'VIEW="carry_exploded"' -D EXPL=26
-  shot "${sw}_carry_section.png"  --imgsize=2400,1250 --camera=71,39,0,0,0,0,210 --projection=o \
+  cy=42; [ "$sw" = choc ] && cy=34   # half the carry case height (MX 84, Choc 67.4 mm)
+  shot "${sw}_carry_section.png"  --imgsize=2400,1250 --camera=71,$cy,0,0,0,0,235 --projection=o \
     -D 'VIEW="carry_section"' -D CUT=95.8 -D BAND=0
   if [ "$sw" = mx ]; then
     shot bottom.png     --imgsize=2000,1500 --camera=-71,53,0,0,0,0,310 --projection=o -D 'VIEW="bottom"'
