@@ -425,7 +425,7 @@ fi
 # Mulden-Naht), die beim Slicer-Import offene Kanten ergeben.
 # Choc-Variante (des-choc-*): Profil 4 mm flacher, Choc-v1-Beinchen statt Kreuz-Stem, Kappe um
 # 90 Grad gedreht und auf der Front gedruckt (auf der Seite laegen die Beinchen uebereinander).
-# Daumen: Beinchen um 90 Grad zur Kappe gedreht (Switches dort quer), Druck daher auf der Seite.
+# 1.5u-Daumen: Beinchen um 90 Grad zur Kappe gedreht (Switch dort quer), Druck daher auf der Seite.
 if [ "$MODE" = "des-all" ] || [ "$MODE" = "des-test" ] || [ "$MODE" = "des-choc-all" ] || [ "$MODE" = "des-choc-test" ]; then
   CHOC=0; case "$MODE" in des-choc-*) CHOC=1;; esac
   DESREPO="$WORK/PseudoMakeMeKeyCapProfiles"; DESLIB="$WORK/des_libs"
@@ -589,8 +589,9 @@ EOF
 
   # Choc-Kappenformen wie des_shape, Hoehen 4 mm niedriger. Reihen: Kappe um 90 Grad gedreht
   # (Front = Druckseite), daher Sehnen der Front (R) und Rueckseite (L), Laenge = Kappenbreite.
-  # Daumen: Beinchen statt der Kappe gedreht, Druck auf der Seite wie bei MX, daher Seitensehnen
-  # (gespiegelt vertauscht) und Laenge = Kappenlaenge; letzte Spalte = Kappe drehen (1) oder nicht.
+  # 1u-Daumen wie die Reihen (gespiegelte haben dieselben Sehnen). 1.5u-Daumen: Beinchen statt der
+  # Kappe gedreht, Druck auf der Seite wie bei MX, daher Seitensehnen (gespiegelt vertauscht) und
+  # Laenge = Kappenlaenge; letzte Spalte = Kappe drehen (1) oder nicht.
   des_choc_shape () {
     case "$1" in
       S_R1) echo "Standard 5 0 [9.044,0,5.955,12.755] [9.026,0.063,7.275,7.248] 17.16 180 11 1";;
@@ -599,10 +600,10 @@ EOF
       S_R4) echo "Standard 0 0 [9.036,0,7.029,6.966] [9.036,0.028,7.572,3.713] 17.16 0 6.55 1";;
       T15L) echo "Thumb 0 0 [9.047,0,6.902,8.521] [9.047,0.032,7.239,5.974] 26.66 0 8 0";;
       T15R) echo "Thumb 0 1 [9.047,0.032,7.239,5.974] [9.047,0,6.902,8.521] 26.66 0 8 0";;
-      T1L)  echo "Thumb 1 1 [9.036,0.016,7.605,5.851] [9.036,0,7.494,7.248] 17.16 0 7 0";;
-      T1R)  echo "Thumb 1 0 [9.036,0,7.494,7.248] [9.036,0.016,7.605,5.851] 17.16 0 7 0";;
-      T2L)  echo "Thumb 2 1 [9.038,0.032,8.197,6.447] [9.038,0,7.796,9.434] 17.16 0 9 0";;
-      T2R)  echo "Thumb 2 0 [9.038,0,7.796,9.434] [9.038,0.032,8.197,6.447] 17.16 0 9 0";;
+      T1L)  echo "Thumb 1 1 [9.036,0,7.438,5.942] [9.036,0,7.928,6.198] 17.16 0 7 1";;
+      T1R)  echo "Thumb 1 0 [9.036,0,7.438,5.942] [9.036,0,7.928,6.198] 17.16 0 7 1";;
+      T2L)  echo "Thumb 2 1 [9.038,0.003,7.880,8.541] [9.038,0,7.587,8.035] 17.16 0 9 1";;
+      T2R)  echo "Thumb 2 0 [9.038,0.003,7.880,8.541] [9.038,0,7.587,8.035] 17.16 0 9 1";;
     esac
   }
 

@@ -23,8 +23,8 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
   (`stl/kat_passtest`, tolerances 0.025/0.05/0.075/0.10) is waiting for the owner's print result.
 
 - **DES for Choc v1** (`des-choc-*`, ADR 0014): fit test printed, leg tol 0.025 chosen; first full
-  set printed: legs shortened to 2.9 mm, thumb legs rotated 90° (thumbs printed on the side).
-  Re-rendered (2026-11-02), not yet reprinted.
+  set printed: legs shortened to 2.9 mm, 1.5u thumb legs rotated 90° (printed on the side; the 1u thumbs
+  stay like the rows). Re-rendered (2026-11-03), not yet reprinted.
 
 ### Open items
 

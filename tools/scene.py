@@ -3,7 +3,7 @@
 import sys, os
 
 prof, caps, raw, out = sys.argv[1:5]
-pre = -90 if prof == 'des-choc' else 0          # DES-Choc: Reihen-Kappen liegen im raw-Ordner um 90 Grad gedreht (Daumen nicht)
+pre = -90 if prof == 'des-choc' else 0          # DES-Choc: Kappen liegen im raw-Ordner um 90 Grad gedreht (1.5u-Daumen nicht)
 if prof == 'des-choc': prof = 'des'
 u = 19.05
 stagger = [0, 0, 0.20, 0.32, 0.20, 0.10]        # Spaltenversatz (in u), links von aussen nach innen
@@ -54,10 +54,12 @@ def layout(blank):
         res.append((b, None, x, y, rot))
     return res
 
+wide = {'Daumen_links_03', 'Daumen_rechts_00', 'Daumen_leer_03', 'Daumen_leer_04'}   # 1.5u-Daumen
+
 def scene(keys, path):
     with open(path, 'w') as f:
         for n, l, x, y, rot in keys:
-            f.write(f'translate([{x*u:.2f},{y*u:.2f},0]) rotate([0,0,{rot}]) rotate([0,0,{0 if n.startswith("Daumen") else pre}]) {{\n')
+            f.write(f'translate([{x*u:.2f},{y*u:.2f},0]) rotate([0,0,{rot}]) rotate([0,0,{0 if n in wide else pre}]) {{\n')
             f.write(f'  color("#2b2b2b") import("{caps}/{n}.stl");\n')
             if l and os.path.exists(f'{raw}/{l}_legends.3mf'):
                 f.write(f'  color("#f2f2f2") import("{raw}/{l}_legends.3mf");\n')

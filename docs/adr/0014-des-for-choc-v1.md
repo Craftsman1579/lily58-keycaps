@@ -1,6 +1,6 @@
 # 0014 – DES caps for Choc v1 switches
 
-- **Status:** accepted (fit test and first full set printed; leg length and thumb legs corrected, not yet reprinted)
+- **Status:** accepted (fit test and first full set printed; leg length and 1.5u thumb legs corrected, not yet reprinted)
 - **Decided by:** owner (second Lily58 with Choc v1 switches at MX spacing 19.05 mm, leg fit from the
   test print), derived (geometry, print orientation)
 
@@ -27,11 +27,14 @@ switch with two legs instead of a cross.
   **front** face, not on a side wall as with MX (ADR 0001). On a side wall the two legs would lie on
   top of each other and the upper one would need support in the narrow gap between them. On the
   front they stand side by side, and the leg width lies in the XY plane. Front/back chords are
-  measured per shape (`des_choc_shape`).
-- **Thumbs:** on the owner's board the thumb switches are turned by 90° relative to the caps, so the
-  legs are rotated by 90° inside the cap (`legRot=90`). The cap itself is not rotated and is printed
-  on its side wall like MX; that way the legs again stand side by side in print and use the same
-  support. Side chords measured per thumb shape (swapped for mirrored caps), 1.5u length 26.66 mm.
+  measured per shape (`des_choc_shape`);
+  mirrored 1u thumbs share them.
+- **1.5u thumb:** on the owner's board its switch is turned by 90° relative to the cap, so the legs
+  are rotated by 90° inside the cap (`legRot=90`). The cap itself is not rotated and is printed on
+  its side wall like MX; that way the legs again stand side by side in print and use the same
+  support. Side chords measured (swapped for the mirrored cap), length 26.66 mm. The 1u thumbs were
+  briefly rotated the same way by mistake; their switches sit like the rows, so they are handled
+  like the rows again.
 - **Support** (`choc_support`, like ADR 0002): a 7.2 mm wide plate under both leg ends and the
   bridge, ~0.2 mm clearance, pulled out through the opening. `flat_cut_legs` keeps the legs that
   stick out below the skirt (the normal flat cut starts at z = 0.02).
