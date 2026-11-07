@@ -12,15 +12,18 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 - Repo: `github.com/Craftsman1579/lily58-keycaps` (public, GPL-3.0). Push/release with `gh`
   (needs the keychain → run outside the sandbox).
 
-## Current state (2026-11-02)
+## Current state (2026-11-07)
 
 - Everything is on `main` (keycaps, DES-Choc, case). Docs: `README.md` in parts marked
   `<!-- part: docs/<name>.md -->` (keycaps, case, travel, rendering, templates, credits), meant to be
   split into separate documents later; images in `docs/img/{keycaps,case,photos}/`.
 
-- DES sets German + US, tolerance 0.025 – tested, released as **v1.1** (binary STL ZIPs).
-- KAT sets German + US rendered at the old default 0.20 (images only). **KAT fit test**
-  (`stl/kat_passtest`, tolerances 0.025/0.05/0.075/0.10) is waiting for the owner's print result.
+- **v1.2** (binary STL ZIPs): DES, DES-Choc and KAT, each German + US, all tolerance 0.025 (KAT
+  0.025 chosen by the owner, now the `kat-all` default). v1.2 also fixes a step across the middle of
+  the DES dish (front dish half was offset in global y; now along its own path, ADR 0009) that
+  printed as a left-right ridge on R1/R2/R4.
+- `stl/` holds only the current sets, `case/` and the `render/` caches; old tolerance sets and fit
+  tests were removed (regenerate with the commands below).
 
 - **DES for Choc v1** (`des-choc-*`, ADR 0014): fit test printed, leg tol 0.025 chosen; first full
   set printed: legs shortened to 2.9 mm, 1.5u thumb legs rotated 90° (printed on the side; the 1u thumbs
@@ -28,9 +31,7 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 
 ### Open items
 
-1. KAT fit test result → set it as `kat-all` default (like the `des-all` override after `TOL=`),
-   render `kat-all` and `LAYOUT=us kat-all`, check them (see below), release **v1.2** with KAT ZIPs,
-   update README/ADR 0004.
+1. Owner to reprint caps with the dish fix and confirm the ridge is gone.
 2. MakerWorld upload planned by the owner; license question open (ADR 0010).
 3. DES thumb mirroring is not yet verified on real hands (ADR 0008).
 4. Optional: a full blank set as ready-made plates (currently 1 spare cap per row + thumbs + homing).
@@ -57,7 +58,7 @@ LAYOUT=us ./lily58_keycaps.sh des-all      # DES US
 ./lily58_keycaps.sh des-test ["t1 t2 …"]   # DES fit test (default 0.00 0.025 0.05 0.075)
 ./lily58_keycaps.sh des-choc-all [tol]     # DES for Choc v1, MX spacing (default leg tol 0.025)
 ./lily58_keycaps.sh des-choc-test ["t1 …"] # Choc fit test
-./lily58_keycaps.sh kat-all [tol]          # KAT German (default tol 0.20, to be replaced)
+./lily58_keycaps.sh kat-all [tol]          # KAT German (default tol 0.025)
 LAYOUT=us ./lily58_keycaps.sh kat-all      # KAT US
 ./lily58_keycaps.sh kat-test ["t1 t2 …"]   # KAT fit test (default 0.025 0.05 0.075 0.10)
 ```
@@ -127,7 +128,7 @@ render/case.sh [mx|choc] [-- -D …]      # docs/img/case/ (exports parts to stl
   `stl/render/keycaps/<variant>/caps/` (cached, parallel); `tools/scene.py des|des-choc|kat` writes the
   scenes (Lily58 arrangement, DES R1 rotated 180°, KAT 1.5u rotated 90°, DES-Choc raw caps turned
   back by −90°); `render/side_profiles.scad` shows one column per profile. Needs the six sets in
-  `stl/` (KAT: `KAT_TOL`, default 0.20).
+  `stl/` (KAT: `KAT_TOL`, default 0.025).
 - Case: `render/case_scene.scad` (`VIEW=assembled|exploded|section|cover|bottom|carry|carry_exploded|
   carry_section|travel`, `switch_type=mx|choc`) with the blank caps of the DES / DES-Choc set. Cap
   skirt above the plate is estimated (MX 7.0, Choc 4.6 mm).

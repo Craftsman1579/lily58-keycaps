@@ -6,13 +6,13 @@
 # Needs the sets in stl/ (see the table below): ./lily58_keycaps.sh des-all, des-choc-all, kat-all,
 # each also with LAYOUT=us.
 # Usage: render/keycaps.sh [variant …]   variants: des des-us des-choc des-choc-us kat kat-us
-#        KAT_TOL=0.10 render/keycaps.sh kat   (KAT sets of another tolerance; default 0.20)
+#        KAT_TOL=0.10 render/keycaps.sh kat   (KAT sets of another tolerance; default 0.025)
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 root="$(cd "$here/.." && pwd)"
 img="$root/docs/img/keycaps"
 mkdir -p "$img"
-kat_tol="${KAT_TOL:-0.20}"
+kat_tol="${KAT_TOL:-0.025}"
 
 # variant -> set folder in stl/, profile (scene.py / flat.scad), image prefix
 variant() {

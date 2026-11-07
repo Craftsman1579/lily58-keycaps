@@ -41,6 +41,8 @@ TOL="${2:-0.20}"   # 0.20 fuer 0.4-mm-Duese
 if [ "$MODE" = "des-all" ] && [ -z "${2:-}" ]; then TOL=0.025; fi
 # Choc: Beinchen je Seite um TOL schmaler (1.0 statt 1.05 mm); 0.00 und 0.05 passten im Passtest
 if [ "$MODE" = "des-choc-all" ] && [ -z "${2:-}" ]; then TOL=0.025; fi
+# KAT: 0.025 nach dem Passtest (Entscheidung des Besitzers, ADR 0004)
+if [ "$MODE" = "kat-all" ] && [ -z "${2:-}" ]; then TOL=0.025; fi
 
 # --- 1. Dokumente-Ordner finden ---------------------------------------------
 find_docs () {

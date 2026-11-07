@@ -1,6 +1,6 @@
 # 0004 – Stem tolerances per profile, verified by fit tests
 
-- **Status:** accepted; KAT value pending its fit test
+- **Status:** accepted
 - **Decided by:** owner (nozzle, tested values), derived (test series)
 
 ## Context
@@ -18,14 +18,14 @@ tolerance differently:
 
 - **DES: 0.025** – tested with the 0.4 mm nozzle, "works perfectly" (slots 1.20 × 1.30 mm,
   lengths 4.08 / 4.28 mm). Default of `des-all`.
-- **KAT: pending.** Default of `kat-all` is still 0.20. Fit test `kat-test` with 0.025 / 0.05 /
-  0.075 / 0.10 was rendered; at 0.05 the narrower slot equals the DES fit (1.20 mm), but KAT's cross
-  arms are shorter (≈ 4.0 mm), so the range goes up to 0.10. Once the owner reports the best value,
-  set it as `kat-all` default (like the DES override after `TOL=`) and render/release the KAT sets.
+- **KAT: 0.025** – chosen by the owner after the fit test `kat-test` (0.025 / 0.05 / 0.075 / 0.10;
+  at 0.05 the narrower slot would equal the DES fit, but KAT's cross arms are shorter, ≈ 4.0 mm, so
+  the range went up to 0.10). Default of `kat-all` since 2026-11-07 (v1.2); before, the sets were
+  rendered at the old global default 0.20 for images only.
 - Fit tests: `des-test` / `kat-test` render one blank home-row cap per tolerance with flat sides and
   the support insert, one file per tolerance (`Passtest_tol_<t>_body.stl`).
-- The global default (`TOL="${2:-0.20}"`) is overridden only for `des-all` when no tolerance is
-  given.
+- The global default (`TOL="${2:-0.20}"`, legacy DSA modes) is overridden for `des-all`,
+  `des-choc-all` and `kat-all` when no tolerance is given.
 
 ## Consequences
 

@@ -15,9 +15,9 @@ a draft and not released yet.
 
 | Variant | Switches | Layouts | Status |
 |---|---|---|---|
-| DES keycaps | MX | German, US | printed, released (v1.1) |
-| DES keycaps | Choc v1 (MX spacing) | German, US | fit test printed, set not yet printed |
-| KAT keycaps | MX | German, US | fit test pending, images only |
+| DES keycaps | MX | German, US | printed, released (v1.2) |
+| DES keycaps | Choc v1 (MX spacing) | German, US | first set printed, corrected set released (v1.2) |
+| KAT keycaps | MX | German, US | released (v1.2), tolerance 0.025 |
 | Case (tray, plate, cover) | MX and Choc v1 | – | draft, plate fit test printed |
 | Travel sleeve | MX | – | draft |
 | Carry case | MX and Choc v1 | – | draft |
@@ -152,9 +152,10 @@ thumb caps and two blank homing caps.
   object with multiple parts, then assign the second filament to the legend. Blank groups
   (`Ersatz_*`, `Daumen_leer`, `Homing_leer`) only have a `*_body.stl`.
 - The supports are already included, so turn slicer supports off.
-- Stem fit with a 0.4 mm nozzle: DES uses a tolerance of 0.025 (tested, firm fit), DES-Choc narrows
-  each leg by 0.025 per side (1.15 mm). DES and KAT apply the tolerance differently, so the values are
-  not interchangeable; print a fit test first with `des-test` / `des-choc-test` / `kat-test`.
+- Stem fit with a 0.4 mm nozzle: DES and KAT use a tolerance of 0.025 (DES tested, firm fit),
+  DES-Choc narrows each leg by 0.025 per side (1.15 mm). DES and KAT apply the tolerance
+  differently, so the values are not interchangeable; print a fit test first with `des-test` /
+  `des-choc-test` / `kat-test`.
 - Recommended: seam at the back or on the bed side, Arachne wall generator (fine symbol lines),
   slow outer walls.
 
@@ -171,7 +172,7 @@ LAYOUT=us ./lily58_keycaps.sh des-all       # DES set with US layout
 ./lily58_keycaps.sh des-choc-all            # DES for Choc v1 (MX spacing), leg tolerance 0.025
 LAYOUT=us ./lily58_keycaps.sh des-choc-all  # DES-Choc with US layout
 ./lily58_keycaps.sh des-choc-test           # Choc fit test: blank caps with 0.00 0.025 0.05 0.075
-./lily58_keycaps.sh kat-all                 # KAT set (German), default tolerance 0.20
+./lily58_keycaps.sh kat-all                 # KAT set (German), default tolerance 0.025
 LAYOUT=us ./lily58_keycaps.sh kat-all       # KAT set with US layout
 ./lily58_keycaps.sh kat-test                # KAT fit test: blank caps with 0.025 0.05 0.075 0.10
 ```
@@ -309,7 +310,7 @@ render/case.sh [mx|choc …] [-- -D …]     # case images; extra OpenSCAD argum
 
 The renders use the generated keycap sets, so build them first: `des-all`, `des-choc-all` and
 `kat-all`, each also with `LAYOUT=us` (see [Generating the keycaps](#generating-the-keycaps)). KAT
-images use the sets of tolerance 0.20 (`KAT_TOL=0.10 render/keycaps.sh kat kat-us` for others).
+images use the sets of tolerance 0.025 (`KAT_TOL=0.10 render/keycaps.sh kat kat-us` for others).
 
 | Image | Source | Script |
 |---|---|---|
