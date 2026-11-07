@@ -343,7 +343,9 @@ parameters, with these changes:
 - **Cross hole:** rebuilt with the same dimensions but without coincident faces, which cause open
   edges on slicer import. The cross starts below the stem bottom; the entry chamfer (1.1× at z = 0)
   is made of two frustums per cross arm.
-- **Dish:** the two dish halves overlap by 0.05 mm instead of 0.00001 mm.
+- **Dish:** the two dish halves overlap by 0.05 mm instead of 0.00001 mm, shifted along the front
+  half's own sweep path so the tilted top has no step across the middle (a shift in global y
+  printed as a ridge on R1/R2/R4; fixed in v1.2, confirmed by a test print).
 - **Legends:** a separate part for multi-color printing, perpendicular to the tilted top and
   centered on the visible shape of the glyph (`textmetrics`). They end 0.3 mm above the inner
   ceiling. The R1 legends are rotated by 180°.

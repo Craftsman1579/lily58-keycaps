@@ -21,7 +21,7 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 - **v1.2** (binary STL ZIPs): DES, DES-Choc and KAT, each German + US, all tolerance 0.025 (KAT
   0.025 chosen by the owner, now the `kat-all` default). v1.2 also fixes a step across the middle of
   the DES dish (front dish half was offset in global y; now along its own path, ADR 0009) that
-  printed as a left-right ridge on R1/R2/R4.
+  printed as a left-right ridge on R1/R2/R4. Fix confirmed by a test print (R1, 2026-11-07).
 - `stl/` holds only the current sets, `case/` and the `render/` caches; old tolerance sets and fit
   tests were removed (regenerate with the commands below).
 
@@ -31,21 +31,20 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
 
 ### Open items
 
-1. Owner to reprint caps with the dish fix and confirm the ridge is gone.
-2. MakerWorld upload planned by the owner; license question open (ADR 0010).
-3. DES thumb mirroring is not yet verified on real hands (ADR 0008).
-4. Optional: a full blank set as ready-made plates (currently 1 spare cap per row + thumbs + homing).
-5. Script comments are still German.
-6. **Case** (ADR 0012): draft v6 tray + plate for the owner's PandaKB
+1. MakerWorld upload planned by the owner; license question open (ADR 0010).
+2. DES thumb mirroring is not yet verified on real hands (ADR 0008).
+3. Optional: a full blank set as ready-made plates (currently 1 spare cap per row + thumbs + homing).
+4. Script comments are still German.
+5. **Case** (ADR 0012): draft v6 tray + plate for the owner's PandaKB
    Lily58 RGB MX (no OLED), as flat as possible. M2 hex standoffs in the tray bosses (MX 10 mm,
    Choc 6 mm), M2x4 from below and from the top; the plate covers the wall and snaps into a
    groove (tune with `part="snap_test"`). Controller cover clicks into the same groove, M2x12 into
    heat-set inserts in the tray rings (cover holes measured, MEASURE 19).
    Two folding tenting feet per half in pockets in the bottom, flush with the rubber feet.
    Switch cutout 13.8 mm, confirmed by the plate fit test.
-7. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
+6. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
    Waiting for the keycap height above the plate (`MEASURE 15`).
-8. **Carry case** (ADR 0015, both boards): halves keys facing each other, a frame on each, a middle
+7. **Carry case** (ADR 0015, both boards): halves keys facing each other, a frame on each, a middle
    plate between, rubber bands round it. `cc_caps` per board (owner, measured): MX 23.2 mm,
    Choc 18 mm, + 1 mm `cc_air`; own frames per board (`carry_frame_*_choc.stl`), shared middle plate.
    Not printed.
