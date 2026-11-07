@@ -19,6 +19,10 @@ Rules for all geometry:
   starts below the stem bottom, flare frustums taper at different rates per axis, legend recess is a
   column cut that extends above the dish, legends end 0.3 mm above the inner ceiling, stem walls end
   0.3 mm above the rim, support cavity copy scaled 0.99).
+- **Overlap along the part's own axis.** The front dish half is moved back 0.05 mm along its own
+  sweep path, not along global y. A shift in y left a step of 0.05·tan(top tilt) across the middle
+  of the dish (R1 0.018 mm, R2 0.012 mm); printed sideways it showed as a ridge running left to
+  right across the top of R1/R2/R4 (owner's print, 2026-11-07). R3 (tilt 4°) was barely affected.
 - **Render upright, cut, then rotate** – never let the playground rotate (`KEY_ROTATION=[0,0,0]`,
   rotation in the group pass).
 - **3MF for intermediate files** (exact shared vertices), **STL for the final groups**, because Bambu

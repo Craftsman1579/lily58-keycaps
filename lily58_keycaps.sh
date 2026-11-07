@@ -475,8 +475,10 @@ module des_cap(keyID, part="body", legend="", font="Liberation Sans:style=Bold",
   module outer() skin([for (i=[0:layers-1]) transform(translation(CapTranslation(i, keyID)) * rotation(CapRotation(i, keyID)), elliptical_rectangle(CapTransform(i, keyID), b = CapRoundness(i,keyID),fn=fn))]);
   module inner() translate([0,0,-.001]) skin([for (i=[0:layers-1]) transform(translation(InnerTranslation(i, keyID)) * rotation(CapRotation(i, keyID)), elliptical_rectangle(InnerTransform(i, keyID), b = CapRoundness(i,keyID),fn=fn))]);
   module dish() {
-    // vordere Haelfte 0.05 statt 0.00001 versetzt: die Haelften ueberlappen statt fast zu beruehren
-    translate([-TopWidShift(keyID),0.05-TopLenShift(keyID),H-DishHeightDif(keyID)])rotate([0,-YAngleSkew(keyID),0])rotate([0,-90+XAngleSkew(keyID),90-ZAngleSkew(keyID)])skin(FrontCurve);
+    // vordere Haelfte 0.05 entlang ihrer eigenen Bahn zurueckversetzt (statt 0.00001 in y): die
+    // Haelften ueberlappen statt fast zu beruehren. Ein Versatz in globaler y-Richtung hinterlaesst
+    // bei geneigter Oberseite (XAngleSkew) eine Stufe 0.05*tan(Neigung) quer ueber die Muldenmitte.
+    translate([-TopWidShift(keyID),-TopLenShift(keyID),H-DishHeightDif(keyID)])rotate([0,-YAngleSkew(keyID),0])rotate([0,-90+XAngleSkew(keyID),90-ZAngleSkew(keyID)])translate([0,0,-0.05])skin(FrontCurve);
     translate([-TopWidShift(keyID),-TopLenShift(keyID),H-DishHeightDif(keyID)])rotate([0,-YAngleSkew(keyID),0])rotate([0,-90-XAngleSkew(keyID),270-ZAngleSkew(keyID)])skin(BackCurve);
   }
   // Kreuzloch wie im Original (stem_internal, 5.25 tief, Einfuehrschraege 1.1 -> 1.0); das Kreuz
