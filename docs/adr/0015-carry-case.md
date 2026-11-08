@@ -32,6 +32,19 @@ themselves are the outer shell. The tray stays unchanged (ADR 0012).
   19 mm (Choc), plus the 3 mm skirt; case ~84 mm high with the MX halves (50 mm without), ~67 mm with
   the Choc halves (40 mm without). Frames ~58 cm³ (MX) / ~45 cm³ (Choc) each, plate ~32 cm³.
 - `part="carry"` renders the stack.
+- **MX: compact variant with a cable compartment** (owner asked for a more compact MX case and room for
+  a USB and a TRRS cable). For MX this replaces the frame height, middle plate and case height given
+  above; Choc keeps the frames on a middle plate.
+  - No middle plate; the frames meet directly and the dowels (10 mm pieces) join them. `cc_air` 0.5 mm per
+    side, so the opposing number rows are 1 mm apart. Height 81 mm instead of 84 (47.4 instead of 50.4
+    without the halves), frames 23.7 mm + skirt. Footprint unchanged (155.5 x 119.3 mm).
+  - 81 mm is close to the limit with these trays and caps: 2 x 16.8 mm for the halves + 2 x 23.2 mm for
+    the caps = 80 mm. Only the number row (KeyHeight 15 mm, thumbs up to 13, other rows up to 10.55)
+    reaches 23.2 mm, and in the mirrored stack it faces itself. ADR 0016 avoids that by turning one half.
+  - Cable compartment in the free space over the controller covers, no extra footprint: 31.1 x 54 mm,
+    38 mm deep over both frames, open towards the other frame, the covers are its floor and lid. Wall to
+    the keys 1.2 mm, 0.7 mm clear of the keycap edges (x 28.52, y 54.95); outer wall 2 mm, 1.2 mm left at
+    the band grooves. The first dowel moved to (-3.3, 44), out of the compartment walls.
 
 ## Measurements
 
@@ -40,7 +53,9 @@ themselves are the outer shell. The tray stays unchanged (ADR 0012).
 ## Consequences
 
 - Changes to the tray outline or the plate (ADR 0012) change the frames.
-- A taller controller cover needs a deeper `cc_cover`.
+- A taller controller cover needs a deeper `cc_cover` and makes the MX compartment shallower.
+- The MX frames need the controller covers mounted: they close the compartment.
+- Whether the cables fit depends on their length, diameter and plug size (not measured yet).
 
 ## Images
 

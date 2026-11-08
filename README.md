@@ -3,8 +3,8 @@
 Printable parts for the [Lily58](https://github.com/kata0510/Lily58) split keyboard, generated from
 parametric OpenSCAD sources and optimized for FDM printing:
 
-- **Keycaps** in two sculpted profiles, **DES** and **KAT**, each with a German layout (QWERTZ, no
-  special characters) or a US layout (QWERTY with punctuation), symbols for the modifier keys and
+- **Keycaps** in two sculpted profiles, **DES** and **KAT**, each with a German layout (QWERTZ letters
+  with US punctuation) or a US layout (QWERTY with punctuation), symbols for the modifier keys and
   multi-color legends. DES also exists for **Choc v1** switches at MX spacing.
 - **A case** for MX boards (PandaKB Lily58 RGB MX) and Choc v1 boards: a tray with a snap-in switch
   plate, a controller cover, rubber feet and pockets for folding tenting feet. Plus a travel sleeve
@@ -20,7 +20,7 @@ a draft and not released yet.
 | KAT keycaps | MX | German, US | released (v1.2), tolerance 0.025 |
 | Case (tray, plate, cover) | MX and Choc v1 | – | draft, plate fit test printed |
 | Travel sleeve | MX | – | draft |
-| Carry case | MX and Choc v1 | – | draft |
+| Carry case | MX (with cable compartment) and Choc v1 | – | draft |
 
 **Contents:** [Keycaps](#keycaps) · [Case](#case) · [Travel sleeve and carry case](#travel-sleeve-and-carry-case)
 · [Images and rendering](#images-and-rendering) · [Changes to the templates](#changes-to-the-templates)
@@ -127,10 +127,10 @@ German layout:
 | Row | Left | Right |
 |---|---|---|
 | Numbers | Esc 1 2 3 4 5 | 6 7 8 9 0 Del |
-| Top | Tab Q W E R T | Z U I O P □ |
-| Home | Ctrl A S D **F** G | H **J** K L □ □ |
-| Bottom | Shift Y X C V B □ | □ N M □ □ □ Shift |
-| Thumbs | Alt GUI Lower Space | Enter Raise Backspace GUI |
+| Top | Tab Q W E R T | Z U I O P - |
+| Home | Ctrl A S D **F** G | H **J** K L ; ' |
+| Bottom | Shift Y X C V B [ | ] N M , . / Shift |
+| Thumbs | Alt GUI Lower Enter | Space Raise Backspace GUI |
 
 US layout (follows the Lily58 default keymap):
 
@@ -140,9 +140,13 @@ US layout (follows the Lily58 default keymap):
 | Top | Tab Q W E R T | Y U I O P - |
 | Home | Ctrl A S D **F** G | H **J** K L ; ' |
 | Bottom | Shift Z X C V B [ | ] N M , . / Shift |
-| Thumbs | Alt GUI Lower Space | Enter Raise Backspace GUI |
+| Thumbs | Alt GUI Lower Enter | Space Raise Backspace GUI |
 
-□ = blank cap, **F**/**J** with homing bar or dot. Space and Enter are 1.5u. Ctrl, Alt and GUI use
+The German layout is the US layout with Y and Z swapped and Del instead of \`: US punctuation for programming, letters
+where a German keyboard has them. Umlauts and ß are not separate keys (long press on A/O/U/S in
+the firmware).
+
+**F**/**J** with homing bar or dot. Enter (left) and Space (right) are 1.5u; both layouts share the thumb keys. Ctrl, Alt and GUI use
 the Mac symbols ⌃ ⌥ ⌘. Every set also contains one blank spare cap per row, a full set of blank
 thumb caps and two blank homing caps.
 
@@ -292,10 +296,24 @@ the MX board (tallest keycap 24 mm above the plate, still to be measured).
 ![Carry case, MX halves, section through the number row](docs/img/case/mx_carry_section.png)
 
 The halves face each other keys inwards; the trays are the outside (ADR 0015). Between them: a frame
-on each half (resting on the plate rim), a 2 mm middle plate, filament pieces as dowels, two rubber
-bands round everything. Each board has its own pair of frames, sized to the measured keycap height above the plate plus 1 mm
-(MX 23.2 mm → `carry_frame_right/left.stl`, Choc 18 mm → `carry_frame_right/left_choc.stl`); the middle
-plate is shared. The case is about 84 mm high with the MX halves, 67 mm with the Choc halves.
+on each half (resting on the plate rim), filament pieces as dowels, two rubber bands round everything.
+Each board has its own pair of frames, sized to the measured keycap height above the plate
+(MX 23.2 mm → `carry_frame_right/left.stl`, Choc 18 mm → `carry_frame_right/left_choc.stl`).
+
+- **MX:** compact, no middle plate, the frames meet directly; about 81 mm high. The free space over the
+  controller covers is a cable compartment for a USB and a TRRS cable (31 × 54 mm, 38 mm deep). The
+  controller covers must be mounted, they close it.
+- **Choc:** a 2 mm middle plate (`carry_mid.stl`) between the frames; about 67 mm high.
+- **MX, maximum compactness (ADR 0016):** `carry2_frame_right/left.stl`, about 75.6 mm high. The left half
+  is turned over the long axis so the tall number rows face the low rows; four 10 x 1.4 mm magnets per frame instead of
+  rubber bands, a flat cable compartment over each controller cover.
+
+- **Choc, maximum compactness (ADR 0016):** `carry2_frame_right/left_choc.stl`, about 59 mm high, same
+  principle and magnets in the four corners, no cable compartment.
+
+![Compact carry case, exploded](docs/img/case/mx_carry2_exploded.png)
+
+![Compact carry case, Choc halves, exploded](docs/img/case/choc_carry2_exploded.png)
 
 <!-- part: docs/rendering.md -->
 ## Images and rendering
@@ -319,6 +337,7 @@ images use the sets of tolerance 0.025 (`KAT_TOL=0.10 render/keycaps.sh kat kat-
 | `docs/img/keycaps/side_profiles.png` | one column of each profile | `render/keycaps.sh` (scene: `render/side_profiles.scad`) |
 | `docs/img/case/<board>_assembled/_exploded/_section/_cover.png` | one half with blank caps | `render/case.sh` (scene: `render/case_scene.scad`) |
 | `docs/img/case/<board>_carry[_exploded/_section].png` | carry case | `render/case.sh` |
+| `docs/img/case/<board>_carry2[_exploded/_section].png` | compact carry case | `render/case.sh` |
 | `docs/img/case/bottom.png`, `travel.png` | tray bottom, travel sleeve | `render/case.sh` |
 | `docs/img/photos/*.jpg` | photos of printed caps | – (EXIF removed with `tools/jpegmeta.py`) |
 

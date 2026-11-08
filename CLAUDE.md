@@ -44,10 +44,15 @@ Context for new sessions. Read this first, then the ADRs in `docs/adr/` for the 
    Switch cutout 13.8 mm, confirmed by the plate fit test.
 6. **Travel sleeve** (ADR 0013): box with two chambers, halves slide in keys up, tray unchanged.
    Waiting for the keycap height above the plate (`MEASURE 15`).
-7. **Carry case** (ADR 0015, both boards): halves keys facing each other, a frame on each, a middle
-   plate between, rubber bands round it. `cc_caps` per board (owner, measured): MX 23.2 mm,
-   Choc 18 mm, + 1 mm `cc_air`; own frames per board (`carry_frame_*_choc.stl`), shared middle plate.
-   Not printed.
+7. **Carry case** (ADR 0015, both boards): halves keys facing each other, a frame on each, rubber
+   bands round it. `cc_caps` per board (owner, measured): MX 23.2 mm, Choc 18 mm. Choc: 1 mm `cc_air`,
+   middle plate (`carry_mid.stl`), own frames (`carry_frame_*_choc.stl`). MX: compact, no middle plate,
+   0.5 mm `cc_air`, 81 mm high, cable compartment 31.1 x 54 x 38 mm over the controller covers.
+   Not printed; cable dimensions not measured yet.
+8. **Compact carry case** (ADR 0016, both boards; Choc: 59.2 mm, no compartment, row heights from the model
+   except R1, `carry2_frame_*_choc.stl`). MX: left half turned over the long axis, 75.6 mm high, `part="frame2"`,
+   four 10 x 1.4 mm magnets per frame instead of bands, two 16.3 mm deep compartments. Row heights measured
+   (R1 23.2, R2 17.4, R3 15.7, R4 17.7, thumbs 20 mm). Not printed.
 
 ## Commands
 
@@ -130,7 +135,8 @@ render/case.sh [mx|choc] [-- -D …]      # docs/img/case/ (exports parts to stl
   `stl/` (KAT: `KAT_TOL`, default 0.025).
 - Case: `render/case_scene.scad` (`VIEW=assembled|exploded|section|cover|bottom|carry|carry_exploded|
   carry_section|travel`, `switch_type=mx|choc`) with the blank caps of the DES / DES-Choc set. Cap
-  skirt above the plate is estimated (MX 7.0, Choc 4.6 mm).
+  height above the plate: MX from the owner's measurements (`row_dz`), Choc scaled to the measured 18 mm. Switches in the
+  scenes are schematic (no check uses them).
 - After a geometry change of the case or a keycap set, rerun the matching script and check the images.
 - Photos: `python3 tools/jpegmeta.py strip in.jpg out.jpg` (removes EXIF/GPS and motion-photo video),
   resize with `sips -Z 1600`, then `jpegmeta.py check`; put them in `docs/img/photos/`.

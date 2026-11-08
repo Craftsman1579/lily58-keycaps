@@ -21,3 +21,4 @@ development (usually after measuring or testing), with the owner's approval.
 | [0013](0013-travel-sleeve.md) | Travel case: a sleeve with two chambers | proposed |
 | [0014](0014-des-for-choc-v1.md) | DES caps for Choc v1 switches | accepted |
 | [0015](0015-carry-case.md) | Carry case: frames and a middle plate, held by rubber bands | proposed |
+| [0016](0016-compact-carry-case-magnets.md) | Compact carry case (MX and Choc): halves turned against each other, closed by magnets | proposed |

@@ -31,8 +31,9 @@ for sw in "${boards[@]}"; do
   mkdir -p "$parts"
   base=(-D 'part="none"' -D "switch_type=\"$sw\"")
 
-  for p in 1 2 3 4 5 6 7; do
+  for p in 1 2 3 4 5 6 7 8; do
     [ "$p" = 7 ] && [ "$sw" = choc ] && continue   # the sleeve is sized for the MX board
+    [ "$p" = 5 ] && [ "$sw" = mx ] && continue     # no middle plate in the MX carry case
     echo ">> $sw part $p"
     openscad "${backend[@]}" "${base[@]}" -D P=$p ${extra[@]+"${extra[@]}"} -o "$parts/p$p.stl" "$scad" 2>&1 | grep -i error || true
   done
@@ -49,9 +50,13 @@ for sw in "${boards[@]}"; do
   shot "${sw}_cover.png"          --imgsize=2000,1500 --camera=16,82,24,55,0,220,190 -D 'VIEW="cover"' -D EXPL=14
   shot "${sw}_carry.png"          --imgsize=2000,1300 --camera=71,53,39,62,0,35,460 -D 'VIEW="carry"'
   shot "${sw}_carry_exploded.png" --imgsize=2000,1500 --camera=71,53,39,62,0,35,600 -D 'VIEW="carry_exploded"' -D EXPL=26
-  cy=42; [ "$sw" = choc ] && cy=34   # half the carry case height (MX 84, Choc 67.4 mm)
+  cy=41; [ "$sw" = choc ] && cy=34   # half the carry case height (MX 81, Choc 67.4 mm)
   shot "${sw}_carry_section.png"  --imgsize=2400,1250 --camera=71,$cy,0,0,0,0,235 --projection=o \
     -D 'VIEW="carry_section"' -D CUT=95.8 -D BAND=0
+  c2z=38; [ "$sw" = choc ] && c2z=30   # half the compact carry case height (MX 75.6, Choc 59.2 mm)
+  shot "${sw}_carry2.png"          --imgsize=2000,1300 --camera=71,53,$c2z,62,0,35,460 -D 'VIEW="carry2"'
+  shot "${sw}_carry2_exploded.png" --imgsize=2000,1500 --camera=71,53,$c2z,62,0,35,820 -D 'VIEW="carry2_exploded"' -D EXPL=42
+  shot "${sw}_carry2_section.png"  --imgsize=2400,1250 --camera=71,$c2z,0,0,0,0,235 --projection=o -D 'VIEW="carry2_section"' -D CUT=95.8
   if [ "$sw" = mx ]; then
     shot bottom.png     --imgsize=2000,1500 --camera=-71,53,0,0,0,0,310 --projection=o -D 'VIEW="bottom"'
     shot travel.png     --imgsize=2000,1500 --camera=78,59,45,65,0,20,480 -D 'VIEW="travel"'

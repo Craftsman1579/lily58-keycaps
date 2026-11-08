@@ -85,17 +85,41 @@ grip_d     = 20;
 /* [Carry case (ADR 0015): halves keys facing each other, a frame on each, a middle plate between,
    held by rubber bands; the trays are the outside] */
 cc_caps   = choc ? 18.0 : 23.2;   // tallest keycap top above the plate top (owner, measured)
-cc_air    = 1.0;      // buffer above the tallest keycap, to the middle plate
-cc_mid    = 2.0;      // middle plate
+// MX: compact variant without a middle plate, the frames meet directly; the opposing number rows
+// (they alone reach cc_caps) are 2 * cc_air apart. Choc: frames on a middle plate.
+cc_air    = choc ? 1.0 : 0.5;   // buffer above the tallest keycap
+cc_mid    = choc ? 2.0 : 0;     // middle plate
 cc_rest   = 3.0;      // the frame rests this wide on the plate rim (keycaps stay inside the PCB outline)
 cc_gap    = 0.3;      // skirt to the half
 cc_skirt  = [1.6, 3.0];   // skirt round the plate edge and the wall top: thickness, depth
-cc_dowel  = [[-4, 80], [146.5, 60], [60, 110.35], [70, 3.9]];   // on the frame's centre line
+// on the frame's centre line; MX: the first one moved out of the cable compartment walls
+cc_dowel  = [[choc ? -4 : -3.3, choc ? 80 : 44], [146.5, 60], [60, 110.35], [70, 3.9]];
 cc_dowel_d = 2.0;     // 1.75 mm filament pieces as dowels
 cc_dowel_h = 5;       // hole depth in the frame (middle plate: through)
 cc_band   = [65, 90]; // y of the rubber band grooves; they cross the straight left and right edges
 cc_band_w = 8;
 cc_band_d = 0.8;
+cc_bin      = !choc;  // MX: cable compartment in the free space over the controller covers
+cc_bin_wall = 2.0;    // outer wall of the compartment (1.2 mm remain at the band grooves)
+cc_bin_key  = 1.2;    // wall towards the keys
+cc_bin_x    = 27.8;   // key side of that wall: keycap edges at x 28.52 and y 54.95 stay 0.7 mm clear
+cc_bin_y    = 55.65;
+
+/* [Compact carry case (ADR 0016, both boards): the upper half is turned the other way, so the tall number row
+   of each half faces the low rows of the other; two frames, closed by magnets] */
+// plate top to plate top. MX: 41.25 with the measured row heights + 0.75 mm air; Choc: 30.8 from the
+// cap model scaled to the measured 18 mm number row + 1.0 mm air
+c2_gap     = choc ? 31.8 : 42.0;
+c2_mag     = [10, 1.4];   // magnet diameter, height (owner, measured)
+c2_mag_clr = 0.25;     // pocket diameter = magnet + this
+// the other two are their point reflections; bosses clear of all caps (Choc: the four corners)
+c2_mag_pos = choc ? [[12, 2], [143, 8]] : [[12, 2], [143, 61]];
+c2_dowel   = [[-4, 15], [-4, 30]];   // same
+c2_bin_wall = 1.6;     // outer wall of the cable compartments
+c2_deck    = 1.2;      // deck over the other half's compartment, lies on the print bed
+c2_roof_z  = 1.0;      // the roof over the windows starts this far from the meeting face
+c2_roof_k  = choc ? 1.15 : 1.0;   // inward per height (Choc: lower frame, 49° from vertical to still close)
+c2_bin     = !choc;    // cable compartments; Choc: the cover leaves only about 8 mm of depth, so none
 
 
 port_dx  = -2;        // test print: both connectors sit 2 mm closer to the inner edge
@@ -311,9 +335,9 @@ module in_chamber(i, left) {
 
 // Carry case: frame in its own coordinates, z = 0 lies on the middle plate, the half rests on z = cc_h
 // (plate top). Over the controller cover the frame is open inside the skirt, cc_cover deep: the cover
-// stands highest above the plate on the Choc board (plate 1.9 mm above the PCB, MX 5.0).
+// stands 7.3 mm above the plate on the Choc board (plate 1.9 mm above the PCB), 4.2 mm on MX.
 cc_h     = cc_caps + cc_air;
-cc_cover = cov_gap + cov_t - 1.9 + 0.5;
+cc_cover = cov_gap + cov_t - plate_above + 0.5;
 cc_out = outer + cc_gap + cc_skirt[0];
 echo(str("carry case height: ", 2 * (foot_out + z_top + cc_h) + cc_mid, " (", 2 * cc_h + cc_mid, " without the halves)"));
 
@@ -323,11 +347,19 @@ module cc_band_cut() for (y = cc_band) difference() {
 }
 module cc_dowels(h) for (d = cc_dowel) translate([d[0], d[1], -eps]) cylinder(d = cc_dowel_d, h = h + eps, $fn = 24);
 
+// Cable compartment: open towards the other frame, the controller cover is its floor. Standing in a
+// y-z plane a coil can use the full depth of both frames.
+module cc_bin_2d() intersection() { outline(cc_out - cc_bin_wall); zone(cc_bin_x - cc_bin_key, cc_bin_y + cc_bin_key); }
+if (cc_bin) echo(str("carry case cable compartment: x ", cc_bin_x - cc_bin_key + cc_out - cc_bin_wall, ", y ",
+  y_top + cc_out - cc_bin_wall - cc_bin_y - cc_bin_key, ", z ", 2 * (cc_h - cc_cover) + cc_mid));
+
 module frame() difference() {
   union() {
     linear_extrude(cc_h) difference() { outline(cc_out); outline(outer - cc_rest); }
     translate([0, 0, cc_h - eps]) linear_extrude(cc_skirt[1] + eps) difference() { outline(cc_out); outline(outer + cc_gap); }
+    if (cc_bin) linear_extrude(cc_h - cc_cover) intersection() { outline(cc_out); zone(cc_bin_x, cc_bin_y); }
   }
+  if (cc_bin) translate([0, 0, -1]) linear_extrude(cc_h - cc_cover + 2) cc_bin_2d();
   translate([0, 0, cc_h - cc_cover]) linear_extrude(cc_cover + 1)
     intersection() { outline(outer + cc_gap); offset(delta = cc_gap) zone(ctrl_x, ctrl_y); }
   translate([0, 0, -1]) linear_extrude(cc_h + cc_skirt[1] + 2) cc_band_cut();
@@ -350,6 +382,55 @@ module carry() {
   color("#9e9e9e") translate([0, 0, z_mid]) mid();
   color("#6d6d6d") translate([0, 0, z_mid + cc_mid]) frame();   // left frame, turned over
   translate([0, 0, 2 * z_mid + cc_mid - foot_out]) mirror([0, 0, 1]) assembly();
+}
+
+// Compact carry case: stack coordinates of the right half, z = 0 is its plate top, keys up, the frames
+// meet at z = c2_m. The left half lies turned over about the long (x) axis, so it appears point-reflected
+// in the plane; the common outline is the union of both, and everything below is point-symmetric where
+// the two frames have to meet. Each frame carries the compartment over its own controller cover and
+// the deck that closes the compartment of the other half.
+c2_m = c2_gap / 2;
+c2_cover = cov_gap + cov_t - plate_above + 0.5;
+function c2_ref(p) = [lily58_pcb_size[0] - p[0], y_top - p[1]];
+c2_mags   = concat(c2_mag_pos, [for (p = c2_mag_pos) c2_ref(p)]);
+c2_dowels = concat(c2_dowel, [for (p = c2_dowel) c2_ref(p)]);
+module c2_reflect() translate([lily58_pcb_size[0], y_top]) rotate(180) children();
+module c2_u(d) union() { outline(d); c2_reflect() outline(d); }
+module c2_zone() intersection() { outline(cc_out); zone(cc_bin_x, cc_bin_y); }
+module c2_bin_2d() intersection() { outline(cc_out - c2_bin_wall); zone(cc_bin_x - cc_bin_key, cc_bin_y + cc_bin_key); }
+echo(str("compact carry case height: ", 2 * (foot_out + z_top) + c2_gap));
+if (c2_bin) echo(str("compact carry case compartments (each): x ", cc_bin_x - cc_bin_key + cc_out - c2_bin_wall,
+  ", y ", y_top + cc_out - c2_bin_wall - cc_bin_y - cc_bin_key, ", z ", c2_m - c2_cover));
+
+// Roof over the windows: where the other half sticks out past this one, the case would be open. A solid
+// wedge grows from the ring at 45° (no support, the meeting face is on the bed) and ends flush with the
+// skirt, 0.3 mm round the tray. The slope stays clear of the other half's keycaps.
+module c2_roof() difference() {
+  // slices end inside the ring and the band below it, so they add no second outer surface
+  for (z = [-cc_skirt[1] : 0.2 : c2_m - c2_roof_z - 0.1]) translate([0, 0, z]) linear_extrude(0.2 + eps) difference() {
+    c2_u(cc_out - 0.5);
+    offset(delta = -c2_roof_k * (c2_m - c2_roof_z - z)) c2_u(outer - cc_rest);
+  }
+  translate([0, 0, -cc_skirt[1] - 1]) linear_extrude(c2_m + cc_skirt[1] + 2) outline(outer + cc_gap);
+}
+
+module frame2() difference() {
+  union() {
+    c2_roof();
+    linear_extrude(c2_m) difference() { c2_u(cc_out); c2_u(outer - cc_rest); }
+    // skirt round the plate edge and outer band of the roof: everything outside the common outline
+    translate([0, 0, -cc_skirt[1]]) linear_extrude(cc_skirt[1] + eps) difference() { c2_u(cc_out); c2_u(outer + cc_gap); }
+    if (c2_bin) translate([0, 0, c2_cover]) linear_extrude(c2_m - c2_cover) c2_zone();
+    if (c2_bin) translate([0, 0, c2_m - c2_deck]) linear_extrude(c2_deck) c2_reflect() c2_zone();
+    intersection() {
+      for (p = c2_mags) translate([p[0], p[1], c2_m - c2_mag[1] - 1.2]) cylinder(d = c2_mag[0] + 2.4, h = c2_mag[1] + 1.2);
+      linear_extrude(100) c2_u(cc_out);
+    }
+  }
+  translate([0, 0, -1]) linear_extrude(c2_cover + 1) intersection() { outline(outer + cc_gap); offset(delta = cc_gap) zone(ctrl_x, ctrl_y); }
+  if (c2_bin) translate([0, 0, c2_cover - eps]) linear_extrude(c2_m - c2_cover + 1) c2_bin_2d();
+  for (p = c2_mags) translate([p[0], p[1], c2_m - c2_mag[1] - 0.1]) cylinder(d = c2_mag[0] + c2_mag_clr, h = c2_mag[1] + 1);
+  for (p = c2_dowels) translate([p[0], p[1], c2_m - cc_dowel_h]) cylinder(d = cc_dowel_d, h = cc_dowel_h + 1, $fn = 24);
 }
 
 // Snap fit test: the real wall and plate edge on a straight piece of the bottom edge.
@@ -405,8 +486,11 @@ if (part == "travel") {   // both halves in the sleeve
   in_chamber(0, false) assembly();
   in_chamber(1, true) assembly();
 }
-if (part == "frame")      sided() frame();    // middle-plate face on the bed
+// Middle-plate face on the bed: turned over onto its half the outline mirrors, so the frame for the
+// right half is the mirrored one.
+if (part == "frame")      { if (side == "left") frame(); else mirror([1, 0, 0]) frame(); }
 if (part == "mid")        mid();
+if (part == "frame2")     sided() translate([0, 0, c2_m]) rotate([180, 0, 0]) frame2();   // meeting face on the bed
 if (part == "carry")      carry();
 if (part == "snap_test")  snap_test();
 if (part == "plate_test") plate_test();
