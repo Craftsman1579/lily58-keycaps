@@ -233,7 +233,7 @@ EOF
 # lassen (deckungsgleiche Flaechen mit dem Rand ergeben sonst offene Kanten).
 # Die Gruppen sind STL, weil Bambu Studio nur STL als ein Objekt mit Teilen laedt.
 if [ "$MODE" = "kat-all" ] || [ "$MODE" = "kat-test" ]; then
-  KATLAYOUT="${LAYOUT:-de}"   # de = QWERTZ ohne Sonderzeichen, us = US-QWERTY wie im Lily58-Standard
+  KATLAYOUT="${LAYOUT:-de}"   # de = QWERTZ (Y/Z getauscht), Sonderzeichen wie US, us = US-QWERTY wie im Lily58-Standard
   if [ "$MODE" = "kat-test" ]; then OUT="$WORK/stl/kat_passtest"
   elif [ "$KATLAYOUT" = us ]; then OUT="$WORK/stl/kat_set_us_tol_${TOL}"
   else OUT="$WORK/stl/kat_set_tol_${TOL}"; fi
@@ -349,17 +349,17 @@ KEYS
 R4_links      4  s:987831 t:1 t:2 t:3 t:4 t:5
 R4_rechts     4  t:6 t:7 t:8 t:9 t:0 s:8998
 R3_links      3  s:983826 t:Q t:W t:E t:R t:T
-R3_rechts     3  t:Z t:U t:I t:O t:P b:-
+R3_rechts     3  t:Z t:U t:I t:O t:P t:-
 R2_links      2  s:984628 t:A t:S t:D h:F t:G
-R2_rechts     2  t:H h:J t:K t:L b:- b:-
-R1_links      1  s:984630 t:Y t:X t:C t:V t:B b:-
-R1_rechts     1  b:- t:N t:M b:- b:- b:- s:984630
+R2_rechts     2  t:H h:J t:K t:L t:; t:'
+R1_links      1  s:984630 t:Y t:X t:C t:V t:B t:[
+R1_rechts     1  t:] t:N t:M t:, t:. t:/ s:984630
 KEYS
 )
   fi
   KEYLIST+=$'\n'"$(cat <<'KEYS'
-Daumen_links  1  s:984629 s:984627 s:9660 s:987216:1.5
-Daumen_rechts 1  s:983825:1.5 s:9650 s:9003 s:984627
+Daumen_links  1  s:984629 s:984627 s:9660 s:983825:1.5
+Daumen_rechts 1  s:987216:1.5 s:9650 s:9003 s:984627
 Ersatz_R4     4  b:-
 Ersatz_R3     3  b:-
 Ersatz_R2     2  b:-
@@ -380,7 +380,7 @@ KEYS
   done <<< "$KEYLIST"
   set +f
   fi
-  # Daumen: Space und Enter 1.5u (innerste Daumentaste des Lily58 Pro)
+  # Daumen: Enter (links) und Space (rechts) 1.5u (innerste Daumentaste des Lily58 Pro)
   # Symbole: 987831 Esc, 8998 Entf, 983826 Tab, 984628 Strg, 984630 Shift,
   #          984629 Alt, 984627 GUI, 9660 Lower, 987216 Space, 983825 Enter,
   #          9650 Raise, 9003 Backspace
@@ -439,7 +439,7 @@ if [ "$MODE" = "des-all" ] || [ "$MODE" = "des-test" ] || [ "$MODE" = "des-choc-
   [ -d "$DESLIB/libraries" ] || { mkdir -p "$DESLIB" && unzip -q -o "$DESREPO/libraries.zip" -d "$DESLIB"; }
   export OPENSCADPATH="$DESLIB/libraries"
 
-  DESLAYOUT="${LAYOUT:-de}"   # de = QWERTZ ohne Sonderzeichen, us = US-QWERTY wie im Lily58-Standard
+  DESLAYOUT="${LAYOUT:-de}"   # de = QWERTZ (Y/Z getauscht), Sonderzeichen wie US, us = US-QWERTY wie im Lily58-Standard
   PRE="des"; [ "$CHOC" = 1 ] && PRE="des_choc"
   if [ "${MODE%-test}" != "$MODE" ]; then OUT="$WORK/stl/${PRE}_passtest"
   elif [ "$DESLAYOUT" = us ]; then OUT="$WORK/stl/${PRE}_set_us_tol_${TOL}"
@@ -695,17 +695,17 @@ KEYS
 R1_links      S_R1:s:987831 S_R1:t:1 S_R1:t:2 S_R1:t:3 S_R1:t:4 S_R1:t:5
 R1_rechts     S_R1:t:6 S_R1:t:7 S_R1:t:8 S_R1:t:9 S_R1:t:0 S_R1:s:8998
 R2_links      S_R2:s:983826 S_R2:t:Q S_R2:t:W S_R2:t:E S_R2:t:R S_R2:t:T
-R2_rechts     S_R2:t:Z S_R2:t:U S_R2:t:I S_R2:t:O S_R2:t:P S_R2:b:-
+R2_rechts     S_R2:t:Z S_R2:t:U S_R2:t:I S_R2:t:O S_R2:t:P S_R2:t:-
 R3_links      S_R3:s:984628 S_R3:t:A S_R3:t:S S_R3:t:D S_R3:h:F S_R3:t:G
-R3_rechts     S_R3:t:H S_R3:h:J S_R3:t:K S_R3:t:L S_R3:b:- S_R3:b:-
-R4_links      S_R4:s:984630 S_R4:t:Y S_R4:t:X S_R4:t:C S_R4:t:V S_R4:t:B S_R4:b:-
-R4_rechts     S_R4:b:- S_R4:t:N S_R4:t:M S_R4:b:- S_R4:b:- S_R4:b:- S_R4:s:984630
+R3_rechts     S_R3:t:H S_R3:h:J S_R3:t:K S_R3:t:L S_R3:t:; S_R3:t:'
+R4_links      S_R4:s:984630 S_R4:t:Y S_R4:t:X S_R4:t:C S_R4:t:V S_R4:t:B S_R4:t:[
+R4_rechts     S_R4:t:] S_R4:t:N S_R4:t:M S_R4:t:, S_R4:t:. S_R4:t:/ S_R4:s:984630
 KEYS
 )
   fi
   KEYLIST+=$'\n'"$(cat <<'KEYS'
-Daumen_links  T2L:s:984629 T1L:s:984627 T1L:s:9660 T15L:s:987216
-Daumen_rechts T15R:s:983825 T1R:s:9650 T1R:s:9003 T2R:s:984627
+Daumen_links  T2L:s:984629 T1L:s:984627 T1L:s:9660 T15L:s:983825
+Daumen_rechts T15R:s:987216 T1R:s:9650 T1R:s:9003 T2R:s:984627
 Ersatz_R1     S_R1:b:-
 Ersatz_R2     S_R2:b:-
 Ersatz_R3     S_R3:b:-

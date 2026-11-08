@@ -12,7 +12,7 @@ X0 = 8.5                                        # linke Spalte der rechten Haelf
 def pos_left(c, r):  return (c, r + stagger[c])
 def pos_right(c, r): return (X0 + c, r + stagger[5 - c])
 
-thumbs_left  = [(2.6, -1.0), (3.6, -1.05), (4.6, -1.1), (6.0, -1.0)]     # Alt GUI Lower Space(1.5u)
+thumbs_left  = [(2.6, -1.0), (3.6, -1.05), (4.6, -1.1), (6.0, -1.0)]     # Alt GUI Lower Enter(1.5u)
 thumbs_right = [(X0 - 1.0, -1.0), (X0 + 0.4, -1.1), (X0 + 1.4, -1.05), (X0 + 2.4, -1.0)]
 if prof == 'des':
     rows = {'R1': 3, 'R2': 2, 'R3': 1, 'R4': 0}   # DES: R1 Zahlen ... R4 unten
